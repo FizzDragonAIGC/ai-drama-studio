@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI番剧工作室 | AI Drama Studio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🎬</span>
+                <span class="logo-text">AI番剧工作室</span>
+            </div>
+            
+            <nav class="nav">
+                <div class="nav-section">
+                    <div class="nav-title">创作流程</div>
+                    <a href="#" class="nav-item active" data-step="input">
+                        <span class="nav-icon">📖</span>
+                        <span>输入故事</span>
+                        <span class="nav-status"></span>
+                    </a>
+                    <a href="#" class="nav-item" data-step="chapter">
+                        <span class="nav-icon">📑</span>
+                        <span>章节规划</span>
+                        <span class="nav-status"></span>
+                    </a>
+                    <a href="#" class="nav-item" data-step="character">
+                        <span class="nav-icon">👗</span>
+                        <span>人物/时代</span>
+                        <span class="nav-status"></span>
+                    </a>
+                    <a href="#" class="nav-item" data-step="emotion">
+                        <span class="nav-icon">🎭</span>
+                        <span>情绪设计</span>
+                        <span class="nav-status"></span>
+                    </a>
+                    <a href="#" class="nav-item" data-step="storyboard">
+                        <span class="nav-icon">📐</span>
+                        <span>分镜设计</span>
+                        <span class="nav-status"></span>
+                    </a>
+                    <a href="#" class="nav-item" data-step="output">
+                        <span class="nav-icon">🎞️</span>
+                        <span>生成输出</span>
+                        <span class="nav-status"></span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">智能体状态</div>
+                    <div class="agent-status" id="agentStatus">
+                        <div class="agent-item">
+                            <span>🎬 制片人</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="agent-item">
+                            <span>📝 编剧</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="agent-item">
+                            <span>🎭 情绪设计师</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="agent-item">
+                            <span>🎥 导演</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="agent-item">
+                            <span>📐 分镜师</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="agent-item">
+                            <span>🎨 美术</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="agent-item">
+                            <span>📷 摄影</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="agent-item">
+                            <span>🎵 配乐</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main">
+            <!-- Step 1: 输入故事 -->
+            <section class="step-panel active" id="step-input">
+                <div class="panel-header">
+                    <h1>📖 输入你的故事</h1>
+                    <p class="panel-desc">粘贴小说、故事或创意想法，AI将为你创作番剧</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="input-group">
+                        <label>故事内容</label>
+                        <textarea id="storyInput" placeholder="在这里粘贴你的小说或故事...
+
+示例：
+祥子，在北平城里，是一个车夫。他不是一般的车夫，他是一个拉包月的车夫。十八岁的时候，他便跑到城里来，带着乡间小伙子的足壮与诚实..."></textarea>
+                    </div>
+                    
+                    <div class="config-grid">
+                        <div class="input-group">
+                            <label>导演风格</label>
+                            <select id="directorStyle">
+                                <option value="auto">🎯 自动匹配</option>
+                                <option value="hou">侯孝贤 - 长镜头、自然光</option>
+                                <option value="wong">王家卫 - 霓虹、暧昧</option>
+                                <option value="jiang">姜文 - 力量感、色彩饱满</option>
+                                <option value="ang">李安 - 细腻、东西融合</option>
+                                <option value="ghibli">宫崎骏 - 温暖、奇幻</option>
+                                <option value="nolan">诺兰 - 冷峻、悬疑</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>年代设定</label>
+                            <input type="text" id="eraInput" placeholder="如：1920年代北京">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>每集时长</label>
+                            <select id="duration">
+                                <option value="3">3分钟</option>
+                                <option value="5">5分钟</option>
+                                <option value="8" selected>8分钟</option>
+                                <option value="10">10分钟</option>
+                                <option value="15">15分钟</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>画面比例</label>
+                            <select id="aspectRatio">
+                                <option value="21:9">21:9 电影宽屏</option>
+                                <option value="16:9">16:9 标准</option>
+                                <option value="4:3">4:3 复古</option>
+                                <option value="9:16">9:16 竖屏短视频</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary" onclick="startProcess()">
+                        <span>🚀 开始创作</span>
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Step 2: 章节规划 -->
+            <section class="step-panel" id="step-chapter">
+                <div class="panel-header">
+                    <div class="agent-badge">
+                        <span class="agent-icon">📖</span>
+                        <span>章节规划师</span>
+                    </div>
+                    <h1>📑 章节规划</h1>
+                    <p class="panel-desc">确认分集和每集的核心看点</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="agent-output" id="chapterOutput">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goBack()">⬅️ 返回上一步</button>
+                        <button class="btn-secondary" onclick="regenerate('chapter')">🔄 重新生成</button>
+                        <button class="btn-primary" onclick="confirmStep('chapter')">✅ 确认，下一步</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 3: 人物/时代设定 -->
+            <section class="step-panel" id="step-character">
+                <div class="panel-header">
+                    <div class="agent-badge">
+                        <span class="agent-icon">📜</span>
+                        <span>时代顾问</span>
+                    </div>
+                    <div class="agent-badge" style="margin-left: 10px; border-color: #f093fb;">
+                        <span class="agent-icon">👗</span>
+                        <span>服化道设计师</span>
+                    </div>
+                    <h1>👗 人物设定 & 时代考据</h1>
+                    <p class="panel-desc">确认人物外貌、服装和时代背景，确保历史准确性</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div id="characterOutput">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goBack()">⬅️ 返回上一步</button>
+                        <button class="btn-secondary" onclick="regenerate('character')">🔄 重新生成</button>
+                        <button class="btn-primary" onclick="confirmStep('character')">✅ 确认，下一步</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 4: 情绪设计 -->
+            <section class="step-panel" id="step-emotion">
+                <div class="panel-header">
+                    <div class="agent-badge emotion">
+                        <span class="agent-icon">🎭</span>
+                        <span>情绪设计师</span>
+                    </div>
+                    <h1>🎭 情绪设计</h1>
+                    <p class="panel-desc">每5-10秒一个情绪节拍，让观众被情绪拉着走</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="emotion-curve-container" id="emotionCurve">
+                        <!-- 动态生成情绪曲线 -->
+                    </div>
+                    
+                    <div class="emotion-table-container" id="emotionTable">
+                        <!-- 动态生成情绪节拍表 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goBack()">⬅️ 返回上一步</button>
+                        <button class="btn-secondary" onclick="regenerate('emotion')">🔄 重新生成</button>
+                        <button class="btn-primary" onclick="confirmStep('emotion')">✅ 确认，下一步</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 4: 分镜设计 -->
+            <section class="step-panel" id="step-storyboard">
+                <div class="panel-header">
+                    <div class="agent-badge storyboard">
+                        <span class="agent-icon">📐</span>
+                        <span>分镜师</span>
+                    </div>
+                    <h1>📐 分镜设计</h1>
+                    <p class="panel-desc">根据情绪强度设计每个镜头</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="storyboard-grid" id="storyboardGrid">
+                        <!-- 动态生成分镜卡片 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goBack()">⬅️ 返回上一步</button>
+                        <button class="btn-secondary" onclick="regenerate('storyboard')">🔄 重新生成</button>
+                        <button class="btn-primary" onclick="confirmStep('storyboard')">✅ 确认，生成Prompt</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 5: 生成输出 -->
+            <section class="step-panel" id="step-output">
+                <div class="panel-header">
+                    <h1>🎞️ 生成输出</h1>
+                    <p class="panel-desc">所有智能体的Prompt汇总</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="output-tabs">
+                        <button class="tab-btn active" onclick="switchTab('table')">📊 分镜表</button>
+                        <button class="tab-btn" onclick="switchTab('image')">🖼️ 图像Prompt</button>
+                        <button class="tab-btn" onclick="switchTab('video')">🎬 视频Prompt</button>
+                        <button class="tab-btn" onclick="switchTab('music')">🎵 音乐Prompt</button>
+                    </div>
+                    
+                    <div class="output-content" id="outputContent">
+                        <!-- 动态生成输出内容 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goBack()">⬅️ 返回上一步</button>
+                        <button class="btn-secondary" onclick="exportAll()">📥 导出全部</button>
+                        <button class="btn-primary" onclick="copyPrompts()">📋 复制Prompt</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 右侧实时预览 -->
+        <aside class="preview-panel">
+            <div class="preview-header">
+                <h3>💬 智能体对话</h3>
+            </div>
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-message system">
+                    <div class="message-content">
+                        <p>👋 欢迎使用AI番剧工作室！</p>
+                        <p>请在左侧输入你的故事，我会帮你一步步创作成番剧。</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

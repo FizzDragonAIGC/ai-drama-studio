@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI番剧工作室 v2.0 | 部门制</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🎬</span>
+                <span class="logo-text">AI番剧工作室</span>
+                <span class="version">v2.0</span>
+            </div>
+            
+            <div class="quick-links" style="padding: 10px 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                <a href="prd.html" style="color: #888; font-size: 0.85em; text-decoration: none; display: block; padding: 5px 0;">📋 PRD文档</a>
+                <a href="ip_library.html" style="color: #888; font-size: 0.85em; text-decoration: none; display: block; padding: 5px 0;">📚 IP库</a>
+            </div>
+            
+            <nav class="nav">
+                <div class="nav-section">
+                    <div class="nav-title">制作流程</div>
+                    <a href="#" class="nav-item active" data-step="input">
+                        <span class="nav-icon">📖</span>
+                        <span>输入故事</span>
+                    </a>
+                    <a href="#" class="nav-item" data-step="chapters">
+                        <span class="nav-icon">📑</span>
+                        <span>全局章节</span>
+                    </a>
+                    <a href="#" class="nav-item" data-step="episode">
+                        <span class="nav-icon">🎬</span>
+                        <span>单集制作</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section" id="episodeNav" style="display: none;">
+                    <div class="nav-title">当前集：<span id="currentEpisode">-</span></div>
+                    <a href="#" class="nav-item sub" data-step="writer">
+                        <span class="nav-icon">📝</span>
+                        <span>编剧部</span>
+                    </a>
+                    <a href="#" class="nav-item sub" data-step="art">
+                        <span class="nav-icon">🎨</span>
+                        <span>美术部</span>
+                    </a>
+                    <a href="#" class="nav-item sub" data-step="director">
+                        <span class="nav-icon">🎥</span>
+                        <span>导演部</span>
+                    </a>
+                    <a href="#" class="nav-item sub" data-step="music">
+                        <span class="nav-icon">🎵</span>
+                        <span>音乐部</span>
+                    </a>
+                    <a href="#" class="nav-item sub" data-step="export">
+                        <span class="nav-icon">📥</span>
+                        <span>导出</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">部门状态</div>
+                    <div class="dept-status" id="deptStatus">
+                        <div class="dept-item">
+                            <span>🎬 总导演</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="dept-item">
+                            <span>📝 编剧部</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="dept-item">
+                            <span>🎨 美术部</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="dept-item">
+                            <span>🎥 导演部</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="dept-item">
+                            <span>🎵 音乐部</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                        <div class="dept-item">
+                            <span>📜 考据部</span>
+                            <span class="status waiting">待命</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main">
+            <!-- Step 1: 输入故事 -->
+            <section class="step-panel active" id="step-input">
+                <div class="panel-header">
+                    <h1>📖 输入你的故事</h1>
+                    <p class="panel-desc">支持长文本（1-2万字），系统会自动分集处理</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="input-group">
+                        <label>故事内容 <span class="char-count" id="charCount">0 字</span></label>
+                        <textarea id="storyInput" placeholder="粘贴你的小说或故事...
+
+支持长文本，系统会自动：
+1. 分析整体结构
+2. 划分章节/集
+3. 逐集展开详细制作" oninput="updateCharCount()"></textarea>
+                    </div>
+                    
+                    <div class="config-grid">
+                        <div class="input-group">
+                            <label>总导演风格</label>
+                            <select id="directorStyle">
+                                <option value="auto">🎯 自动匹配</option>
+                                <option value="hou">侯孝贤 - 长镜头、自然光</option>
+                                <option value="wong">王家卫 - 霓虹、暧昧</option>
+                                <option value="jiang">姜文 - 力量感、饱满</option>
+                                <option value="ang">李安 - 细腻、东西融合</option>
+                                <option value="ghibli">宫崎骏 - 温暖、奇幻</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>年代/时代</label>
+                            <input type="text" id="eraInput" placeholder="如：1920年代北平">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>每集目标时长</label>
+                            <select id="duration">
+                                <option value="5">5分钟</option>
+                                <option value="8" selected>8分钟</option>
+                                <option value="10">10分钟</option>
+                                <option value="15">15分钟</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>画面比例</label>
+                            <select id="aspectRatio">
+                                <option value="21:9">21:9 电影宽屏</option>
+                                <option value="16:9" selected>16:9 标准</option>
+                                <option value="9:16">9:16 竖屏</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary" onclick="startAnalysis()">
+                        <span>🚀 开始分析</span>
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Step 2: 全局章节 -->
+            <section class="step-panel" id="step-chapters">
+                <div class="panel-header">
+                    <div class="dept-badge executive">
+                        <span>🎬</span>
+                        <span>总导演</span>
+                    </div>
+                    <h1>📑 全局章节规划</h1>
+                    <p class="panel-desc">确认分集后，选择某一集开始详细制作</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="chapters-overview" id="chaptersOverview">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goBack()">⬅️ 返回</button>
+                        <button class="btn-secondary" onclick="regenerateChapters()">🔄 重新划分</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 3: 单集制作 - 编剧部 -->
+            <section class="step-panel" id="step-writer">
+                <div class="panel-header">
+                    <div class="dept-badge writer">
+                        <span>📝</span>
+                        <span>编剧部</span>
+                    </div>
+                    <h1 id="writerTitle">📝 编剧部 - 第X集</h1>
+                    <p class="panel-desc">情绪节拍设计，每5-10秒一个情绪转折点</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div id="writerOutput">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="backToEpisodes()">⬅️ 返回选集</button>
+                        <button class="btn-secondary" onclick="regenerateWriter()">🔄 重新生成</button>
+                        <button class="btn-primary" onclick="confirmWriter()">✅ 确认，进入美术部</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 4: 单集制作 - 美术部 -->
+            <section class="step-panel" id="step-art">
+                <div class="panel-header">
+                    <div class="dept-badge art">
+                        <span>🎨</span>
+                        <span>美术部</span>
+                    </div>
+                    <h1 id="artTitle">🎨 美术部 - 第X集</h1>
+                    <p class="panel-desc">人物设定、服化道、场景设计</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div id="artOutput">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goToStep('writer')">⬅️ 返回编剧部</button>
+                        <button class="btn-secondary" onclick="regenerateArt()">🔄 重新生成</button>
+                        <button class="btn-primary" onclick="confirmArt()">✅ 确认，进入导演部</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 5: 单集制作 - 导演部 -->
+            <section class="step-panel" id="step-director">
+                <div class="panel-header">
+                    <div class="dept-badge director">
+                        <span>🎥</span>
+                        <span>导演部</span>
+                    </div>
+                    <h1 id="directorTitle">🎥 导演部 - 第X集</h1>
+                    <p class="panel-desc">分镜、摄影、灯光、调色、表演 综合方案</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div id="directorOutput">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goToStep('art')">⬅️ 返回美术部</button>
+                        <button class="btn-secondary" onclick="regenerateDirector()">🔄 重新生成</button>
+                        <button class="btn-primary" onclick="confirmDirector()">✅ 确认，进入音乐部</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 6: 单集制作 - 音乐部 -->
+            <section class="step-panel" id="step-music">
+                <div class="panel-header">
+                    <div class="dept-badge music">
+                        <span>🎵</span>
+                        <span>音乐部</span>
+                    </div>
+                    <h1 id="musicTitle">🎵 音乐部 - 第X集</h1>
+                    <p class="panel-desc">主旋律、副旋律、环境音 三轨配乐方案</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div id="musicOutput">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goToStep('director')">⬅️ 返回导演部</button>
+                        <button class="btn-secondary" onclick="regenerateMusic()">🔄 重新生成</button>
+                        <button class="btn-primary" onclick="confirmMusic()">✅ 确认，导出</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Step 7: 导出 -->
+            <section class="step-panel" id="step-export">
+                <div class="panel-header">
+                    <h1 id="exportTitle">📥 导出 - 第X集</h1>
+                    <p class="panel-desc">导出完整分镜表，然后制作下一集</p>
+                </div>
+                
+                <div class="panel-content">
+                    <div class="export-options">
+                        <div class="export-card" onclick="exportExcel()">
+                            <span class="export-icon">📊</span>
+                            <span class="export-name">Excel (CSV)</span>
+                            <span class="export-desc">完整分镜表，55+列</span>
+                        </div>
+                        <div class="export-card" onclick="exportJSON()">
+                            <span class="export-icon">📄</span>
+                            <span class="export-name">JSON</span>
+                            <span class="export-desc">结构化数据</span>
+                        </div>
+                        <div class="export-card" onclick="copyPrompts()">
+                            <span class="export-icon">📋</span>
+                            <span class="export-name">复制Prompt</span>
+                            <span class="export-desc">图像生成用</span>
+                        </div>
+                    </div>
+                    
+                    <div class="export-summary" id="exportSummary">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn-secondary" onclick="goToStep('music')">⬅️ 返回音乐部</button>
+                        <button class="btn-primary" onclick="finishEpisode()">✅ 完成，制作下一集</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 右侧状态栏 -->
+        <aside class="status-panel">
+            <div class="status-header">
+                <h3>📊 项目状态</h3>
+            </div>
+            <div class="project-stats" id="projectStats">
+                <div class="stat-item">
+                    <span class="stat-label">总字数</span>
+                    <span class="stat-value" id="statChars">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">总集数</span>
+                    <span class="stat-value" id="statEpisodes">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">已完成</span>
+                    <span class="stat-value" id="statCompleted">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">当前集</span>
+                    <span class="stat-value" id="statCurrent">-</span>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <h4>制作进度</h4>
+                <div class="episode-progress" id="episodeProgress">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

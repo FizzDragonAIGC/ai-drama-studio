@@ -1,0 +1,234 @@
+{
+  "characters": [
+    {
+      "id": "cuicui",
+      "name": "翠翠",
+      "role": "女主角",
+      "age": "15-16岁",
+      "gender": "女",
+      
+      "appearance": {
+        "face": "圆润清秀，眉眼如画，皮肤因阳光微黑",
+        "hair": "黑长辫子，用红绳扎着",
+        "body": "身量纤细，像小鹿一样灵动",
+        "eyes": "明亮清澈，带着野性的天真",
+        "characteristic": "笑起来有两个小酒窝"
+      },
+      
+      "costume": {
+        "daily": "蓝布短衫、黑布裤、赤脚或草鞋",
+        "festival": "新做的蓝印花布衣裳，银耳环",
+        "colors": ["靛蓝", "素白", "黑色"],
+        "accessories": "手腕的红绳，辫梢的红布条"
+      },
+      
+      "personality": {
+        "core": "纯真、倔强、敏感、内敛",
+        "traits": ["不善言辞但心思细腻", "对爷爷依恋深", "有野性美", "情窦初开时害羞"],
+        "quirks": ["喜欢学鸟叫", "常常发呆看水", "生气时不说话只跑开"]
+      },
+      
+      "arc": {
+        "beginning": "无忧无虑的少女，与爷爷相依为命",
+        "middle": "情窦初开，对傩送产生朦胧感情，内心矛盾",
+        "end": "经历失去，独自守着渡口等待"
+      },
+      
+      "relationships": {
+        "爷爷": "相依为命，既是父母又是知己",
+        "傩送": "暗恋对象，因害羞始终未表达",
+        "天保": "对他无感，但因此感到愧疚",
+        "黄狗": "忠实伙伴，是她孤独时的陪伴"
+      },
+      
+      "voiceDirection": "清脆但不多话，台词少，多用神态和动作表达",
+      "imagePromptKeywords": "young Chinese girl, Miao ethnicity, 1920s, blue cloth shirt, long braid, innocent eyes, rural riverside, Shen Congwen style"
+    },
+    
+    {
+      "id": "grandfather",
+      "name": "爷爷（老船夫）",
+      "role": "男主角",
+      "age": "约70岁",
+      "gender": "男",
+      
+      "appearance": {
+        "face": "满脸皱纹，古铜色皮肤，白胡须",
+        "hair": "花白短发，戴旧草帽",
+        "body": "精瘦但硬朗，常年撑船手有老茧",
+        "eyes": "浑浊但慈祥",
+        "characteristic": "总是微微弓着背"
+      },
+      
+      "costume": {
+        "daily": "对襟短褂、宽腿裤、草帽、草鞋",
+        "colors": ["褐色", "灰白", "土黄"],
+        "accessories": "旱烟袋从不离身，腰间系着竹筒（装酒）"
+      },
+      
+      "personality": {
+        "core": "善良、固执、乐观、孤独",
+        "traits": ["热心肠不收渡船钱", "心疼翠翠的婚事", "喜欢喝酒但不醉", "话多但不唠叨"],
+        "quirks": ["摆渡时爱哼小调", "喜欢和黄狗说话", "夜里会偷偷叹气"]
+      },
+      
+      "arc": {
+        "beginning": "守着渡船，唯一牵挂是翠翠的终身大事",
+        "middle": "为翠翠婚事奔走，却弄巧成拙",
+        "end": "在风雨夜去世，带着遗憾离开"
+      },
+      
+      "relationships": {
+        "翠翠": "唯一的亲人，倾注全部的爱",
+        "顺顺": "老相识，想结亲家",
+        "天保/傩送": "希望其中一个能娶翠翠"
+      },
+      
+      "voiceDirection": "沙哑温和，语速慢，常有乡音",
+      "imagePromptKeywords": "elderly Chinese boatman, 70 years old, weathered face, white beard, straw hat, simple clothes, kind eyes, 1920s rural China"
+    },
+    
+    {
+      "id": "nuosong",
+      "name": "傩送（二老）",
+      "role": "男主角",
+      "age": "约20岁",
+      "gender": "男",
+      
+      "appearance": {
+        "face": "英俊刚毅，眉目清朗",
+        "hair": "黑色短发，利落精神",
+        "body": "高大结实，善水性",
+        "eyes": "明亮有神，看翠翠时会柔和",
+        "characteristic": "笑起来很阳光"
+      },
+      
+      "costume": {
+        "daily": "白布对襟短衫、深色裤子",
+        "dragonBoat": "赤膊，系红腰带",
+        "colors": ["白色", "藏蓝", "深灰"],
+        "accessories": "有时系一条头巾"
+      },
+      
+      "personality": {
+        "core": "热情、直接、重情义、外向",
+        "traits": ["会唱山歌", "性格比哥哥活泼", "敢爱敢恨", "龙舟赛的好手"],
+        "quirks": ["喜欢在月下唱歌", "对喜欢的人会主动", "生气时会出走"]
+      },
+      
+      "arc": {
+        "beginning": "自由快乐的少年，龙舟赛冠军",
+        "middle": "爱上翠翠，与哥哥产生矛盾",
+        "end": "哥哥死后愧疚出走，留下翠翠等待"
+      },
+      
+      "relationships": {
+        "翠翠": "深爱着她，月下唱歌表达心意",
+        "天保": "亲哥哥，既是兄弟也是情敌",
+        "顺顺": "父亲，关系良好",
+        "爷爷": "本想提亲，后来产生误会"
+      },
+      
+      "voiceDirection": "清亮有力，唱歌时动人",
+      "imagePromptKeywords": "young Chinese man, 20 years old, handsome, athletic, white shirt, 1920s rural China, dragon boat racer, romantic hero"
+    },
+    
+    {
+      "id": "tianbao",
+      "name": "天保（大老）",
+      "role": "重要配角",
+      "age": "约22岁",
+      "gender": "男",
+      
+      "appearance": {
+        "face": "憨厚老实，方脸",
+        "hair": "黑色短发",
+        "body": "壮实，做水手的身材",
+        "eyes": "朴实真诚",
+        "characteristic": "不如弟弟俊美"
+      },
+      
+      "costume": {
+        "daily": "深色布衣，比傩送朴素",
+        "colors": ["褐色", "深蓝", "黑色"],
+        "accessories": "无特别装饰"
+      },
+      
+      "personality": {
+        "core": "憨厚、内向、重情、自卑",
+        "traits": ["不善言辞", "做事踏实", "不如弟弟会唱歌", "感情内敛"],
+        "quirks": ["喜欢默默做事", "失恋后借酒消愁"]
+      },
+      
+      "arc": {
+        "beginning": "喜欢翠翠，想走车路（托媒人）提亲",
+        "middle": "得知弟弟也喜欢翠翠，决定退出",
+        "end": "外出跑船时溺水身亡"
+      },
+      
+      "relationships": {
+        "翠翠": "暗恋，但不敢表达",
+        "傩送": "弟弟，也是情敌，但最终选择成全",
+        "顺顺": "父亲"
+      },
+      
+      "voiceDirection": "低沉朴实，话不多",
+      "imagePromptKeywords": "young Chinese man, 22, honest face, sturdy build, simple dark clothes, 1920s rural China, tragic character"
+    },
+    
+    {
+      "id": "shunshun",
+      "name": "顺顺（船总）",
+      "role": "配角",
+      "age": "约50岁",
+      "gender": "男",
+      
+      "appearance": {
+        "face": "富态方正，有威严",
+        "body": "壮实，年轻时也是好水手",
+        "characteristic": "穿着比普通人讲究"
+      },
+      
+      "costume": {
+        "daily": "质地较好的长衫或对襟衫",
+        "colors": ["青灰", "藏蓝"]
+      },
+      
+      "personality": {
+        "core": "豪爽、公正、重面子",
+        "traits": ["镇上有威望", "对两个儿子疼爱", "讲义气"]
+      },
+      
+      "relationships": {
+        "天保/傩送": "两个儿子",
+        "爷爷": "老相识，但后来有些误会"
+      },
+      
+      "imagePromptKeywords": "middle-aged Chinese man, 50, dignified, wealthy boatman, 1920s rural China"
+    },
+    
+    {
+      "id": "yellowdog",
+      "name": "黄狗",
+      "role": "配角（重要象征）",
+      "age": "成年狗",
+      "gender": "雄性",
+      
+      "appearance": {
+        "description": "普通的黄色土狗，毛色金黄",
+        "characteristic": "忠诚，总跟在翠翠身边"
+      },
+      
+      "symbolism": "忠诚、陪伴、翠翠孤独时的慰藉",
+      
+      "imagePromptKeywords": "yellow Chinese rural dog, loyal, 1920s China, companion animal"
+    }
+  ],
+  
+  "characterRelationshipMap": {
+    "core": "翠翠 ←爱情→ 傩送 ←兄弟→ 天保 →单恋→ 翠翠",
+    "family": "爷爷 ←相依为命→ 翠翠 | 顺顺 ←父子→ 天保+傩送",
+    "conflict": "天保与傩送因翠翠产生矛盾 → 天保退出并死亡 → 傩送愧疚出走",
+    "tragic": "所有人都是好人，但命运让他们错过"
+  }
+}

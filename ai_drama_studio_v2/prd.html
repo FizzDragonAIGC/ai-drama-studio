@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI番剧制作系统 - PRD</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e8e8e8;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ffd93d, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header .meta {
+            color: #888;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .section h2 {
+            color: #ffd93d;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,217,61,0.3);
+            font-size: 1.5em;
+        }
+        
+        .section h3 {
+            color: #4facfe;
+            margin: 25px 0 15px;
+            font-size: 1.2em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        th {
+            background: rgba(79,172,254,0.2);
+            color: #4facfe;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .status-done { color: #6bcb77; }
+        .status-pending { color: #ffd93d; }
+        .status-planned { color: #888; }
+        
+        .highlight-box {
+            background: rgba(255,217,61,0.1);
+            border-left: 4px solid #ffd93d;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .highlight-box.blue {
+            background: rgba(79,172,254,0.1);
+            border-left-color: #4facfe;
+        }
+        
+        .highlight-box.pink {
+            background: rgba(245,87,108,0.1);
+            border-left-color: #f5576c;
+        }
+        
+        .architecture {
+            background: rgba(0,0,0,0.3);
+            padding: 25px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+        
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .dept-card {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .dept-card .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .dept-card .name {
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .dept-card .desc {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #ffd93d, #4facfe, #f5576c, #6bcb77);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffd93d;
+        }
+        
+        .timeline-item.done::before { background: #6bcb77; }
+        .timeline-item.current::before { background: #4facfe; }
+        .timeline-item.planned::before { background: #888; }
+        
+        .timeline-item h4 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-item ul {
+            margin-left: 20px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            color: #000;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(79,172,254,0.4);
+        }
+        
+        .download-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        @media print {
+            body { background: #fff; color: #000; }
+            .section { border: 1px solid #ddd; }
+            th { background: #f0f0f0; color: #333; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 AI番剧制作系统</h1>
+            <p style="font-size: 1.3em; margin: 15px 0;">产品需求文档 (PRD)</p>
+            <p class="meta">版本 v2.0 | 作者: 卓卓 & 小Pax | 2026-02-14</p>
+        </div>
+
+        <!-- 产品概述 -->
+        <div class="section">
+            <h2>📋 1. 产品概述</h2>
+            
+            <div class="highlight-box">
+                <strong>一句话描述：</strong><br>
+                将小说/故事自动转换为专业分镜表的AI协作系统
+            </div>
+            
+            <h3>产品定位</h3>
+            <ul style="margin-left: 25px;">
+                <li><strong>不是：</strong>视频生成工具</li>
+                <li><strong>是：</strong>前期制作（Pre-production）辅助系统</li>
+                <li><strong>产出：</strong>可直接用于拍摄/生成的分镜表 + Prompt</li>
+            </ul>
+            
+            <h3>解决的问题</h3>
+            <table>
+                <tr><th>痛点</th><th>现状</th><th>我们的方案</th></tr>
+                <tr><td>分镜耗时</td><td>专业分镜师需要数天</td><td>AI辅助，分钟级产出</td></tr>
+                <tr><td>多工种协调</td><td>导演、摄影、美术各自为战</td><td>部门制智能体，统一输出</td></tr>
+                <tr><td>长剧本处理</td><td>容易遗漏细节</td><td>分层处理，逐集展开</td></tr>
+                <tr><td>情绪把控</td><td>依赖经验</td><td>量化情绪曲线，可视化</td></tr>
+            </table>
+        </div>
+
+        <!-- 目标用户 -->
+        <div class="section">
+            <h2>👥 2. 目标用户</h2>
+            <table>
+                <tr><th>用户类型</th><th>场景</th><th>核心需求</th></tr>
+                <tr><td>AI视频创作者</td><td>用Runway/Sora生成短片</td><td>需要结构化Prompt</td></tr>
+                <tr><td>独立动画师</td><td>一人制作番剧</td><td>需要完整分镜参考</td></tr>
+                <tr><td>网文作者</td><td>想把小说影视化</td><td>需要可视化呈现</td></tr>
+                <tr><td>影视学生</td><td>学习分镜/导演</td><td>需要专业方法论</td></tr>
+            </table>
+        </div>
+
+        <!-- 系统架构 -->
+        <div class="section">
+            <h2>🏢 3. 系统架构：部门制</h2>
+            
+            <div class="dept-grid">
+                <div class="dept-card" style="border-top: 3px solid #ffd93d;">
+                    <div class="icon">🎬</div>
+                    <div class="name">总导演</div>
+                    <div class="desc">风格统筹<br>章节划分</div>
+                </div>
+                <div class="dept-card" style="border-top: 3px solid #4facfe;">
+                    <div class="icon">📝</div>
+                    <div class="name">编剧部</div>
+                    <div class="desc">剧本·对白<br>情绪设计</div>
+                </div>
+                <div class="dept-card" style="border-top: 3px solid #f093fb;">
+                    <div class="icon">🎨</div>
+                    <div class="name">美术部</div>
+                    <div class="desc">服化道<br>场景设计</div>
+                </div>
+                <div class="dept-card" style="border-top: 3px solid #f5576c;">
+                    <div class="icon">🎥</div>
+                    <div class="name">导演部</div>
+                    <div class="desc">分镜·摄影<br>灯光·调色</div>
+                </div>
+                <div class="dept-card" style="border-top: 3px solid #6bcb77;">
+                    <div class="icon">🎵</div>
+                    <div class="name">音乐部</div>
+                    <div class="desc">配乐三轨<br>音效设计</div>
+                </div>
+                <div class="dept-card" style="border-top: 3px solid #00f2fe;">
+                    <div class="icon">📜</div>
+                    <div class="name">考据部</div>
+                    <div class="desc">历史顾问<br>文化考据</div>
+                </div>
+            </div>
+
+            <h3>数据流</h3>
+            <div class="architecture">┌─────────────────────────────────────┐
+│  第一层：全局分析                    │
+│  • 分章节（每章3-15分钟）            │
+│  • 提取人物 · 时代考据               │
+└─────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────┐
+│  第二层：详细制作（用户选择某一集）   │
+│  编剧部 → 美术部 → 导演部 → 音乐部   │
+└─────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────┐
+│  输出：Excel (55+列) / JSON / Prompt │
+└─────────────────────────────────────┘</div>
+        </div>
+
+        <!-- 功能需求 -->
+        <div class="section">
+            <h2>✅ 4. 功能需求</h2>
+            
+            <h3>P0 核心功能（必须有）</h3>
+            <table>
+                <tr><th>功能</th><th>描述</th><th>状态</th></tr>
+                <tr><td>故事输入</td><td>支持1-2万字长文本</td><td class="status-done">✅ 已完成</td></tr>
+                <tr><td>自动分章</td><td>智能划分章节，每章3-15分钟</td><td class="status-done">✅ 已完成</td></tr>
+                <tr><td>情绪分析</td><td>每5-10秒一个情绪节拍</td><td class="status-done">✅ 已完成</td></tr>
+                <tr><td>三层分镜</td><td>叙事/戏剧/情绪分类</td><td class="status-done">✅ 已完成</td></tr>
+                <tr><td>导演方案</td><td>分镜+摄影+灯光+调色+表演</td><td class="status-done">✅ 已完成</td></tr>
+                <tr><td>音乐三轨</td><td>主旋律+副旋律+环境音</td><td class="status-done">✅ 已完成</td></tr>
+                <tr><td>Excel导出</td><td>55+列完整数据</td><td class="status-done">✅ 已完成</td></tr>
+            </table>
+            
+            <h3>P1 重要功能（应该有）</h3>
+            <table>
+                <tr><th>功能</th><th>描述</th><th>状态</th></tr>
+                <tr><td>真实AI分析</td><td>接入Claude/GPT做智能分析</td><td class="status-pending">🔜 待开发</td></tr>
+                <tr><td>智能分章</td><td>识别情节转折点切分</td><td class="status-pending">🔜 待开发</td></tr>
+                <tr><td>人物提取</td><td>从故事自动识别人物名</td><td class="status-pending">🔜 待开发</td></tr>
+                <tr><td>批量导出</td><td>一次导出所有集</td><td class="status-pending">🔜 待开发</td></tr>
+            </table>
+            
+            <h3>P2 增强功能（可以有）</h3>
+            <table>
+                <tr><th>功能</th><th>描述</th><th>状态</th></tr>
+                <tr><td>预览图生成</td><td>接入Midjourney生成参考图</td><td class="status-planned">📋 规划中</td></tr>
+                <tr><td>视频生成</td><td>接入Runway/Sora</td><td class="status-planned">📋 规划中</td></tr>
+                <tr><td>配乐生成</td><td>接入Suno/Udio</td><td class="status-planned">📋 规划中</td></tr>
+            </table>
+        </div>
+
+        <!-- 情绪系统 -->
+        <div class="section">
+            <h2>🎭 5. 情绪节拍系统</h2>
+            
+            <div class="highlight-box blue">
+                <strong>核心理念：</strong>情绪转折点 = 分镜的最小单位<br>
+                每5-10秒一个情绪钩子，让观众被情绪拉着走
+            </div>
+            
+            <h3>三层分镜分类</h3>
+            <table>
+                <tr><th>层级</th><th>占比</th><th>作用</th><th>示例</th></tr>
+                <tr><td>📖 叙事</td><td>50-60%</td><td>讲清故事、交代信息</td><td>建立镜头、对话镜头</td></tr>
+                <tr><td>🎯 戏剧</td><td>25-30%</td><td>强化冲突、推动主线</td><td>反应镜头、高潮镜头</td></tr>
+                <tr><td>🎨 情绪</td><td>15-20%</td><td>艺术表达、营造氛围</td><td>空镜、情绪特写</td></tr>
+            </table>
+            
+            <h3>情绪强度 → 参数映射</h3>
+            <table>
+                <tr><th>强度</th><th>分镜</th><th>摄影</th><th>灯光</th><th>配乐</th></tr>
+                <tr><td>1-3</td><td>全景/固定</td><td>深景深 f/5.6</td><td>柔光</td><td>留白</td></tr>
+                <tr><td>4-6</td><td>中景/轻移</td><td>正常 f/4</td><td>自然光</td><td>背景音</td></tr>
+                <tr><td>7-8</td><td>近景/跟拍</td><td>浅景深 f/2.8</td><td>侧光</td><td>旋律明显</td></tr>
+                <tr><td>9-10</td><td>特写/推近</td><td>极浅 f/1.4</td><td>眼神光</td><td>情绪高潮</td></tr>
+            </table>
+        </div>
+
+        <!-- 音乐系统 -->
+        <div class="section">
+            <h2>🎵 6. 音乐系统</h2>
+            
+            <h3>三轨并行</h3>
+            <table>
+                <tr><th>轨道</th><th>内容</th><th>作用</th></tr>
+                <tr><td>🎼 主旋律</td><td>核心旋律、主奏乐器</td><td>情绪主导</td></tr>
+                <tr><td>🎵 副旋律</td><td>和声、对位</td><td>丰富层次</td></tr>
+                <tr><td>🌊 环境音</td><td>氛围铺底、音效</td><td>沉浸感</td></tr>
+            </table>
+            
+            <h3>动态标记</h3>
+            <table>
+                <tr><th>符号</th><th>含义</th><th>使用场景</th></tr>
+                <tr><td>🔺</td><td>渐强进入 (cresc.)</td><td>情绪升高</td></tr>
+                <tr><td>🔻</td><td>渐弱过渡 (dim.)</td><td>情绪回落</td></tr>
+                <tr><td>⚡</td><td>突强切入 (sfz)</td><td>突然高潮</td></tr>
+                <tr><td>🔇</td><td>突然静默 (tacet)</td><td>制造张力</td></tr>
+            </table>
+        </div>
+
+        <!-- 产品路线图 -->
+        <div class="section">
+            <h2>🗺️ 7. 产品路线图</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item done">
+                    <h4>Phase 1: 基础版 ✅</h4>
+                    <p style="color: #6bcb77; margin-bottom: 10px;">已完成</p>
+                    <ul>
+                        <li>部门制架构</li>
+                        <li>分层处理长剧本</li>
+                        <li>情绪节拍系统</li>
+                        <li>导演部综合方案</li>
+                        <li>音乐三轨系统</li>
+                        <li>Excel导出</li>
+                    </ul>
+                </div>
+                
+                <div class="timeline-item current">
+                    <h4>Phase 2: 智能版 🔜</h4>
+                    <p style="color: #4facfe; margin-bottom: 10px;">开发中</p>
+                    <ul>
+                        <li>Claude API 分析故事</li>
+                        <li>智能分章（识别转折点）</li>
+                        <li>人物自动提取</li>
+                        <li>情绪精准分析</li>
+                    </ul>
+                </div>
+                
+                <div class="timeline-item planned">
+                    <h4>Phase 3: 生成版 📋</h4>
+                    <p style="color: #888; margin-bottom: 10px;">规划中</p>
+                    <ul>
+                        <li>Midjourney 预览图</li>
+                        <li>Runway/Kling 视频</li>
+                        <li>Suno 配乐</li>
+                    </ul>
+                </div>
+                
+                <div class="timeline-item planned">
+                    <h4>Phase 4: 协作版 📋</h4>
+                    <p style="color: #888; margin-bottom: 10px;">规划中</p>
+                    <ul>
+                        <li>用户账号</li>
+                        <li>项目管理</li>
+                        <li>团队协作</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 成功指标 -->
+        <div class="section">
+            <h2>📊 8. 成功指标</h2>
+            <table>
+                <tr><th>指标</th><th>目标</th><th>衡量方式</th></tr>
+                <tr><td>分镜速度</td><td>8分钟剧本 < 3分钟出分镜</td><td>计时</td></tr>
+                <tr><td>镜头数量</td><td>每分钟8-10个镜头</td><td>统计</td></tr>
+                <tr><td>分章准确度</td><td>用户认可度 > 80%</td><td>反馈</td></tr>
+                <tr><td>Prompt质量</td><td>生成图像匹配度 > 60%</td><td>测试</td></tr>
+            </table>
+        </div>
+
+        <!-- 下载/操作 -->
+        <div class="actions">
+            <button class="download-btn" onclick="window.print()">🖨️ 打印 / 保存PDF</button>
+            <button class="download-btn secondary" onclick="downloadWord()">📄 下载 Word</button>
+            <a class="download-btn" href="index.html">🎬 进入系统</a>
+            <a class="download-btn secondary" href="ip_library.html">📚 IP库</a>
+        </div>
+    </div>
+
+    <script>
+    function downloadWord() {
+        // 简单的HTML转Word方案
+        const content = document.querySelector('.container').innerHTML;
+        const html = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                  xmlns:w='urn:schemas-microsoft-com:office:word'>
+            <head><meta charset="utf-8"><title>AI番剧制作系统 PRD</title></head>
+            <body>${content}</body></html>
+        `;
+        const blob = new Blob([html], { type: 'application/msword' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'AI番剧制作系统_PRD.doc';
+        a.click();
+    }
+    </script>
+</body>
+</html>

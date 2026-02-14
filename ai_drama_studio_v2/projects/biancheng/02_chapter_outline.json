@@ -1,0 +1,185 @@
+{
+  "structure": {
+    "totalChapters": 21,
+    "plannedEpisodes": 6,
+    "chapterToEpisodeMapping": {
+      "episode1": [1, 2, 3, 4],
+      "episode2": [5, 6, 7, 8],
+      "episode3": [9, 10, 11, 12],
+      "episode4": [13, 14, 15, 16],
+      "episode5": [17, 18, 19],
+      "episode6": [20, 21]
+    }
+  },
+  
+  "episodes": [
+    {
+      "episode": 1,
+      "title": "边城渡口",
+      "duration": "10分钟",
+      "chapters": "1-4",
+      "summary": "介绍茶峒小镇、渡口生活、翠翠与爷爷相依为命的日常",
+      "emotionalTone": "宁静、美好、田园诗意",
+      "keyEvents": [
+        "茶峒风景展示",
+        "翠翠和爷爷的日常渡船",
+        "介绍翠翠的身世（母亲的悲剧故事）",
+        "黄狗的陪伴"
+      ],
+      "emotionalIntensity": {
+        "start": 3,
+        "peak": 5,
+        "end": 4
+      },
+      "visualHighlights": [
+        "晨雾中的渡口",
+        "白塔与吊脚楼",
+        "翠翠在船头发呆"
+      ]
+    },
+    {
+      "episode": 2,
+      "title": "端午初遇",
+      "duration": "10分钟",
+      "chapters": "5-8",
+      "summary": "端午节龙舟赛，翠翠与傩送初次相遇，情窦初开",
+      "emotionalTone": "热闹、欢快、少女心动",
+      "keyEvents": [
+        "端午节龙舟赛盛况",
+        "翠翠独自进城看赛",
+        "翠翠与傩送河边偶遇",
+        "误会与初印象",
+        "翠翠心里有了涟漪"
+      ],
+      "emotionalIntensity": {
+        "start": 5,
+        "peak": 8,
+        "end": 6
+      },
+      "visualHighlights": [
+        "龙舟竞渡的壮观场面",
+        "河边夜色，两人相遇",
+        "翠翠脸红低头"
+      ]
+    },
+    {
+      "episode": 3,
+      "title": "月下情歌",
+      "duration": "10分钟",
+      "chapters": "9-12",
+      "summary": "傩送月下唱歌给翠翠听，天保也表达心意，三角关系浮现",
+      "emotionalTone": "浪漫、甜蜜、隐忧",
+      "keyEvents": [
+        "又一年端午将至",
+        "天保托人提亲（走车路）",
+        "傩送选择走马路（唱歌求爱）",
+        "翠翠梦中听到歌声",
+        "爷爷察觉翠翠的心事"
+      ],
+      "emotionalIntensity": {
+        "start": 5,
+        "peak": 9,
+        "end": 7
+      },
+      "visualHighlights": [
+        "月光下的河面",
+        "傩送在悬崖上唱歌",
+        "翠翠睡梦中微笑"
+      ]
+    },
+    {
+      "episode": 4,
+      "title": "兄弟抉择",
+      "duration": "10分钟",
+      "chapters": "13-16",
+      "summary": "天保得知弟弟也爱翠翠，决定退出，外出跑船",
+      "emotionalTone": "沉重、矛盾、不祥预感",
+      "keyEvents": [
+        "兄弟摊牌，约定公平竞争",
+        "天保唱歌输给傩送",
+        "天保决定退出",
+        "天保乘船外出",
+        "爷爷去顺顺家探口风被冷落"
+      ],
+      "emotionalIntensity": {
+        "start": 6,
+        "peak": 8,
+        "end": 7
+      },
+      "visualHighlights": [
+        "兄弟夜谈",
+        "天保离去的背影",
+        "爷爷失落地回家"
+      ]
+    },
+    {
+      "episode": 5,
+      "title": "风雨将至",
+      "duration": "12分钟",
+      "chapters": "17-19",
+      "summary": "天保溺亡的消息传来，顺顺家迁怒，傩送与父亲冲突后出走",
+      "emotionalTone": "悲痛、压抑、命运无常",
+      "keyEvents": [
+        "天保在茨滩溺亡",
+        "傩送悲痛愧疚",
+        "顺顺迁怒于老船夫",
+        "爷爷背负莫须有的罪名",
+        "傩送与父亲争吵后离家",
+        "爷爷心事重重"
+      ],
+      "emotionalIntensity": {
+        "start": 7,
+        "peak": 10,
+        "end": 8
+      },
+      "visualHighlights": [
+        "暴风雨将至的天空",
+        "傩送愤怒离去的背影",
+        "爷爷独自坐在渡口"
+      ]
+    },
+    {
+      "episode": 6,
+      "title": "等待",
+      "duration": "10分钟",
+      "chapters": "20-21",
+      "summary": "暴风雨夜，白塔倒塌，爷爷去世。翠翠独守渡口，等待傩送归来",
+      "emotionalTone": "悲伤、孤独、余韵悠长",
+      "keyEvents": [
+        "暴风雨之夜",
+        "白塔被雷劈倒",
+        "爷爷在风雨中去世",
+        "翠翠成为孤儿",
+        "顺顺来帮忙料理后事",
+        "白塔重建",
+        "翠翠独自守着渡口，等待傩送",
+        "那个人也许永远不回来，也许明天回来"
+      ],
+      "emotionalIntensity": {
+        "start": 8,
+        "peak": 10,
+        "end": 6
+      },
+      "visualHighlights": [
+        "电闪雷鸣的夜晚",
+        "白塔倒塌的瞬间",
+        "翠翠抱着爷爷痛哭",
+        "新白塔建起",
+        "翠翠独坐渡口，望向远方",
+        "结尾：河水静静流淌"
+      ]
+    }
+  ],
+  
+  "overallEmotionalArc": {
+    "description": "从田园牧歌到命运悲剧，但结尾留有希望",
+    "curve": [
+      { "episode": 1, "emotion": "宁静", "intensity": 4 },
+      { "episode": 2, "emotion": "欢快", "intensity": 6 },
+      { "episode": 3, "emotion": "甜蜜", "intensity": 8 },
+      { "episode": 4, "emotion": "忧虑", "intensity": 7 },
+      { "episode": 5, "emotion": "悲痛", "intensity": 9 },
+      { "episode": 6, "emotion": "余韵", "intensity": 6 }
+    ]
+  }
+}

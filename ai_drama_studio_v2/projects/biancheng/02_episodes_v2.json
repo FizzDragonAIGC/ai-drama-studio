@@ -1,0 +1,521 @@
+{
+  "episodes": [
+    {
+      "episode": 1,
+      "title": "边城渡口",
+      "duration": "10分钟",
+      
+      "theme": {
+        "core": "孤岛上的宁静",
+        "question": "这样与世隔绝的美好能持续多久？",
+        "subtext": "美好的事物总是脆弱的"
+      },
+      
+      "logline": "在湘西边城的渡口，少女翠翠和爷爷过着与世无争的生活，但妈妈的悲剧故事暗示着命运的不确定。",
+      
+      "emotionalJourney": {
+        "opening": {
+          "mood": "宁静、诗意",
+          "intensity": 3,
+          "goal": "让观众爱上这个世界"
+        },
+        "middle": {
+          "mood": "温馨、淡淡忧伤",
+          "intensity": 5,
+          "goal": "展示翠翠的身世，植入悲剧种子"
+        },
+        "ending": {
+          "mood": "平静中的不安",
+          "intensity": 4,
+          "goal": "暗示变化即将到来"
+        }
+      },
+      
+      "keyScenes": [
+        {
+          "scene": "晨雾渡口",
+          "purpose": "建立世界观",
+          "visual": "晨雾、白塔、渡船、翠翠的身影"
+        },
+        {
+          "scene": "爷孙日常",
+          "purpose": "建立人物关系",
+          "visual": "做饭、撑船、黄狗撒娇"
+        },
+        {
+          "scene": "妈妈的故事",
+          "purpose": "植入悲剧种子",
+          "visual": "爷爷讲述，翠翠听，月光下"
+        },
+        {
+          "scene": "远望茶峒",
+          "purpose": "预示外面的世界",
+          "visual": "翠翠站在高处，望着远方的灯火"
+        }
+      ],
+      
+      "characterFocus": {
+        "翠翠": "展示她的天真、与自然的亲近、对爷爷的依赖",
+        "爷爷": "展示他的慈爱、孤独、对翠翠的担心",
+        "黄狗": "建立它作为陪伴者的角色"
+      },
+      
+      "foreshadowing": [
+        "妈妈的悲剧故事（暗示翠翠可能重蹈覆辙）",
+        "白塔的存在（它会在最后倒塌）",
+        "翠翠望向远方（暗示她渴望更大的世界）",
+        "爷爷的咳嗽（暗示健康问题）"
+      ],
+      
+      "hookToNextEpisode": {
+        "type": "期待",
+        "content": "端午节要到了，翠翠想去镇上看龙舟赛",
+        "question": "翠翠会在龙舟赛上遇到什么？",
+        "emotionalHook": "让观众和翠翠一起期待"
+      },
+      
+      "endingScene": {
+        "description": "翠翠问爷爷：'端午节，我能去镇上看龙舟吗？' 爷爷笑着点头。翠翠开心地跑开，黄狗追着她。画面定格在翠翠奔跑的背影。",
+        "mood": "期待、青春",
+        "musicCue": "轻快的笛声渐起"
+      },
+      
+      "viewerTakeaway": {
+        "emotion": "被这个世界的美好打动",
+        "curiosity": "翠翠的命运会怎样？",
+        "investment": "开始关心翠翠和爷爷"
+      }
+    },
+    
+    {
+      "episode": 2,
+      "title": "端午初遇",
+      "duration": "10分钟",
+      
+      "theme": {
+        "core": "命运的相遇",
+        "question": "一次偶遇会改变一生吗？",
+        "subtext": "爱情的种子在误会中萌芽"
+      },
+      
+      "logline": "端午龙舟赛上，翠翠与傩送因误会相识，心里泛起了从未有过的涟漪。",
+      
+      "contextFromPrevious": {
+        "setup": "翠翠的期待",
+        "payoff": "期待变成了意外的心动",
+        "continuity": "翠翠穿上了新衣服，带着第一集的期待出门"
+      },
+      
+      "emotionalJourney": {
+        "opening": {
+          "mood": "期待、兴奋",
+          "intensity": 5,
+          "goal": "传递节日的热闹"
+        },
+        "middle": {
+          "mood": "紧张、心跳加速",
+          "intensity": 8,
+          "goal": "初遇的心动"
+        },
+        "ending": {
+          "mood": "甜蜜、困惑",
+          "intensity": 6,
+          "goal": "留下余韵"
+        }
+      },
+      
+      "keyScenes": [
+        {
+          "scene": "龙舟竞渡",
+          "purpose": "展示傩送的魅力",
+          "visual": "龙舟、鼓声、傩送站在船头，阳光下",
+          "hook": "翠翠第一次注意到他"
+        },
+        {
+          "scene": "河边误会",
+          "purpose": "初遇的戏剧性",
+          "visual": "天黑、翠翠独自一人、傩送出现",
+          "dialogue": "傩送：'怎么一个人？' 翠翠以为他是坏人",
+          "tension": "误会 → 化解 → 傩送送她回家"
+        },
+        {
+          "scene": "夜归",
+          "purpose": "心动的瞬间",
+          "visual": "月光下走路，两人沉默，翠翠偷看傩送",
+          "emotion": "少女初次心动的羞涩"
+        },
+        {
+          "scene": "回到渡口",
+          "purpose": "心事藏在心里",
+          "visual": "翠翠躺在床上睡不着，摸着自己脸红的脸"
+        }
+      ],
+      
+      "characterIntroduced": {
+        "傩送": {
+          "firstImpression": "阳光、帅气、龙舟冠军",
+          "personality": "热情但不轻浮，有少年气",
+          "对翠翠的态度": "好奇，被她的野性吸引"
+        }
+      },
+      
+      "hookToNextEpisode": {
+        "type": "悬念 + 情感",
+        "content": "翠翠不知道傩送是谁，但心里记住了他。同时，我们看到天保（大老）远远看着翠翠，眼神里有故事。",
+        "question": "傩送会再出现吗？天保也喜欢翠翠？",
+        "emotionalHook": "三角关系的暗示"
+      },
+      
+      "endingScene": {
+        "description": "翠翠在渡口发呆，爷爷问她在想什么，她说'没什么'但脸红了。镜头拉远，河对岸，一个身影在看着这边——是天保。",
+        "mood": "甜蜜中有暗流",
+        "musicCue": "主题旋律第一次完整出现"
+      },
+      
+      "viewerTakeaway": {
+        "emotion": "为翠翠的初恋心动",
+        "curiosity": "傩送和天保，谁会和翠翠在一起？",
+        "tension": "三角关系的预感"
+      }
+    },
+    
+    {
+      "episode": 3,
+      "title": "月下情歌",
+      "duration": "10分钟",
+      
+      "theme": {
+        "core": "爱的表达方式",
+        "question": "走车路还是走马路——爱情需要勇气还是稳妥？",
+        "subtext": "有些话不说出口，就永远错过"
+      },
+      
+      "logline": "天保托人提亲，傩送选择月下唱歌。翠翠在梦中听到歌声，摘到了虎耳草。",
+      
+      "contextFromPrevious": {
+        "setup": "翠翠心里有了傩送",
+        "payoff": "傩送用歌声回应",
+        "newElement": "天保也正式加入"
+      },
+      
+      "emotionalJourney": {
+        "opening": {
+          "mood": "日常中的心事",
+          "intensity": 5,
+          "goal": "翠翠开始有了秘密"
+        },
+        "middle": {
+          "mood": "浪漫、梦幻",
+          "intensity": 9,
+          "goal": "月下情歌——全剧最美的场景"
+        },
+        "ending": {
+          "mood": "甜蜜中的隐忧",
+          "intensity": 7,
+          "goal": "三角关系明确"
+        }
+      },
+      
+      "keyScenes": [
+        {
+          "scene": "爷爷和媒人",
+          "purpose": "天保托人提亲（走车路）",
+          "conflict": "翠翠不知道这件事"
+        },
+        {
+          "scene": "兄弟对话",
+          "purpose": "发现都爱翠翠",
+          "tension": "傩送说他要走马路",
+          "dialogue": "傩送：'我不要碾坊，我要渡船。'"
+        },
+        {
+          "scene": "月下唱歌",
+          "purpose": "全剧最浪漫的场景",
+          "visual": "月光、河水、悬崖上的傩送身影",
+          "audio": "山歌声飘过河面",
+          "emotion": "这是傩送的表白"
+        },
+        {
+          "scene": "翠翠的梦",
+          "purpose": "象征性表达她的心",
+          "visual": "梦中她听到歌声，摘到了虎耳草",
+          "symbolism": "虎耳草=爱情的回应"
+        }
+      ],
+      
+      "hookToNextEpisode": {
+        "type": "冲突预告",
+        "content": "爷爷去顺顺家探口风，顺顺态度暧昧。天保对傩送说：'你唱吧，你唱我就退。'",
+        "question": "兄弟怎么解决这个问题？爷爷的努力会有用吗？",
+        "emotionalHook": "美好即将被打破的预感"
+      },
+      
+      "endingScene": {
+        "description": "翠翠醒来，手里仿佛还握着虎耳草。她跑到河边，希望能听到昨晚的歌声，但河面安静。爷爷在她身后看着她，叹了口气。",
+        "mood": "期待与不安并存",
+        "musicCue": "歌声的回响，渐弱"
+      },
+      
+      "viewerTakeaway": {
+        "emotion": "被浪漫打动",
+        "worry": "这么美好的事情，不会一直这样下去吧？",
+        "investment": "希望翠翠和傩送在一起"
+      }
+    },
+    
+    {
+      "episode": 4,
+      "title": "兄弟抉择",
+      "duration": "10分钟",
+      
+      "theme": {
+        "core": "退让的代价",
+        "question": "为爱退出是成全还是逃避？",
+        "subtext": "好意有时会酿成悲剧"
+      },
+      
+      "logline": "天保唱歌输给傩送，决定离开。爷爷去顺顺家探口风，却被冷落。每个人都在努力，但方向错了。",
+      
+      "contextFromPrevious": {
+        "setup": "傩送月下唱歌成功",
+        "payoff": "天保决定退出",
+        "escalation": "爷爷的介入让事情更复杂"
+      },
+      
+      "emotionalJourney": {
+        "opening": {
+          "mood": "紧张的平静",
+          "intensity": 6,
+          "goal": "暴风雨前的平静"
+        },
+        "middle": {
+          "mood": "沉重、无奈",
+          "intensity": 8,
+          "goal": "展示所有人的困境"
+        },
+        "ending": {
+          "mood": "不祥的预感",
+          "intensity": 7,
+          "goal": "悲剧的预兆"
+        }
+      },
+      
+      "keyScenes": [
+        {
+          "scene": "唱歌比试",
+          "purpose": "傩送赢了",
+          "visual": "两兄弟在悬崖上，一个唱得好，一个唱不出口",
+          "emotion": "天保的自卑和傩送的愧疚"
+        },
+        {
+          "scene": "天保的决定",
+          "purpose": "他选择退出",
+          "dialogue": "天保：'你唱得好，她会喜欢你。我走。'",
+          "emotion": "悲壮的成全"
+        },
+        {
+          "scene": "爷爷探口风",
+          "purpose": "好心办坏事",
+          "visual": "爷爷在顺顺家，被冷淡对待",
+          "irony": "他不知道天保要退出，顺顺也在为两个儿子的事烦恼"
+        },
+        {
+          "scene": "天保出发",
+          "purpose": "离别",
+          "visual": "天保登上货船，回头看了一眼茶峒",
+          "omen": "天色阴沉，像是要下雨"
+        }
+      ],
+      
+      "hookToNextEpisode": {
+        "type": "悬念 + 不祥",
+        "content": "天保的船消失在河的尽头。爷爷独自走在回家的路上，咳嗽不止。画外音：'后来人们说，那天的茨滩出了事...'",
+        "question": "天保会怎样？爷爷的身体怎么了？",
+        "emotionalHook": "强烈的不祥预感"
+      },
+      
+      "endingScene": {
+        "description": "翠翠在渡口等爷爷回来，看到他沮丧的样子想问又不敢问。夜里下起了雨，翠翠听到远处传来的雷声。黄狗不安地吠叫。",
+        "mood": "压抑、不安",
+        "musicCue": "低沉的大提琴，隐约的雷声"
+      },
+      
+      "viewerTakeaway": {
+        "emotion": "揪心",
+        "fear": "有不好的事要发生",
+        "urgency": "必须看下一集"
+      }
+    },
+    
+    {
+      "episode": 5,
+      "title": "风雨将至",
+      "duration": "12分钟",
+      
+      "theme": {
+        "core": "命运的无常",
+        "question": "谁都没有做错，为什么会这样？",
+        "subtext": "有些悲剧，是好人之间的误会造成的"
+      },
+      
+      "logline": "天保溺亡的消息传来，顺顺迁怒老船夫，傩送愧疚出走。所有的美好都在崩塌。",
+      
+      "contextFromPrevious": {
+        "setup": "天保出发的不祥预感",
+        "payoff": "最担心的事发生了",
+        "consequence": "一切都变了"
+      },
+      
+      "emotionalJourney": {
+        "opening": {
+          "mood": "等待中的不安",
+          "intensity": 7
+        },
+        "middle": {
+          "mood": "悲痛、震惊",
+          "intensity": 10
+        },
+        "ending": {
+          "mood": "绝望、麻木",
+          "intensity": 8
+        }
+      },
+      
+      "keyScenes": [
+        {
+          "scene": "噩耗传来",
+          "purpose": "天保死讯",
+          "visual": "有人在渡口喊爷爷，脸色苍白",
+          "impact": "画面静止，声音消失"
+        },
+        {
+          "scene": "顺顺的愤怒",
+          "purpose": "迁怒于人",
+          "conflict": "顺顺认为老船夫太贪心，害死了天保",
+          "irony": "爷爷什么都没做错"
+        },
+        {
+          "scene": "傩送的愧疚",
+          "purpose": "他认为是自己害死了哥哥",
+          "dialogue": "傩送：'如果不是我...'",
+          "decision": "他选择离开"
+        },
+        {
+          "scene": "傩送与父亲争吵",
+          "purpose": "最后的冲突",
+          "dialogue": "顺顺：'你还想着那个渡船的！' 傩送：'我走。'",
+          "emotion": "愧疚转化为愤怒"
+        },
+        {
+          "scene": "傩送离去",
+          "purpose": "第二次失去",
+          "visual": "傩送的背影消失在山路尽头",
+          "silence": "翠翠远远看着，没有追"
+        }
+      ],
+      
+      "hookToNextEpisode": {
+        "type": "悲剧预感",
+        "content": "暴风雨来了。爷爷坐在渡口，一个人喝酒，咳嗽。翠翠叫他进屋，他说'再等等'。风越来越大，白塔在风中摇晃。",
+        "question": "爷爷会怎样？白塔会倒吗？傩送会回来吗？",
+        "emotionalHook": "最后的平静"
+      },
+      
+      "endingScene": {
+        "description": "暴风雨的前夜，翠翠和爷爷坐在屋檐下，沉默。远处的雷声越来越近。爷爷突然说：'翠翠，不管发生什么，你要好好活下去。' 翠翠不懂，问：'爷爷你在说什么？' 爷爷笑了笑，没回答。",
+        "mood": "宁静中的告别",
+        "musicCue": "主题曲的悲伤变奏"
+      }
+    },
+    
+    {
+      "episode": 6,
+      "title": "等待",
+      "duration": "10分钟",
+      
+      "theme": {
+        "core": "失去与希望",
+        "question": "在失去一切后，人如何活下去？",
+        "subtext": "等待本身就是一种希望"
+      },
+      
+      "logline": "暴风雨夜，白塔倒塌，爷爷去世。翠翠独自守着渡口，等待那个也许永远不会回来的人。",
+      
+      "emotionalJourney": {
+        "opening": {
+          "mood": "暴风雨",
+          "intensity": 10,
+          "goal": "悲剧高潮"
+        },
+        "middle": {
+          "mood": "悲痛、空洞",
+          "intensity": 9,
+          "goal": "最深的悲伤"
+        },
+        "ending": {
+          "mood": "平静、余韵",
+          "intensity": 6,
+          "goal": "留下希望"
+        }
+      },
+      
+      "keyScenes": [
+        {
+          "scene": "暴风雨之夜",
+          "purpose": "命运的高潮",
+          "visual": "电闪雷鸣，大雨倾盆",
+          "event": "白塔被雷劈倒"
+        },
+        {
+          "scene": "爷爷的最后",
+          "purpose": "最重要的离别",
+          "visual": "翠翠发现爷爷静静地走了",
+          "emotion": "克制但心碎的悲伤",
+          "note": "不要过于煽情，用沉默和空间表达"
+        },
+        {
+          "scene": "独自面对",
+          "purpose": "翠翠的成长",
+          "visual": "雨停了，翠翠一个人坐在渡口",
+          "emotion": "从悲伤到坚强的转变"
+        },
+        {
+          "scene": "白塔重建",
+          "purpose": "生活继续",
+          "visual": "人们帮忙重建白塔，翠翠继续摆渡",
+          "symbolism": "旧世界结束，但生活还要继续"
+        },
+        {
+          "scene": "等待",
+          "purpose": "结尾",
+          "visual": "翠翠坐在新白塔下，看着河的远方",
+          "voiceover": "那个人也许永远不回来了，也许明天回来。"
+        }
+      ],
+      
+      "finalImage": {
+        "description": "翠翠和黄狗在渡口，新的白塔在身后，河水静静流淌，她望着远方。没有答案，只有等待。",
+        "mood": "忧伤但有希望",
+        "openEnding": "傩送会回来吗？留给观众思考"
+      },
+      
+      "closingMessage": {
+        "literal": "那个人也许永远不回来了，也许明天回来。",
+        "subtext": "爱与等待是永恒的主题",
+        "emotionalResidue": "美好的遗憾，会在心里留很久"
+      }
+    }
+  ],
+  
+  "overallDesign": {
+    "hookStrategy": {
+      "ep1→ep2": "期待（端午节会发生什么）",
+      "ep2→ep3": "情感（翠翠会和谁在一起）+ 悬念（天保也喜欢她）",
+      "ep3→ep4": "担忧（三角关系怎么解决）",
+      "ep4→ep5": "不祥（天保会出事吗）",
+      "ep5→ep6": "紧迫（爷爷会怎样）"
+    },
+    
+    "contextChain": "每一集结尾的情绪成为下一集开头的基调，情绪递增直到第5集高潮，第6集回落留余韵"
+  }
+}

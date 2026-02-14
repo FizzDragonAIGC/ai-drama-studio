@@ -1,0 +1,95 @@
+{
+  "project": {
+    "name": "边城",
+    "author": "沈从文",
+    "originalLength": "约3万字",
+    "targetFormat": "AI番剧",
+    "totalDuration": "约60分钟",
+    "episodes": 6,
+    "episodeDuration": "8-12分钟"
+  },
+  
+  "visualStyle": {
+    "overallTone": "诗意写实",
+    "colorPalette": ["青绿", "土黄", "湖蓝", "暖橙", "月白"],
+    "saturation": "中低饱和度，自然色调",
+    "lighting": "大量自然光，晨昏光线为主",
+    "reference": ["《刺客聂隐娘》侯孝贤", "《卧虎藏龙》李安", "宫崎骏水彩背景"],
+    "mood": "宁静、忧伤、纯真、宿命"
+  },
+  
+  "worldSetting": {
+    "era": "民国初年（约1920-1930年代）",
+    "location": "湘西茶峒（川湘边境小镇）",
+    "geography": {
+      "river": "酉水/白河",
+      "mountain": "青翠山峦环绕",
+      "town": "吊脚楼、石板街、渡口"
+    },
+    "culture": {
+      "ethnicity": "苗族/土家族混居",
+      "customs": ["端午龙舟", "月下对歌", "走马求亲"],
+      "economy": "渡船、水运、山货贸易"
+    },
+    "atmosphere": "与世隔绝的桃源，但现代文明正在渗透"
+  },
+  
+  "keyLocations": [
+    {
+      "name": "渡口/白塔",
+      "description": "翠翠和爷爷生活的地方，酉水边的渡船，旁边有一座白塔",
+      "visual": "河岸、竹篙、渡船、白塔、黄狗",
+      "mood": "宁静、日常、孤独"
+    },
+    {
+      "name": "茶峒镇",
+      "description": "河街吊脚楼，船总顺顺的家在这里",
+      "visual": "吊脚楼、石板路、店铺、码头",
+      "mood": "热闹、人间烟火"
+    },
+    {
+      "name": "龙舟赛场",
+      "description": "端午节龙舟比赛的河面",
+      "visual": "龙舟、彩旗、鼓声、人群",
+      "mood": "热烈、欢快、青春"
+    },
+    {
+      "name": "山上碾坊",
+      "description": "天保/傩送家的产业，也是后来的矛盾焦点",
+      "visual": "山间小路、水车、碾坊",
+      "mood": "静谧、选择、命运"
+    },
+    {
+      "name": "月下河边",
+      "description": "傩送唱歌给翠翠听的地方",
+      "visual": "月光、河水、虫鸣、歌声",
+      "mood": "浪漫、朦胧、青春萌动"
+    }
+  ],
+  
+  "themes": [
+    {
+      "theme": "爱情的纯真与错过",
+      "description": "翠翠与傩送之间朦胧的爱情，因为误会和命运最终错过"
+    },
+    {
+      "theme": "命运的无常",
+      "description": "白塔倒塌、爷爷去世、天保溺亡，美好事物的消逝"
+    },
+    {
+      "theme": "传统与变迁",
+      "description": "古老的湘西风俗在现代文明冲击下的最后余晖"
+    },
+    {
+      "theme": "等待与希望",
+      "description": "翠翠在结尾的等待——也许永远不回来，也许明天回来"
+    }
+  ],
+  
+  "emotionalArc": {
+    "beginning": "宁静、美好、日常",
+    "development": "萌动、期待、甜蜜",
+    "climax": "误会、冲突、悲剧",
+    "ending": "孤独、等待、余韵"
+  }
+}

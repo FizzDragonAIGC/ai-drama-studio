@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI番剧制作系统 - Mind Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+        }
+        
+        /* 流程总览 */
+        .flow-overview {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        .flow-overview h2 {
+            color: #ffd93d;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .flow-chart {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .flow-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .flow-step.input { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .flow-step.script { background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%); }
+        .flow-step.director { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .flow-step.generate { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .flow-step.output { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
+        .flow-arrow {
+            font-size: 24px;
+            color: #666;
+        }
+        
+        /* 三层架构 */
+        .layers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .layer {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+        }
+        .layer h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid;
+        }
+        .layer.input-layer h3 { border-color: #38ef7d; color: #38ef7d; }
+        .layer.prompt-layer h3 { border-color: #ffd93d; color: #ffd93d; }
+        .layer.model-layer h3 { border-color: #ff6b6b; color: #ff6b6b; }
+        .layer ul {
+            list-style: none;
+        }
+        .layer li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .layer li:last-child { border-bottom: none; }
+        .icon { font-size: 1.2em; }
+        
+        /* Agent详情 */
+        .agents {
+            margin-bottom: 40px;
+        }
+        .agents h2 {
+            color: #6bcb77;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .agent-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .agent-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .agent-icon {
+            font-size: 2em;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .agent-name {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .agent-role {
+            color: #888;
+            font-size: 0.9em;
+        }
+        .agent-section {
+            margin-top: 15px;
+        }
+        .agent-section h4 {
+            color: #4d96ff;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        .agent-section ul {
+            list-style: none;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        .agent-section li {
+            padding: 4px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+        .agent-section li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #666;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+        .tag.ask { background: #ff6b6b; }
+        .tag.auto { background: #6bcb77; }
+        .tag.confirm { background: #ffd93d; color: #333; }
+        
+        /* Prompt结构 */
+        .prompt-structure {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        .prompt-structure h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        .prompt-example {
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            color: #c9d1d9;
+        }
+        .prompt-example .comment { color: #8b949e; }
+        .prompt-example .keyword { color: #ff7b72; }
+        .prompt-example .string { color: #a5d6ff; }
+        .prompt-example .value { color: #7ee787; }
+        
+        /* 数据流向 */
+        .data-flow {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        .data-flow h2 {
+            color: #4d96ff;
+            margin-bottom: 20px;
+        }
+        .flow-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .flow-table th, .flow-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .flow-table th {
+            background: rgba(255,255,255,0.1);
+            font-weight: 600;
+        }
+        .flow-table tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* 底部 */
+        .footer {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .layers {
+                grid-template-columns: 1fr;
+            }
+            .flow-chart {
+                flex-direction: column;
+            }
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 AI番剧制作系统</h1>
+        <p class="subtitle">小说 → 剧本 → 分镜 → 视频 全自动流水线</p>
+        
+        <!-- 流程总览 -->
+        <div class="flow-overview">
+            <h2>📊 流程总览</h2>
+            <div class="flow-chart">
+                <div class="flow-step input">📖 小说/想法</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">🎬 制片人</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step script">📝 编剧</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step director">🎥 导演组</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step generate">🖼️ 生成</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step output">🎞️ 成片</div>
+            </div>
+        </div>
+        
+        <!-- 三层架构 -->
+        <div class="layers">
+            <div class="layer input-layer">
+                <h3>📥 第一层：输入层</h3>
+                <ul>
+                    <li><span class="icon">📖</span> 小说/故事文本</li>
+                    <li><span class="icon">🎨</span> 风格参考图（可选）</li>
+                    <li><span class="icon">🎬</span> 导演风格选择</li>
+                    <li><span class="icon">📅</span> 年代设定</li>
+                    <li><span class="icon">⏱️</span> 每集时长</li>
+                    <li><span class="icon">🖼️</span> 画面比例</li>
+                    <li><span class="icon">🎵</span> 音乐风格（可选）</li>
+                    <li><span class="icon">🎞️</span> 参考影片（可选）</li>
+                </ul>
+            </div>
+            
+            <div class="layer prompt-layer">
+                <h3>📝 第二层：Prompt层</h3>
+                <ul>
+                    <li><span class="icon">📐</span> 景别：远/全/中/近/特写</li>
+                    <li><span class="icon">🎥</span> 运镜：推/拉/摇/移/跟</li>
+                    <li><span class="icon">💡</span> 光线：方向/色温/质感</li>
+                    <li><span class="icon">🎨</span> 色彩：主色/副色/点缀</li>
+                    <li><span class="icon">👔</span> 服装：年代/风格/细节</li>
+                    <li><span class="icon">🏠</span> 场景：建筑/道具/氛围</li>
+                    <li><span class="icon">😊</span> 情绪：标签/曲线</li>
+                    <li><span class="icon">🎼</span> 音乐：风格/乐器/节奏</li>
+                </ul>
+            </div>
+            
+            <div class="layer model-layer">
+                <h3>🤖 第三层：模型层</h3>
+                <ul>
+                    <li><span class="icon">🧠</span> Claude/GPT-4（剧本/导演）</li>
+                    <li><span class="icon">🖼️</span> Midjourney（图像）</li>
+                    <li><span class="icon">🎬</span> Runway/可灵（视频）</li>
+                    <li><span class="icon">🎵</span> Suno/Udio（音乐）</li>
+                    <li><span class="icon">🗣️</span> ElevenLabs（配音）</li>
+                    <li><span class="icon">✂️</span> FFmpeg（剪辑）</li>
+                    <li><span class="icon">👁️</span> Claude Vision（审核）</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Agent详情 -->
+        <div class="agents">
+            <h2>🤖 智能体详情</h2>
+            <div class="agent-grid">
+                <!-- 制片人 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">🎬</div>
+                        <div>
+                            <div class="agent-name">制片人 Agent</div>
+                            <div class="agent-role">Producer - 项目总控</div>
+                        </div>
+                    </div>
+                    <span class="tag ask">问用户 5题</span>
+                    <div class="agent-section">
+                        <h4>📥 输入来源</h4>
+                        <ul>
+                            <li>用户：小说/故事文本</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>❓ 向用户提问</h4>
+                        <ul>
+                            <li>导演风格偏好？</li>
+                            <li>年代设定？</li>
+                            <li>每集时长？</li>
+                            <li>画面比例？</li>
+                            <li>参考影片？</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>📤 产出 → 发给</h4>
+                        <ul>
+                            <li>项目配置表 → 所有Agent</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 编剧 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">📝</div>
+                        <div>
+                            <div class="agent-name">编剧 Agent</div>
+                            <div class="agent-role">Screenwriter - 剧本创作</div>
+                        </div>
+                    </div>
+                    <span class="tag ask">问用户 5题</span>
+                    <div class="agent-section">
+                        <h4>📥 输入来源</h4>
+                        <ul>
+                            <li>制片人：项目配置表</li>
+                            <li>用户：回答提问</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>❓ 向用户提问</h4>
+                        <ul>
+                            <li>核心主题理解？</li>
+                            <li>改编自由度？</li>
+                            <li>语言风格？</li>
+                            <li>是否使用旁白？</li>
+                            <li>本集覆盖范围？</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>📤 产出 → 发给</h4>
+                        <ul>
+                            <li>完整剧本 → 导演</li>
+                            <li>人物表 → 美术</li>
+                            <li>情绪曲线 → 配乐</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 导演 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">🎥</div>
+                        <div>
+                            <div class="agent-name">导演 Agent</div>
+                            <div class="agent-role">Director - 创意控制</div>
+                        </div>
+                    </div>
+                    <span class="tag ask">问用户 4题</span>
+                    <div class="agent-section">
+                        <h4>📥 输入来源</h4>
+                        <ul>
+                            <li>制片人：项目配置</li>
+                            <li>编剧：剧本包</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>❓ 向用户提问</h4>
+                        <ul>
+                            <li>情绪基调偏好？</li>
+                            <li>视觉参考？</li>
+                            <li>色彩偏好？</li>
+                            <li>禁忌事项？</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>📤 产出 → 发给</h4>
+                        <ul>
+                            <li>导演阐述 → 分镜/美术/摄影</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 分镜师 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">📐</div>
+                        <div>
+                            <div class="agent-name">分镜师 Agent</div>
+                            <div class="agent-role">Storyboard - 镜头设计</div>
+                        </div>
+                    </div>
+                    <span class="tag auto">自动执行</span>
+                    <div class="agent-section">
+                        <h4>📥 输入来源</h4>
+                        <ul>
+                            <li>导演：导演阐述</li>
+                            <li>编剧：剧本场景</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>🎯 核心工作</h4>
+                        <ul>
+                            <li>场景→镜头拆分</li>
+                            <li>景别/运镜设计</li>
+                            <li>时长分配</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>📤 产出 → 发给</h4>
+                        <ul>
+                            <li>分镜脚本 → Prompt工程师</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 美术指导 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">🎨</div>
+                        <div>
+                            <div class="agent-name">美术指导 Agent</div>
+                            <div class="agent-role">Art Director - 视觉设计</div>
+                        </div>
+                    </div>
+                    <span class="tag confirm">快速确认</span>
+                    <div class="agent-section">
+                        <h4>📥 输入来源</h4>
+                        <ul>
+                            <li>导演：导演阐述</li>
+                            <li>编剧：人物表</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>🎯 核心工作</h4>
+                        <ul>
+                            <li>年代考据</li>
+                            <li>服装道具设计</li>
+                            <li>色彩方案</li>
+                            <li>场景设计</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>📤 产出 → 发给</h4>
+                        <ul>
+                            <li>美术设计包 → Prompt工程师</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 摄影指导 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">📷</div>
+                        <div>
+                            <div class="agent-name">摄影指导 Agent</div>
+                            <div class="agent-role">Cinematographer - 光影设计</div>
+                        </div>
+                    </div>
+                    <span class="tag auto">自动执行</span>
+                    <div class="agent-section">
+                        <h4>📥 输入来源</h4>
+                        <ul>
+                            <li>导演：导演阐述</li>
+                            <li>分镜师：分镜脚本</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>🎯 核心工作</h4>
+                        <ul>
+                            <li>光线设计</li>
+                            <li>镜头参数</li>
+                            <li>胶片质感</li>
+                            <li>色温/对比度</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>📤 产出 → 发给</h4>
+                        <ul>
+                            <li>摄影参数表 → Prompt工程师</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Prompt工程师 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">🔧</div>
+                        <div>
+                            <div class="agent-name">Prompt工程师 Agent</div>
+                            <div class="agent-role">Prompt Engineer - 指令合成</div>
+                        </div>
+                    </div>
+                    <span class="tag auto">自动执行</span>
+                    <div class="agent-section">
+                        <h4>📥 输入来源</h4>
+                        <ul>
+                            <li>分镜师：分镜脚本</li>
+                            <li>美术：设计包</li>
+                            <li>摄影：参数表</li>
+                            <li>导演：风格设定</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>🎯 核心工作</h4>
+                        <ul>
+                            <li>汇总所有信息</li>
+                            <li>合成最终Prompt</li>
+                            <li>适配不同模型格式</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>📤 产出 → 发给</h4>
+                        <ul>
+                            <li>MJ Prompt → 图像生成</li>
+                            <li>视频Prompt → 视频生成</li>
+                            <li>音乐Prompt → Suno</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 配乐师 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <div class="agent-icon">🎵</div>
+                        <div>
+                            <div class="agent-name">配乐师 Agent</div>
+                            <div class="agent-role">Composer - 音乐创作</div>
+                        </div>
+                    </div>
+                    <span class="tag confirm">快速确认</span>
+                    <div class="agent-section">
+                        <h4>📥 输入来源</h4>
+                        <ul>
+                            <li>导演：情绪曲线</li>
+                            <li>编剧：场景情绪标签</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>🎯 核心工作</h4>
+                        <ul>
+                            <li>情绪→音乐映射</li>
+                            <li>乐器/风格选择</li>
+                            <li>节奏设计</li>
+                        </ul>
+                    </div>
+                    <div class="agent-section">
+                        <h4>📤 产出 → 发给</h4>
+                        <ul>
+                            <li>Suno Prompt → 音乐生成</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据流向表 -->
+        <div class="data-flow">
+            <h2>📊 数据流向总表</h2>
+            <table class="flow-table">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>Agent</th>
+                        <th>问用户？</th>
+                        <th>从谁拿输入</th>
+                        <th>产出什么</th>
+                        <th>发给谁</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>🎬 制片人</td>
+                        <td>✅ 5题</td>
+                        <td>用户（小说）</td>
+                        <td>项目配置表</td>
+                        <td>所有人</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>📝 编剧</td>
+                        <td>✅ 5题</td>
+                        <td>制片人</td>
+                        <td>剧本+人物表</td>
+                        <td>导演</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>🎥 导演</td>
+                        <td>✅ 4题</td>
+                        <td>编剧+制片人</td>
+                        <td>导演阐述</td>
+                        <td>分镜/美术/摄影</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>📐 分镜师</td>
+                        <td>❌ 自动</td>
+                        <td>导演+编剧</td>
+                        <td>分镜脚本</td>
+                        <td>Prompt工程师</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>🎨 美术指导</td>
+                        <td>⚡ 确认</td>
+                        <td>导演+编剧</td>
+                        <td>美术设计包</td>
+                        <td>Prompt工程师</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>📷 摄影指导</td>
+                        <td>❌ 自动</td>
+                        <td>导演+分镜</td>
+                        <td>摄影参数表</td>
+                        <td>Prompt工程师</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>🔧 Prompt工程师</td>
+                        <td>❌ 自动</td>
+                        <td>分镜+美术+摄影</td>
+                        <td>最终Prompt</td>
+                        <td>生成模型</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>🎵 配乐师</td>
+                        <td>⚡ 确认</td>
+                        <td>导演+编剧</td>
+                        <td>Suno Prompt</td>
+                        <td>音乐生成</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>🖼️ 图像生成</td>
+                        <td>❌ 自动</td>
+                        <td>Prompt工程师</td>
+                        <td>静态画面</td>
+                        <td>视频生成</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>🎬 视频生成</td>
+                        <td>❌ 自动</td>
+                        <td>Prompt+图像</td>
+                        <td>视频片段</td>
+                        <td>剪辑师</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>✂️ 剪辑师</td>
+                        <td>❌ 自动</td>
+                        <td>视频+音频</td>
+                        <td>成片</td>
+                        <td>输出</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Prompt结构示例 -->
+        <div class="prompt-structure">
+            <h2>📝 最终Prompt合成公式</h2>
+            <div class="prompt-example">
+<span class="comment">// Midjourney Prompt 合成结构</span>
+
+<span class="keyword">主体描述</span>: <span class="string">"A young Chinese man in his late teens"</span>
+<span class="keyword">+ 场景</span>: <span class="string">"standing on a 1920s Beijing street"</span>
+<span class="keyword">+ 服装</span>: <span class="string">"wearing a worn gray cotton jacket"</span>  <span class="comment">← 来自美术</span>
+<span class="keyword">+ 景别</span>: <span class="string">"close-up shot from chest up"</span>  <span class="comment">← 来自分镜</span>
+<span class="keyword">+ 动作/表情</span>: <span class="string">"looking with longing in his eyes"</span>
+<span class="keyword">+ 光线</span>: <span class="string">"natural sunlight from the right side"</span>  <span class="comment">← 来自摄影</span>
+<span class="keyword">+ 色彩</span>: <span class="string">"warm desaturated color grading"</span>  <span class="comment">← 来自导演</span>
+<span class="keyword">+ 风格</span>: <span class="string">"Hou Hsiao-hsien cinematography style"</span>  <span class="comment">← 来自制片人</span>
+<span class="keyword">+ 技术参数</span>: <span class="string">"35mm film grain, shallow depth of field"</span>
+<span class="keyword">+ 后缀</span>: <span class="value">--ar 21:9 --v 6 --s 500</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>🎬 AI番剧制作系统 v1.0 | 设计者：卓卓 | 2024</p>
+        </div>
+    </div>
+</body>
+</html>

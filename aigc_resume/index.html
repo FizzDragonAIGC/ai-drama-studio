@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIGC创作者简历</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-hover: #1a1a25;
+            --text-primary: #ffffff;
+            --text-secondary: #8888aa;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-pink: #ec4899;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --gradient-1: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            --gradient-2: linear-gradient(135deg, #3b82f6 0%, #22c55e 100%);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            position: relative;
+            padding: 80px 20px;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(168,85,247,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(236,72,153,0.15) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                        var(--gradient-1) border-box;
+            margin: 0 auto 25px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .name {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .tagline {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .location {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            margin-bottom: 25px;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        
+        .social-link:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+        }
+        
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2), transparent);
+        }
+        
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .skill-category {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .skill-category h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .skill-item {
+            margin-bottom: 15px;
+        }
+        
+        .skill-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .skill-name {
+            color: var(--text-primary);
+        }
+        
+        .skill-level {
+            color: var(--text-secondary);
+        }
+        
+        .skill-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease-out;
+        }
+        
+        .skill-progress.purple { background: var(--gradient-1); }
+        .skill-progress.blue { background: var(--gradient-2); }
+        .skill-progress.pink { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .skill-progress.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        
+        /* Works */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .work-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        
+        .work-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+            box-shadow: 0 20px 40px rgba(168,85,247,0.2);
+        }
+        
+        .work-cover {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a2e, #2a2a4e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .work-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .work-cover .play-btn {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .work-cover .play-btn:hover {
+            background: var(--accent-purple);
+            transform: scale(1.1);
+        }
+        
+        .work-content {
+            padding: 20px;
+        }
+        
+        .work-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .work-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .work-tag {
+            padding: 4px 12px;
+            background: rgba(168,85,247,0.2);
+            border-radius: 20px;
+            font-size: 0.8em;
+            color: var(--accent-purple);
+        }
+        
+        .work-stats {
+            display: flex;
+            gap: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        .work-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .stat-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-purple), var(--accent-pink), var(--accent-blue));
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 30px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            border: 3px solid var(--bg-dark);
+        }
+        
+        .timeline-date {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(168,85,247,0.2);
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: var(--accent-purple);
+            margin-bottom: 10px;
+        }
+        
+        .timeline-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-company {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        
+        /* Contact */
+        .contact-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 60px;
+        }
+        
+        .contact-title {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        
+        .contact-desc {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        
+        .contact-items {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 30px;
+            font-size: 0.95em;
+        }
+        
+        .cta-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--gradient-1);
+            border-radius: 30px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(168,85,247,0.4);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        /* Edit Mode */
+        .editable {
+            outline: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .editable:hover {
+            background: rgba(168,85,247,0.1);
+        }
+        
+        .editable:focus {
+            background: rgba(168,85,247,0.2);
+            box-shadow: 0 0 0 2px var(--accent-purple);
+        }
+        
+        /* Edit Panel */
+        .edit-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .edit-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .edit-btn.primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+        
+        .edit-btn.secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .edit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header { padding: 50px 20px; }
+            .name { font-size: 2em; }
+            .works-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        /* Print */
+        @media print {
+            body { background: white; color: black; }
+            .edit-panel { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="avatar">
+                <span>🎨</span>
+            </div>
+            <h1 class="name editable" contenteditable="true">你的名字</h1>
+            <p class="tagline editable" contenteditable="true">AI短片导演 / Midjourney艺术家 / 视觉叙事者</p>
+            <div class="location">
+                <span>📍 <span class="editable" contenteditable="true">上海</span></span>
+                <span>✉️ <span class="editable" contenteditable="true">hello@example.com</span></span>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-link">📕 小红书</a>
+                <a href="#" class="social-link">📺 B站</a>
+                <a href="#" class="social-link">🐦 Twitter</a>
+                <a href="#" class="social-link">📸 Instagram</a>
+                <a href="#" class="social-link">🌐 个人网站</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">📊 数据</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number editable" contenteditable="true">50K+</div>
+                    <div class="stat-label">全网粉丝</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-number editable" contenteditable="true">500万</div>
+                    <div class="stat-label">累计播放</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-number editable" contenteditable="true">50万</div>
+                    <div class="stat-label">单条最高</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🤝</div>
+                    <div class="stat-number editable" contenteditable="true">20+</div>
+                    <div class="stat-label">品牌合作</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-number editable" contenteditable="true">3</div>
+                    <div class="stat-label">获奖</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills -->
+        <section class="section">
+            <h2 class="section-title">🛠️ 技能</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>🎨 图像生成</h3>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Midjourney</span>
+                            <span class="skill-level">精通</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress purple" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Stable Diffusion</span>
+                            <span class="skill-level">熟练</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress purple" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">ComfyUI</span>
+                            <span class="skill-level">熟练</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress purple" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>🎬 视频生成</h3>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Runway Gen-3</span>
+                            <span class="skill-level">精通</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress blue" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Kling</span>
+                            <span class="skill-level">熟练</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress blue" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Pika / Sora</span>
+                            <span class="skill-level">了解</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress blue" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>🎵 音频 & 其他</h3>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Suno AI</span>
+                            <span class="skill-level">熟练</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress pink" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Prompt Engineering</span>
+                            <span class="skill-level">精通</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress pink" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">工作流自动化</span>
+                            <span class="skill-level">熟练</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress pink" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Works -->
+        <section class="section">
+            <h2 class="section-title">🎬 代表作品</h2>
+            <div class="works-grid">
+                <div class="work-card">
+                    <div class="work-cover">
+                        🎥
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="work-content">
+                        <h3 class="work-title editable" contenteditable="true">作品标题</h3>
+                        <div class="work-tags">
+                            <span class="work-tag">AI短片</span>
+                            <span class="work-tag">Runway</span>
+                            <span class="work-tag">Midjourney</span>
+                        </div>
+                        <div class="work-stats">
+                            <span class="work-stat">👁️ 10万播放</span>
+                            <span class="work-stat">❤️ 5000赞</span>
+                            <span class="work-stat">⏱️ 2分钟</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="work-card">
+                    <div class="work-cover">
+                        🎨
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="work-content">
+                        <h3 class="work-title editable" contenteditable="true">概念艺术系列</h3>
+                        <div class="work-tags">
+                            <span class="work-tag">概念图</span>
+                            <span class="work-tag">Midjourney</span>
+                        </div>
+                        <div class="work-stats">
+                            <span class="work-stat">👁️ 5万播放</span>
+                            <span class="work-stat">❤️ 3000赞</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="work-card">
+                    <div class="work-cover">
+                        🎵
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="work-content">
+                        <h3 class="work-title editable" contenteditable="true">AI音乐MV</h3>
+                        <div class="work-tags">
+                            <span class="work-tag">MV</span>
+                            <span class="work-tag">Suno</span>
+                            <span class="work-tag">Kling</span>
+                        </div>
+                        <div class="work-stats">
+                            <span class="work-stat">👁️ 8万播放</span>
+                            <span class="work-stat">❤️ 4000赞</span>
+                            <span class="work-stat">⏱️ 3分钟</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience -->
+        <section class="section">
+            <h2 class="section-title">💼 项目经历</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="timeline-date">2024.12</span>
+                    <h3 class="timeline-title editable" contenteditable="true">品牌AI短片项目</h3>
+                    <p class="timeline-company">某知名品牌 · AI导演</p>
+                    <p class="timeline-desc editable" contenteditable="true">
+                        负责品牌宣传片的AI视觉设计，使用Midjourney生成概念图，Runway生成视频片段，
+                        最终产出2分钟品牌短片，播放量超过100万。
+                    </p>
+                </div>
+                
+                <div class="timeline-item">
+                    <span class="timeline-date">2024.08</span>
+                    <h3 class="timeline-title editable" contenteditable="true">独立AI番剧创作</h3>
+                    <p class="timeline-company">个人项目 · 全流程</p>
+                    <p class="timeline-desc editable" contenteditable="true">
+                        独立完成5集AI番剧，从剧本、分镜、画面生成到配乐，全程使用AI工具完成，
+                        B站累计播放50万，获得官方推荐。
+                    </p>
+                </div>
+                
+                <div class="timeline-item">
+                    <span class="timeline-date">2024.05</span>
+                    <h3 class="timeline-title editable" contenteditable="true">AIGC创作大赛</h3>
+                    <p class="timeline-company">XX平台 · 一等奖</p>
+                    <p class="timeline-desc editable" contenteditable="true">
+                        参加平台举办的AIGC创作大赛，作品《XXX》获得一等奖，奖金10000元。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section class="contact-section">
+            <h2 class="contact-title">🤝 合作意向</h2>
+            <p class="contact-desc">开放以下类型的合作，欢迎联系！</p>
+            <div class="contact-items">
+                <div class="contact-item">🎬 AI短片定制</div>
+                <div class="contact-item">🎨 概念设计</div>
+                <div class="contact-item">📚 教程/培训</div>
+                <div class="contact-item">🤝 品牌合作</div>
+            </div>
+            <a href="mailto:hello@example.com" class="cta-btn">📧 联系我</a>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Made with 💜 and AI</p>
+    </footer>
+
+    <!-- Edit Panel -->
+    <div class="edit-panel">
+        <button class="edit-btn secondary" onclick="exportHTML()">📥 导出HTML</button>
+        <button class="edit-btn secondary" onclick="window.print()">🖨️ 打印/PDF</button>
+        <button class="edit-btn primary" onclick="showHelp()">❓ 使用说明</button>
+    </div>
+
+    <script>
+        // 导出HTML
+        function exportHTML() {
+            const html = document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'my_aigc_resume.html';
+            a.click();
+        }
+        
+        // 使用说明
+        function showHelp() {
+            alert(`📝 使用说明：
+            
+1. 点击任何文字可以直接编辑
+2. 编辑完成后点击"导出HTML"保存
+3. 点击"打印/PDF"可以保存为PDF
+
+💡 提示：
+- 替换头像：找到代码中的emoji，换成 <img src="你的图片链接">
+- 添加作品：复制work-card的HTML结构
+- 修改颜色：编辑CSS中的:root变量`);
+        }
+        
+        // 自动保存到localStorage
+        document.querySelectorAll('.editable').forEach(el => {
+            el.addEventListener('blur', () => {
+                localStorage.setItem('aigc_resume_' + el.className, el.innerHTML);
+            });
+        });
+        
+        // 加载保存的内容
+        window.onload = function() {
+            document.querySelectorAll('.editable').forEach(el => {
+                const saved = localStorage.getItem('aigc_resume_' + el.className);
+                if (saved) el.innerHTML = saved;
+            });
+        };
+    </script>
+</body>
+</html>
