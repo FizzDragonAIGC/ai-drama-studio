@@ -291,7 +291,7 @@
         /* IP卡片网格 */
         .ip-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
         }
         
@@ -301,7 +301,6 @@
             border-radius: 15px;
             padding: 20px;
             transition: all 0.3s;
-            cursor: pointer;
         }
         
         .ip-card:hover {
@@ -375,6 +374,47 @@
             color: #ffd93d;
         }
         
+        /* 卡片按钮区 */
+        .ip-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .ip-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .ip-btn.primary {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .ip-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79,172,254,0.4);
+        }
+        
+        .ip-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .ip-btn.secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
         /* 文化母体卡片 - 略有不同的样式 */
         .culture-card {
             background: linear-gradient(135deg, rgba(245,87,108,0.05), rgba(79,172,254,0.05));
@@ -398,11 +438,12 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             z-index: 1000;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
+            align-items: flex-start;
+            padding: 40px 20px;
+            overflow-y: auto;
         }
         
         .modal-overlay.active {
@@ -410,41 +451,181 @@
         }
         
         .modal {
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             border-radius: 20px;
-            max-width: 600px;
+            max-width: 800px;
             width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
             padding: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            margin: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-title {
+            font-size: 1.8em;
+            color: #ffd93d;
+        }
+        
+        .modal-subtitle {
+            color: #888;
+            margin-top: 5px;
         }
         
         .modal-close {
-            float: right;
-            background: none;
+            background: rgba(255,255,255,0.1);
             border: none;
             color: #888;
             font-size: 1.5em;
             cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .modal h2 {
-            color: #ffd93d;
-            margin-bottom: 20px;
+        .modal-close:hover {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
         }
         
         .modal-section {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .modal-section h4 {
             color: #4facfe;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .modal-section p {
-            color: #aaa;
+        .modal-section p, .modal-section ul {
+            color: #ccc;
+            line-height: 1.8;
+        }
+        
+        .modal-section ul {
+            margin-left: 20px;
+        }
+        
+        .modal-section li {
+            margin-bottom: 8px;
+        }
+        
+        /* 原文区域 */
+        .source-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .source-box pre {
+            white-space: pre-wrap;
+            font-family: 'Noto Serif SC', serif, system-ui;
+            font-size: 0.95em;
+            line-height: 2;
+            color: #ddd;
+        }
+        
+        .source-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .source-link {
+            padding: 8px 15px;
+            background: rgba(107,203,119,0.15);
+            border: 1px solid rgba(107,203,119,0.3);
+            border-radius: 20px;
+            color: #6bcb77;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        
+        .source-link:hover {
+            background: rgba(107,203,119,0.25);
+        }
+        
+        /* 故事大纲 */
+        .outline-box {
+            background: rgba(245,87,108,0.1);
+            border: 1px solid rgba(245,87,108,0.2);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .outline-section {
+            margin-bottom: 20px;
+        }
+        
+        .outline-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .outline-section h5 {
+            color: #f5576c;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        .outline-section p {
+            color: #bbb;
+            font-size: 0.95em;
+        }
+        
+        /* 导入按钮 */
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .modal-btn.import {
+            background: linear-gradient(90deg, #ffd93d, #f5576c);
+            color: #000;
+        }
+        
+        .modal-btn.import:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255,217,61,0.4);
+        }
+        
+        .modal-btn.outline {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
         }
         
         /* 返回顶部 */
@@ -478,6 +659,8 @@
             .nav { flex-direction: column; gap: 15px; }
             .nav-links { display: flex; gap: 15px; }
             .nav-links a { margin: 0; }
+            .ip-grid { grid-template-columns: 1fr; }
+            .modal-actions { flex-direction: column; }
         }
     </style>
 </head>
@@ -543,9 +726,6 @@
                         <div class="rule">作者去世后 <strong>70年</strong>（2018年延长）</div>
                     </div>
                 </div>
-                <p style="margin-top: 15px; font-size: 0.9em; color: #888;">
-                    💡 <strong>提示：</strong>古典名著（如四大名著、莎士比亚）已完全公版，可直接使用。近现代作品需核实作者去世年份。
-                </p>
             </div>
             
             <!-- 搜索筛选 -->
@@ -558,26 +738,7 @@
                     <option value="cn">🇨🇳 中国</option>
                     <option value="uk">🇬🇧 英国</option>
                     <option value="fr">🇫🇷 法国</option>
-                    <option value="ru">🇷🇺 俄国</option>
-                    <option value="us">🇺🇸 美国</option>
-                    <option value="jp">🇯🇵 日本</option>
-                    <option value="de">🇩🇪 德国</option>
                     <option value="other">🌏 其他</option>
-                </select>
-                <select class="filter-select" id="genreFilter">
-                    <option value="">📚 所有类型</option>
-                    <option value="epic">史诗</option>
-                    <option value="love">爱情</option>
-                    <option value="fantasy">奇幻</option>
-                    <option value="thriller">惊悚/悬疑</option>
-                    <option value="comedy">喜剧</option>
-                    <option value="tragedy">悲剧</option>
-                    <option value="adventure">冒险</option>
-                </select>
-                <select class="filter-select" id="statusFilter">
-                    <option value="">📋 版权状态</option>
-                    <option value="public">✅ 已公版</option>
-                    <option value="soon">⚠️ 即将公版</option>
                 </select>
             </div>
             
@@ -588,168 +749,8 @@
                     <span class="category-title">中国文学</span>
                     <span class="category-count">50+ 作品</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card" data-genre="epic,fantasy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">西游记</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">吴承恩 · 明代</div>
-                        <div class="ip-desc">师徒四人西天取经，降妖除魔。中国影响力最大的神话小说。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">奇幻冒险</span>
-                            <span class="ip-tag">热血</span>
-                            <span class="ip-tag">100集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 30亿+</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="epic,love" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">红楼梦</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">曹雪芹 · 清代</div>
-                        <div class="ip-desc">贾宝玉与林黛玉的爱情悲剧，四大家族兴衰史。中国古典小说巅峰。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">古装爱情</span>
-                            <span class="ip-tag">家族史诗</span>
-                            <span class="ip-tag">80集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿+</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="epic" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">三国演义</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">罗贯中 · 明代</div>
-                        <div class="ip-desc">东汉末年群雄逐鹿，魏蜀吴三国鼎立。战争谋略经典。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">战争史诗</span>
-                            <span class="ip-tag">权谋</span>
-                            <span class="ip-tag">120集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 20亿+</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="fantasy,thriller" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">聊斋志异</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">蒲松龄 · 清代</div>
-                        <div class="ip-desc">491篇狐鬼故事，人妖恋、因果报应。最适合单元剧开发。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">灵异</span>
-                            <span class="ip-tag">爱情</span>
-                            <span class="ip-tag">单元剧50集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 8亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="fantasy,epic" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">封神演义</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">许仲琳 · 明代</div>
-                        <div class="ip-desc">武王伐纣，神仙大战。365位正神封神榜。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">神话史诗</span>
-                            <span class="ip-tag">战争</span>
-                            <span class="ip-tag">60集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 8亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="love" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">牡丹亭</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">汤显祖 · 明代</div>
-                        <div class="ip-desc">杜丽娘因梦生情，死而复生。"情不知所起，一往而深"。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情</span>
-                            <span class="ip-tag">奇幻</span>
-                            <span class="ip-tag">12集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 3亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="tragedy,comedy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">阿Q正传</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">鲁迅 · 1936去世</div>
-                        <div class="ip-desc">"精神胜利法"的典型人物，讽刺国民性的经典。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">讽刺</span>
-                            <span class="ip-tag">悲剧</span>
-                            <span class="ip-tag">12集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="love" data-status="soon">
-                        <div class="ip-card-header">
-                            <span class="ip-name">边城</span>
-                            <span class="ip-status soon">⚠️ 2038公版</span>
-                        </div>
-                        <div class="ip-author">沈从文 · 1988去世</div>
-                        <div class="ip-desc">湘西边城的纯爱故事，翠翠与傩送的爱情悲剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情文艺</span>
-                            <span class="ip-tag">乡土</span>
-                            <span class="ip-tag">6集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 2亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="tragedy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">骆驼祥子</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">老舍 · 1966去世</div>
-                        <div class="ip-desc">北平车夫祥子的悲剧人生，三起三落。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">现实主义</span>
-                            <span class="ip-tag">悲剧</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 3亿</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="cnLitGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
             
@@ -760,130 +761,8 @@
                     <span class="category-title">英国文学</span>
                     <span class="category-count">40+ 作品</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card" data-genre="tragedy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">哈姆雷特</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">莎士比亚 · 1616去世</div>
-                        <div class="ip-desc">"生存还是毁灭"——丹麦王子的复仇悲剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">复仇</span>
-                            <span class="ip-tag">心理</span>
-                            <span class="ip-tag">电影/6集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿+</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="love,tragedy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">罗密欧与朱丽叶</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">莎士比亚 · 1616去世</div>
-                        <div class="ip-desc">世仇家族的年轻恋人，殉情而死。世界最知名爱情悲剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情悲剧</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 15亿+</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="thriller" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">福尔摩斯探案集</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">柯南道尔 · 1930去世</div>
-                        <div class="ip-desc">221B贝克街的咨询侦探，与华生医生一起破案。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">推理</span>
-                            <span class="ip-tag">侦探</span>
-                            <span class="ip-tag">单元剧60集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 15亿+</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="love" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">傲慢与偏见</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">简·奥斯汀 · 1817去世</div>
-                        <div class="ip-desc">伊丽莎白与达西先生的爱情喜剧，英式社交经典。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情喜剧</span>
-                            <span class="ip-tag">12集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="fantasy,thriller" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">弗兰肯斯坦</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">玛丽·雪莱 · 1851去世</div>
-                        <div class="ip-desc">科学家创造的怪物，探讨人与造物主的关系。科幻鼻祖。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">科幻</span>
-                            <span class="ip-tag">惊悚</span>
-                            <span class="ip-tag">电影/6集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="thriller" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">德古拉</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">布莱姆·斯托克 · 1912去世</div>
-                        <div class="ip-desc">特兰西瓦尼亚的吸血鬼伯爵，恐怖小说经典。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">恐怖</span>
-                            <span class="ip-tag">哥特</span>
-                            <span class="ip-tag">12集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="epic" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">1984</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">乔治·奥威尔 · 1950去世</div>
-                        <div class="ip-desc">"老大哥在看着你"——反乌托邦经典，极权统治预言。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">反乌托邦</span>
-                            <span class="ip-tag">政治</span>
-                            <span class="ip-tag">12集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="ukLitGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
             
@@ -894,300 +773,20 @@
                     <span class="category-title">法国文学</span>
                     <span class="category-count">20+ 作品</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card" data-genre="epic" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">悲惨世界</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">维克多·雨果 · 1885去世</div>
-                        <div class="ip-desc">冉阿让的救赎之路，法国大革命时代背景下的史诗。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">史诗</span>
-                            <span class="ip-tag">救赎</span>
-                            <span class="ip-tag">50集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="adventure" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">基督山伯爵</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">大仲马 · 1870去世</div>
-                        <div class="ip-desc">冤狱14年后的复仇，"等待与希望"的经典。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">复仇</span>
-                            <span class="ip-tag">冒险</span>
-                            <span class="ip-tag">50集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 8亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="fantasy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">小王子</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">圣埃克苏佩里 · 1944去世</div>
-                        <div class="ip-desc">"重要的东西，眼睛是看不见的"——哲理童话。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">童话</span>
-                            <span class="ip-tag">哲理</span>
-                            <span class="ip-tag">电影/6集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="adventure,fantasy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">海底两万里</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">儒勒·凡尔纳 · 1905去世</div>
-                        <div class="ip-desc">尼摩船长的鹦鹉螺号，海底世界探险。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">科幻</span>
-                            <span class="ip-tag">冒险</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="frLitGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
             
-            <!-- 俄国文学 -->
-            <div class="category-section" data-region="ru">
-                <div class="category-header">
-                    <span class="category-icon">🇷🇺</span>
-                    <span class="category-title">俄国文学</span>
-                    <span class="category-count">15+ 作品</span>
-                </div>
-                <div class="ip-grid">
-                    <div class="ip-card" data-genre="epic" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">战争与和平</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">托尔斯泰 · 1910去世</div>
-                        <div class="ip-desc">拿破仑战争时期的俄国贵族群像，世界文学巅峰。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">战争史诗</span>
-                            <span class="ip-tag">80集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="thriller" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">罪与罚</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">陀思妥耶夫斯基 · 1881去世</div>
-                        <div class="ip-desc">贫穷大学生的杀人与救赎，心理描写巅峰。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">心理惊悚</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 3亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="love,tragedy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">安娜·卡列尼娜</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">托尔斯泰 · 1910去世</div>
-                        <div class="ip-desc">"幸福的家庭都是相似的"——贵妇的婚外情悲剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情悲剧</span>
-                            <span class="ip-tag">40集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 3亿</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 日本文学 -->
-            <div class="category-section" data-region="jp">
-                <div class="category-header">
-                    <span class="category-icon">🇯🇵</span>
-                    <span class="category-title">日本文学</span>
-                    <span class="category-count">15+ 作品</span>
-                </div>
-                <div class="ip-grid">
-                    <div class="ip-card" data-genre="love,epic" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">源氏物语</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">紫式部 · 约1014去世</div>
-                        <div class="ip-desc">光源氏的宫廷恋爱，世界最早的长篇小说。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">宫廷爱情</span>
-                            <span class="ip-tag">50集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 3亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="thriller" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">罗生门</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">芥川龙之介 · 1927去世</div>
-                        <div class="ip-desc">人性善恶的考验，"罗生门效应"的来源。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">心理</span>
-                            <span class="ip-tag">哲理</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 3亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="tragedy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">人间失格</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">太宰治 · 1948去世</div>
-                        <div class="ip-desc">"生而为人，我很抱歉"——废柴青年的自我毁灭。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">心理</span>
-                            <span class="ip-tag">文艺</span>
-                            <span class="ip-tag">12集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 2亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="love" data-status="soon">
-                        <div class="ip-card-header">
-                            <span class="ip-name">雪国</span>
-                            <span class="ip-status soon">⚠️ 2042公版</span>
-                        </div>
-                        <div class="ip-author">川端康成 · 1972去世</div>
-                        <div class="ip-desc">"穿过县境长长的隧道，便是雪国"——艺伎与游客的爱情。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情文艺</span>
-                            <span class="ip-tag">电影/6集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 2亿</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 其他地区 -->
+            <!-- 其他 -->
             <div class="category-section" data-region="other">
                 <div class="category-header">
                     <span class="category-icon">🌍</span>
                     <span class="category-title">其他地区</span>
                     <span class="category-count">30+ 作品</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card" data-genre="fantasy,adventure" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">一千零一夜</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">阿拉伯民间 · 古代</div>
-                        <div class="ip-desc">山鲁佐德讲述1001个故事，阿里巴巴、阿拉丁等经典。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">奇幻</span>
-                            <span class="ip-tag">冒险</span>
-                            <span class="ip-tag">单元剧100集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 20亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="comedy,adventure" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">堂吉诃德</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">塞万提斯 · 1616去世</div>
-                        <div class="ip-desc">向风车挑战的骑士，理想主义者的悲喜剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">喜剧</span>
-                            <span class="ip-tag">冒险</span>
-                            <span class="ip-tag">50集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="epic,fantasy" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">神曲</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">但丁 · 1321去世</div>
-                        <div class="ip-desc">地狱、炼狱、天堂的游历，西方最伟大的诗歌。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">奇幻</span>
-                            <span class="ip-tag">史诗</span>
-                            <span class="ip-tag">30集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card" data-genre="epic" data-status="public">
-                        <div class="ip-card-header">
-                            <span class="ip-name">摩诃婆罗多</span>
-                            <span class="ip-status public">✅ 公版</span>
-                        </div>
-                        <div class="ip-author">印度史诗 · 古代</div>
-                        <div class="ip-desc">印度神话史诗，俱卢族与般度族的大战。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">神话史诗</span>
-                            <span class="ip-tag">100集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 15亿</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="otherLitGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
         </div>
@@ -1199,18 +798,10 @@
                 <h3>🎭 什么是文化母体IP？</h3>
                 <p>
                     <strong>文化母体</strong>是指深植于集体记忆中的神话、传说、历史人物和民间故事。
-                    它们没有明确的作者或版权归属，但拥有广泛的认知度和情感共鸣。
+                    它们没有明确的作者或版权归属，但需要编剧<strong>重新创作剧本</strong>。
                 </p>
-                <ul>
-                    <li><strong>神话传说</strong>：盘古开天、希腊众神、北欧神话...</li>
-                    <li><strong>民间故事</strong>：白蛇传、灰姑娘、都市传说...</li>
-                    <li><strong>历史人物</strong>：秦始皇、拿破仑、武则天...</li>
-                    <li><strong>宗教人物</strong>：济公、达摩祖师、圣人传说...</li>
-                </ul>
                 <p style="margin-top: 15px; color: #f5576c;">
-                    ⚠️ <strong>注意：</strong>文化母体IP需要编剧<strong>重新创作剧本</strong>，
-                    不能直接使用已有的改编版本（如迪士尼版白雪公主）。
-                    你可以自由诠释原始故事，但要避免抄袭任何特定作品的创意元素。
+                    ⚠️ 每个IP都配有<strong>商业化故事大纲</strong>，可直接导入制作系统！
                 </p>
             </div>
             
@@ -1222,22 +813,10 @@
                 <select class="filter-select" id="cultureRegionFilter">
                     <option value="">🌍 所有地区</option>
                     <option value="cn">🇨🇳 中国</option>
-                    <option value="jp">🇯🇵 日本</option>
-                    <option value="kr">🇰🇷 韩国</option>
-                    <option value="in">🇮🇳 印度</option>
-                    <option value="gr">🇬🇷 希腊</option>
-                    <option value="eg">🇪🇬 埃及</option>
-                    <option value="no">🇳🇴 北欧</option>
-                    <option value="uk">🇬🇧 英国/凯尔特</option>
                     <option value="sg">🇸🇬 新加坡</option>
-                </select>
-                <select class="filter-select" id="cultureTypeFilter">
-                    <option value="">📚 所有类型</option>
-                    <option value="myth">神话传说</option>
-                    <option value="folk">民间故事</option>
-                    <option value="history">历史人物</option>
-                    <option value="religion">宗教人物</option>
-                    <option value="urban">都市传说</option>
+                    <option value="jp">🇯🇵 日本</option>
+                    <option value="gr">🇬🇷 希腊</option>
+                    <option value="no">🇳🇴 北欧</option>
                 </select>
             </div>
             
@@ -1248,267 +827,20 @@
                     <span class="category-title">中国文化母体</span>
                     <span class="category-count">100+ IP</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">白蛇传</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">民间四大传说</div>
-                        <div class="ip-desc">白素贞与许仙的人妖恋，法海镇压雷峰塔。千年等待，爱情悲剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情奇幻</span>
-                            <span class="ip-tag">妖怪</span>
-                            <span class="ip-tag">30集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">哪吒闹海</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">封神神话</div>
-                        <div class="ip-desc">"割肉还母，剔骨还父"——叛逆少年与父权的对抗。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">热血成长</span>
-                            <span class="ip-tag">神话</span>
-                            <span class="ip-tag">电影/24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">嫦娥奔月</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">中国神话</div>
-                        <div class="ip-desc">后羿射日后，嫦娥吞仙丹飞升。"嫦娥应悔偷灵药，碧海青天夜夜心"。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情</span>
-                            <span class="ip-tag">悲剧</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 15亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="folk">
-                        <div class="ip-card-header">
-                            <span class="ip-name">梁山伯与祝英台</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">民间四大传说</div>
-                        <div class="ip-desc">同窗三年不知是女儿身，化蝶双飞。中国版罗密欧与朱丽叶。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情悲剧</span>
-                            <span class="ip-tag">12集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="religion">
-                        <div class="ip-card-header">
-                            <span class="ip-name">济公</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">佛教人物</div>
-                        <div class="ip-desc">"酒肉穿肠过，佛祖心中留"——疯僧济世，惩恶扬善。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">喜剧</span>
-                            <span class="ip-tag">神话</span>
-                            <span class="ip-tag">单元剧</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 8亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="history">
-                        <div class="ip-card-header">
-                            <span class="ip-name">武则天</span>
-                            <span class="ip-status public">历史人物</span>
-                        </div>
-                        <div class="ip-author">唐朝 · 624-705</div>
-                        <div class="ip-desc">中国唯一女皇帝，从才人到天后到皇帝。权谋与爱情的史诗。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">宫斗</span>
-                            <span class="ip-tag">女性史诗</span>
-                            <span class="ip-tag">60集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="history">
-                        <div class="ip-card-header">
-                            <span class="ip-name">苏东坡</span>
-                            <span class="ip-status public">历史人物</span>
-                        </div>
-                        <div class="ip-author">北宋 · 1037-1101</div>
-                        <div class="ip-desc">"人生如逆旅，我亦是行人"——豁达文人的跌宕人生。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">传记</span>
-                            <span class="ip-tag">文艺</span>
-                            <span class="ip-tag">40集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="religion">
-                        <div class="ip-card-header">
-                            <span class="ip-name">妈祖</span>
-                            <span class="ip-status public">民间信仰</span>
-                        </div>
-                        <div class="ip-author">福建/台湾/东南亚</div>
-                        <div class="ip-desc">海上女神林默娘，保佑航海平安。全球3亿信众。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">神话</span>
-                            <span class="ip-tag">海洋</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">九尾狐</span>
-                            <span class="ip-status public">妖怪</span>
-                        </div>
-                        <div class="ip-author">东亚共有</div>
-                        <div class="ip-desc">千年狐妖，魅惑人心。苏妲己、妖狐传说。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情</span>
-                            <span class="ip-tag">悬疑</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 8亿</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="cnCultureGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
             
-            <!-- 新加坡文化母体 -->
+            <!-- 新加坡 -->
             <div class="category-section" data-region="sg">
                 <div class="category-header">
                     <span class="category-icon">🇸🇬</span>
                     <span class="category-title">新加坡文化母体</span>
                     <span class="category-count">10+ IP</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card culture-card" data-type="urban">
-                        <div class="ip-card-header">
-                            <span class="ip-name">樟宜医院鬼故事</span>
-                            <span class="ip-status public">都市传说</span>
-                        </div>
-                        <div class="ip-author">新加坡都市传说</div>
-                        <div class="ip-desc">废弃的旧樟宜医院，闹鬼传说众多。新加坡最著名的灵异地点。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">恐怖</span>
-                            <span class="ip-tag">灵异</span>
-                            <span class="ip-tag">单元剧6集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 500万+</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="folk">
-                        <div class="ip-card-header">
-                            <span class="ip-name">红山传说</span>
-                            <span class="ip-status public">民间传说</span>
-                        </div>
-                        <div class="ip-author">新加坡民间</div>
-                        <div class="ip-desc">剑鱼袭击村庄，少年用香蕉树茎挡住鱼口。红山因此得名。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">奇幻</span>
-                            <span class="ip-tag">少年英雄</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐</span>
-                            <span>潜在观众 300万</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="religion">
-                        <div class="ip-card-header">
-                            <span class="ip-name">普亮法师</span>
-                            <span class="ip-status public">宗教人物</span>
-                        </div>
-                        <div class="ip-author">光明山普觉禅寺</div>
-                        <div class="ip-desc">新加坡光明山开山祖师，推动本地佛教发展的高僧传奇。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">传记</span>
-                            <span class="ip-tag">宗教</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐</span>
-                            <span>潜在观众 200万</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="urban">
-                        <div class="ip-card-header">
-                            <span class="ip-name">德光岛鬼故事</span>
-                            <span class="ip-status public">都市传说</span>
-                        </div>
-                        <div class="ip-author">军营传说</div>
-                        <div class="ip-desc">新加坡服役男生的必听故事，军训岛上的各种灵异事件。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">恐怖</span>
-                            <span class="ip-tag">军旅</span>
-                            <span class="ip-tag">6集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐</span>
-                            <span>潜在观众 300万</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="history">
-                        <div class="ip-card-header">
-                            <span class="ip-name">旧福特工厂</span>
-                            <span class="ip-status public">历史/灵异</span>
-                        </div>
-                        <div class="ip-author">二战历史</div>
-                        <div class="ip-desc">1942年英军投降地点，日据时期的黑暗记忆。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">战争</span>
-                            <span class="ip-tag">历史</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐</span>
-                            <span>潜在观众 300万</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="sgCultureGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
             
@@ -1519,77 +851,8 @@
                     <span class="category-title">希腊神话</span>
                     <span class="category-count">30+ IP</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">赫拉克勒斯</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">希腊神话</div>
-                        <div class="ip-desc">宙斯之子完成十二试炼，打败九头蛇、捕获地狱三头犬。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">冒险</span>
-                            <span class="ip-tag">英雄</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">奥德修斯</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">荷马史诗</div>
-                        <div class="ip-desc">特洛伊战争后十年漂泊，与独眼巨人、海妖搏斗终回故乡。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">冒险</span>
-                            <span class="ip-tag">史诗</span>
-                            <span class="ip-tag">30集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">美杜莎</span>
-                            <span class="ip-status public">神话</span>
-                        </div>
-                        <div class="ip-author">希腊神话</div>
-                        <div class="ip-desc">蛇发女妖，看她一眼就会石化。从受害者到怪物的悲剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">反派视角</span>
-                            <span class="ip-tag">悲剧</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 8亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">俄耳甫斯</span>
-                            <span class="ip-status public">神话</span>
-                        </div>
-                        <div class="ip-author">希腊神话</div>
-                        <div class="ip-desc">下地狱救妻子，回头一望功亏一篑。最动人的爱情悲剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情悲剧</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="grCultureGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
             
@@ -1600,206 +863,20 @@
                     <span class="category-title">北欧神话</span>
                     <span class="category-count">15+ IP</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">诸神黄昏</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">北欧神话</div>
-                        <div class="ip-desc">Ragnarök——众神与巨人的最终决战，世界毁灭与重生。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">灾难史诗</span>
-                            <span class="ip-tag">神话</span>
-                            <span class="ip-tag">电影/12集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">洛基</span>
-                            <span class="ip-status public">神话</span>
-                        </div>
-                        <div class="ip-author">北欧神话</div>
-                        <div class="ip-desc">诡计之神，变形大师。亦正亦邪，最复杂的北欧神灵。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">反英雄</span>
-                            <span class="ip-tag">喜剧</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 8亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">瓦尔基里</span>
-                            <span class="ip-status public">神话</span>
-                        </div>
-                        <div class="ip-author">北欧神话</div>
-                        <div class="ip-desc">女武神，选择战死勇士的灵魂进入瓦尔哈拉。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">女性动作</span>
-                            <span class="ip-tag">战争</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="noCultureGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
             
-            <!-- 日本文化母体 -->
+            <!-- 日本 -->
             <div class="category-section" data-region="jp">
                 <div class="category-header">
                     <span class="category-icon">🇯🇵</span>
                     <span class="category-title">日本文化母体</span>
                     <span class="category-count">30+ IP</span>
                 </div>
-                <div class="ip-grid">
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">安倍晴明</span>
-                            <span class="ip-status public">历史+神话</span>
-                        </div>
-                        <div class="ip-author">平安时代</div>
-                        <div class="ip-desc">日本最著名的阴阳师，驱鬼除魔，半人半妖的传说。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">奇幻</span>
-                            <span class="ip-tag">悬疑</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="folk">
-                        <div class="ip-card-header">
-                            <span class="ip-name">辉夜姬</span>
-                            <span class="ip-status public">民间传说</span>
-                        </div>
-                        <div class="ip-author">竹取物语</div>
-                        <div class="ip-desc">从竹中诞生的月宫公主，五位贵族求婚，最终返回月球。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">爱情</span>
-                            <span class="ip-tag">奇幻</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 3亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">百鬼夜行</span>
-                            <span class="ip-status public">妖怪文化</span>
-                        </div>
-                        <div class="ip-author">日本妖怪</div>
-                        <div class="ip-desc">河童、天狗、雪女、九尾狐...日本妖怪大全，最适合单元剧。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">奇幻</span>
-                            <span class="ip-tag">恐怖</span>
-                            <span class="ip-tag">单元剧50集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="history">
-                        <div class="ip-card-header">
-                            <span class="ip-name">宫本武藏</span>
-                            <span class="ip-status public">历史人物</span>
-                        </div>
-                        <div class="ip-author">江户时代</div>
-                        <div class="ip-desc">"剑圣"——60余战无败绩，二刀流创始人，《五轮书》作者。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">武侠</span>
-                            <span class="ip-tag">传记</span>
-                            <span class="ip-tag">40集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 英国/凯尔特 -->
-            <div class="category-section" data-region="uk">
-                <div class="category-header">
-                    <span class="category-icon">🇬🇧</span>
-                    <span class="category-title">英国/凯尔特传说</span>
-                    <span class="category-count">15+ IP</span>
-                </div>
-                <div class="ip-grid">
-                    <div class="ip-card culture-card" data-type="folk">
-                        <div class="ip-card-header">
-                            <span class="ip-name">亚瑟王</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">不列颠传说</div>
-                        <div class="ip-desc">拔出石中剑的少年王，圆桌骑士，寻找圣杯。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">史诗</span>
-                            <span class="ip-tag">奇幻</span>
-                            <span class="ip-tag">50集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="folk">
-                        <div class="ip-card-header">
-                            <span class="ip-name">罗宾汉</span>
-                            <span class="ip-status public">👑 顶级IP</span>
-                        </div>
-                        <div class="ip-author">英国传说</div>
-                        <div class="ip-desc">舍伍德森林的绿林好汉，劫富济贫。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">冒险</span>
-                            <span class="ip-tag">正义</span>
-                            <span class="ip-tag">24集</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐⭐</span>
-                            <span>潜在观众 10亿</span>
-                        </div>
-                    </div>
-                    
-                    <div class="ip-card culture-card" data-type="myth">
-                        <div class="ip-card-header">
-                            <span class="ip-name">尼斯湖水怪</span>
-                            <span class="ip-status public">都市传说</span>
-                        </div>
-                        <div class="ip-author">苏格兰</div>
-                        <div class="ip-desc">苏格兰高地湖中的神秘生物，真假难辨的世纪之谜。</div>
-                        <div class="ip-tags">
-                            <span class="ip-tag">悬疑</span>
-                            <span class="ip-tag">冒险</span>
-                            <span class="ip-tag">电影</span>
-                        </div>
-                        <div class="ip-meta">
-                            <span class="ip-influence">⭐⭐⭐⭐</span>
-                            <span>潜在观众 5亿</span>
-                        </div>
-                    </div>
+                <div class="ip-grid" id="jpCultureGrid">
+                    <!-- JS生成 -->
                 </div>
             </div>
         </div>
@@ -1810,105 +887,1132 @@
     
     <!-- 详情弹窗 -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <button class="modal-close" onclick="closeModal()">×</button>
-            <h2 id="modalTitle"></h2>
-            <div class="modal-section">
-                <h4>📖 故事简介</h4>
-                <p id="modalDesc"></p>
-            </div>
-            <div class="modal-section">
-                <h4>🎬 开发建议</h4>
-                <p id="modalSuggestion"></p>
-            </div>
-            <div class="modal-section">
-                <h4>⚠️ 版权说明</h4>
-                <p id="modalCopyright"></p>
-            </div>
+        <div class="modal" id="modalContent">
+            <!-- JS动态生成 -->
         </div>
     </div>
 
     <script>
-        // 标签页切换
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                btn.classList.add('active');
-                document.getElementById(btn.dataset.tab).classList.add('active');
-            });
-        });
+    // ===== IP数据库 =====
+    
+    // 公版文学IP
+    const literatureIPs = {
+        cn: [
+            {
+                id: 'xiyouji',
+                name: '西游记',
+                author: '吴承恩',
+                era: '明代',
+                status: 'public',
+                desc: '师徒四人西天取经，降妖除魔。中国影响力最大的神话小说。',
+                tags: ['奇幻冒险', '热血', '100集'],
+                influence: 5,
+                audience: '30亿+',
+                hasSource: true,
+                sourceLinks: [
+                    { name: '古诗文网', url: 'https://www.gushiwen.cn/guwen/book_46653.aspx' },
+                    { name: '维基文库', url: 'https://zh.wikisource.org/wiki/西遊記' }
+                ],
+                sourceExcerpt: `第一回 灵根育孕源流出 心性修持大道生
+
+诗曰：
+混沌未分天地乱，茫茫渺渺无人见。
+自从盘古破鸿蒙，开辟从兹清浊辨。
+覆载群生仰至仁，发明万物皆成善。
+欲知造化会元功，须看西游释厄传。
+
+盖闻天地之数，有十二万九千六百岁为一元。将一元分为十二会，乃子、丑、寅、卯、辰、巳、午、未、申、酉、戌、亥之十二支也...`
+            },
+            {
+                id: 'honglou',
+                name: '红楼梦',
+                author: '曹雪芹',
+                era: '清代',
+                status: 'public',
+                desc: '贾宝玉与林黛玉的爱情悲剧，四大家族兴衰史。中国古典小说巅峰。',
+                tags: ['古装爱情', '家族史诗', '80集'],
+                influence: 5,
+                audience: '10亿+',
+                hasSource: true,
+                sourceLinks: [
+                    { name: '古诗文网', url: 'https://www.gushiwen.cn/guwen/book_46654.aspx' },
+                    { name: '红楼梦中文网', url: 'https://www.honglm.com/' }
+                ],
+                sourceExcerpt: `第一回 甄士隐梦幻识通灵 贾雨村风尘怀闺秀
+
+此开卷第一回也。作者自云：因曾历过一番梦幻之后，故将真事隐去，而借"通灵"之说，撰此《石头记》一书也。故曰"甄士隐"云云。但书中所记何事何人？自又云："今风尘碌碌，一事无成，忽念及当日所有之女子，一一细考较去，觉其行止见识，皆出于我之上。何我堂堂须眉，诚不若彼裙钗哉？"`
+            },
+            {
+                id: 'sanguo',
+                name: '三国演义',
+                author: '罗贯中',
+                era: '明代',
+                status: 'public',
+                desc: '东汉末年群雄逐鹿，魏蜀吴三国鼎立。战争谋略经典。',
+                tags: ['战争史诗', '权谋', '120集'],
+                influence: 5,
+                audience: '20亿+',
+                hasSource: true,
+                sourceLinks: [
+                    { name: '古诗文网', url: 'https://www.gushiwen.cn/guwen/book_46655.aspx' }
+                ],
+                sourceExcerpt: `第一回 宴桃园豪杰三结义 斩黄巾英雄首立功
+
+话说天下大势，分久必合，合久必分。周末七国分争，并入于秦。及秦灭之后，楚、汉分争，又并入于汉。汉朝自高祖斩白蛇而起义，一统天下，后来光武中兴，传至献帝，遂分为三国。`
+            },
+            {
+                id: 'liaozhai',
+                name: '聊斋志异',
+                author: '蒲松龄',
+                era: '清代',
+                status: 'public',
+                desc: '491篇狐鬼故事，人妖恋、因果报应。最适合单元剧开发。',
+                tags: ['灵异', '爱情', '单元剧50集'],
+                influence: 4,
+                audience: '8亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: '古诗文网', url: 'https://www.gushiwen.cn/guwen/book_46656.aspx' }
+                ],
+                sourceExcerpt: `聂小倩
+
+宁采臣，浙人。性慷爽，廉隅自重。每对人言："生平无二色。"适赴金华，至北郭，解装兰若。寺中殿塔壮丽，然蓬蒿没人，似绝行踪。东西僧舍，双扉虚掩；惟南一小舍，扃键如新...`
+            },
+            {
+                id: 'biancheng',
+                name: '边城',
+                author: '沈从文',
+                era: '1934',
+                status: 'soon',
+                statusText: '2038公版',
+                desc: '湘西边城的纯爱故事，翠翠与傩送的爱情悲剧。田园牧歌式的抒情小说。',
+                tags: ['爱情文艺', '乡土', '6集'],
+                influence: 4,
+                audience: '2亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: '古诗文网', url: 'https://www.gushiwen.cn/guwen/book_46653f7d6328.aspx' }
+                ],
+                sourceExcerpt: `由四川过湖南去，靠东有一条官路。这官路将近湘西边境到了一个地方名为"茶峒"的小山城时，有一小溪，溪边有座白色小塔，塔下住了一户单独的人家。这人家只一个老人，一个女孩子，一只黄狗。
+
+小溪流下去，绕山岨流，约三里便汇入茶峒的大河。人若过溪越小山走去，则只一里路就到了茶峒城边。溪流如弓背，山路如弓弦，故远近有了小小差异。小溪宽约二十丈，河床为大片石头作成。静静的水即或深到一篙不能落底，却依然清澈透明，河中游鱼来去皆可以计数。`
+            },
+            {
+                id: 'luotuo',
+                name: '骆驼祥子',
+                author: '老舍',
+                era: '1936',
+                status: 'public',
+                desc: '北平车夫祥子的悲剧人生，三起三落。现实主义杰作。',
+                tags: ['现实主义', '悲剧', '24集'],
+                influence: 4,
+                audience: '3亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: '在线阅读', url: 'https://www.kanunu8.com/book3/8057/' }
+                ],
+                sourceExcerpt: `我们所要介绍的是祥子，不是骆驼，因为"骆驼"只是个外号；那么，我们就先说祥子，随手儿把骆驼与祥子那点关系说过去，也就算了。
+
+北平的洋车夫有许多派：年轻力壮，腿脚灵利的，讲究赁漂亮的车，拉"整天儿"，爱什么时候出车与收车都有自由；拉出车来，在固定的"车口"或宅门一放，专等坐快车的主儿...`
+            }
+        ],
+        uk: [
+            {
+                id: 'hamlet',
+                name: '哈姆雷特',
+                author: '莎士比亚',
+                era: '1600',
+                status: 'public',
+                desc: '"生存还是毁灭"——丹麦王子的复仇悲剧。',
+                tags: ['复仇', '心理', '电影/6集'],
+                influence: 5,
+                audience: '10亿+',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg', url: 'https://www.gutenberg.org/ebooks/1524' },
+                    { name: '中文译本', url: 'https://www.gutenberg.org/ebooks/16768' }
+                ],
+                sourceExcerpt: `ACT I. SCENE I.
+Elsinore. A platform before the Castle.
+
+[Francisco at his post. Enter to him Bernardo.]
+
+BERNARDO: Who's there?
+FRANCISCO: Nay, answer me: stand, and unfold yourself.
+BERNARDO: Long live the king!
+FRANCISCO: Bernardo?
+BERNARDO: He.`
+            },
+            {
+                id: 'sherlock',
+                name: '福尔摩斯探案集',
+                author: '柯南道尔',
+                era: '1887-1927',
+                status: 'public',
+                desc: '221B贝克街的咨询侦探，与华生医生一起破案。',
+                tags: ['推理', '侦探', '单元剧60集'],
+                influence: 5,
+                audience: '15亿+',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg', url: 'https://www.gutenberg.org/ebooks/1661' }
+                ],
+                sourceExcerpt: `A STUDY IN SCARLET
+
+PART I.
+(Being a reprint from the reminiscences of JOHN H. WATSON, M.D., late of the Army Medical Department.)
+
+CHAPTER I.
+MR. SHERLOCK HOLMES.
+
+In the year 1878 I took my degree of Doctor of Medicine of the University of London, and proceeded to Netley to go through the course prescribed for surgeons in the army...`
+            },
+            {
+                id: 'pride',
+                name: '傲慢与偏见',
+                author: '简·奥斯汀',
+                era: '1813',
+                status: 'public',
+                desc: '伊丽莎白与达西先生的爱情喜剧，英式社交经典。',
+                tags: ['爱情喜剧', '12集'],
+                influence: 5,
+                audience: '5亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg', url: 'https://www.gutenberg.org/ebooks/1342' }
+                ],
+                sourceExcerpt: `It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.
+
+However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered as the rightful property of some one or other of their daughters.`
+            },
+            {
+                id: 'frankenstein',
+                name: '弗兰肯斯坦',
+                author: '玛丽·雪莱',
+                era: '1818',
+                status: 'public',
+                desc: '科学家创造的怪物，探讨人与造物主的关系。科幻鼻祖。',
+                tags: ['科幻', '惊悚', '电影/6集'],
+                influence: 5,
+                audience: '10亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg', url: 'https://www.gutenberg.org/ebooks/84' }
+                ],
+                sourceExcerpt: `Letter 1
+
+To Mrs. Saville, England.
+St. Petersburgh, Dec. 11th, 17—.
+
+You will rejoice to hear that no disaster has accompanied the commencement of an enterprise which you have regarded with such evil forebodings. I arrived here yesterday, and my first task is to assure my dear sister of my welfare and increasing confidence in the success of my undertaking.`
+            },
+            {
+                id: '1984',
+                name: '1984',
+                author: '乔治·奥威尔',
+                era: '1949',
+                status: 'public',
+                desc: '"老大哥在看着你"——反乌托邦经典，极权统治预言。',
+                tags: ['反乌托邦', '政治', '12集'],
+                influence: 5,
+                audience: '10亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg AU', url: 'https://gutenberg.net.au/ebooks01/0100021.txt' }
+                ],
+                sourceExcerpt: `PART ONE
+
+1
+
+It was a bright cold day in April, and the clocks were striking thirteen. Winston Smith, his chin nuzzled into his breast in an effort to escape the vile wind, slipped quickly through the glass doors of Victory Mansions, though not quickly enough to prevent a swirl of gritty dust from entering along with him.`
+            }
+        ],
+        fr: [
+            {
+                id: 'miserables',
+                name: '悲惨世界',
+                author: '维克多·雨果',
+                era: '1862',
+                status: 'public',
+                desc: '冉阿让的救赎之路，法国大革命时代背景下的史诗。',
+                tags: ['史诗', '救赎', '50集'],
+                influence: 5,
+                audience: '10亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg', url: 'https://www.gutenberg.org/ebooks/135' }
+                ],
+                sourceExcerpt: `CHAPTER I. M. MYRIEL
+
+In 1815, M. Charles-François-Bienvenu Myriel was Bishop of D—— He was an old man of about seventy-five years of age; he had occupied the see of D—— since 1806.
+
+Although this detail has no connection whatever with the real substance of what we are about to relate, it will not be superfluous, if merely for the sake of exactness in all points, to mention here the various rumors and remarks which had been in circulation about him from the very moment when he arrived in the diocese.`
+            },
+            {
+                id: 'monte',
+                name: '基督山伯爵',
+                author: '大仲马',
+                era: '1844',
+                status: 'public',
+                desc: '冤狱14年后的复仇，"等待与希望"的经典。',
+                tags: ['复仇', '冒险', '50集'],
+                influence: 5,
+                audience: '8亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg', url: 'https://www.gutenberg.org/ebooks/1184' }
+                ],
+                sourceExcerpt: `Chapter 1. Marseilles—The Arrival.
+
+On the 24th of February, 1815, the look-out at Notre-Dame de la Garde signalled the three-master, the Pharaon from Smyrna, Trieste, and Naples.
+
+As usual, a pilot put off immediately, and rounding the Château d'If, got on board the vessel between Cape Morgiou and Rion island.`
+            },
+            {
+                id: 'prince',
+                name: '小王子',
+                author: '圣埃克苏佩里',
+                era: '1943',
+                status: 'public',
+                desc: '"重要的东西，眼睛是看不见的"——哲理童话。',
+                tags: ['童话', '哲理', '电影/6集'],
+                influence: 5,
+                audience: '5亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: '法语原文', url: 'https://www.ebooksgratuits.com/html/st_exupery_le_petit_prince.html' }
+                ],
+                sourceExcerpt: `献给莱昂·维尔特
+
+请孩子们原谅我把这本书献给一个大人。我有一个很重要的理由：这个大人是我在世界上最好的朋友。我还有一个理由：这个大人什么都能理解，甚至是给孩子们写的书。我的第三个理由是：这个大人住在法国，他又饿又冷，非常需要得到安慰。`
+            }
+        ],
+        other: [
+            {
+                id: '1001nights',
+                name: '一千零一夜',
+                author: '阿拉伯民间',
+                era: '古代',
+                status: 'public',
+                desc: '山鲁佐德讲述1001个故事，阿里巴巴、阿拉丁等经典。',
+                tags: ['奇幻', '冒险', '单元剧100集'],
+                influence: 5,
+                audience: '20亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg', url: 'https://www.gutenberg.org/ebooks/2080' }
+                ],
+                sourceExcerpt: `THE STORY OF KING SHAHRYAR AND HIS BROTHER.
+
+In the chronicles of the ancient dynasty of the Sassanidae, who reigned for about four hundred years, from Persia to the borders of China, beyond the great river Ganges itself, we read the praises of one of the kings of this race, who was said to be the best monarch of his time.`
+            },
+            {
+                id: 'erta',
+                name: '神曲',
+                author: '但丁',
+                era: '1320',
+                status: 'public',
+                desc: '地狱、炼狱、天堂的游历，西方最伟大的诗歌。',
+                tags: ['奇幻', '史诗', '30集'],
+                influence: 5,
+                audience: '5亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: 'Project Gutenberg', url: 'https://www.gutenberg.org/ebooks/1004' }
+                ],
+                sourceExcerpt: `Inferno: Canto I
+
+Midway upon the journey of our life
+I found myself within a forest dark,
+For the straightforward pathway had been lost.
+
+Ah me! how hard a thing it is to say
+What was this forest savage, rough, and stern,
+Which in the very thought renews the fear.`
+            },
+            {
+                id: 'genji',
+                name: '源氏物语',
+                author: '紫式部',
+                era: '约1010',
+                status: 'public',
+                desc: '光源氏的宫廷恋爱，世界最早的长篇小说。',
+                tags: ['宫廷爱情', '50集'],
+                influence: 5,
+                audience: '3亿',
+                hasSource: true,
+                sourceLinks: [
+                    { name: '日本语原文', url: 'https://www.aozora.gr.jp/cards/000052/card362.html' }
+                ],
+                sourceExcerpt: `桐壺
+
+いづれの御時にか、女御、更衣あまたさぶらひたまひけるなかに、いとやむごとなき際にはあらぬが、すぐれて時めきたまふありけり。
+
+（哪一朝天皇在位时，后宫女御、更衣甚多，其中有一位并非出身最高贵的更衣，却格外受到宠幸。）`
+            }
+        ]
+    };
+    
+    // 文化母体IP（含故事大纲）
+    const cultureIPs = {
+        cn: [
+            {
+                id: 'baishe',
+                name: '白蛇传',
+                type: '民间传说',
+                desc: '白素贞与许仙的人妖恋，法海镇压雷峰塔。千年等待，爱情悲剧。',
+                tags: ['爱情奇幻', '妖怪', '30集'],
+                influence: 5,
+                audience: '10亿',
+                outline: {
+                    logline: '一条修炼千年的白蛇化为人形，与凡人许仙相爱，却被僧人法海以"妖孽害人"为由横加阻挠，最终白蛇被镇压于雷峰塔下，二十年后其子状元及第，塔倒母出。',
+                    theme: '爱情超越物种界限，世俗偏见与真爱的对抗',
+                    target: '18-45岁女性为主，东亚文化圈',
+                    episodes: [
+                        { num: 1, title: '千年修行', desc: '白蛇青蛇峨眉山修行千年，白蛇思凡下山' },
+                        { num: 2, title: '断桥相遇', desc: '西湖断桥，白素贞与许仙雨中邂逅' },
+                        { num: 3, title: '同船共渡', desc: '借伞定情，许仙被白素贞的美貌与温柔打动' },
+                        { num: 4, title: '成亲开店', desc: '二人成婚，开设保和堂药铺' },
+                        { num: 5, title: '端午惊变', desc: '端午节白蛇饮雄黄酒现原形，许仙惊吓而死' },
+                        { num: 6, title: '盗仙草', desc: '白蛇上昆仑山盗取灵芝仙草救活许仙' },
+                        { num: 7, title: '法海现身', desc: '金山寺法海以妖孽害人为由，要度化许仙' },
+                        { num: 8, title: '水漫金山', desc: '白蛇率水族兵将水漫金山，为救许仙' },
+                        { num: 9, title: '镇压雷峰', desc: '白蛇因动用法力伤及无辜，被镇雷峰塔下' },
+                        { num: 10, title: '塔倒重逢', desc: '二十年后许士林高中状元，祭塔救母' }
+                    ],
+                    characters: [
+                        { name: '白素贞', role: '女主', desc: '千年白蛇精，温柔善良，为爱奋不顾身' },
+                        { name: '许仙', role: '男主', desc: '杭州书生，善良懦弱，对妻子深爱但意志不坚' },
+                        { name: '小青', role: '女配', desc: '青蛇精，白素贞的侍女与姐妹，泼辣忠心' },
+                        { name: '法海', role: '反派', desc: '金山寺高僧，执念于降妖除魔，不懂情爱' }
+                    ],
+                    usp: '中国最知名的爱情神话，已有数十版影视改编，IP认知度极高'
+                }
+            },
+            {
+                id: 'nezha',
+                name: '哪吒闹海',
+                type: '神话传说',
+                desc: '"割肉还母，剔骨还父"——叛逆少年与父权的对抗。',
+                tags: ['热血成长', '神话', '电影/24集'],
+                influence: 5,
+                audience: '10亿',
+                outline: {
+                    logline: '陈塘关总兵之子哪吒天生神力，却因打死龙王三太子而惹祸，为不连累父母，自刎而死。后被太乙真人以莲花重塑肉身，成为抵抗纣王的神将。',
+                    theme: '反抗权威、自我牺牲与重生、父子和解',
+                    target: '12-35岁男性为主，全球华人',
+                    episodes: [
+                        { num: 1, title: '灵珠转世', desc: '太乙真人灵珠子投胎陈塘关，三年六个月怀胎' },
+                        { num: 2, title: '生而不凡', desc: '哪吒出生即能说话，太乙真人收为徒弟' },
+                        { num: 3, title: '东海戏水', desc: '哪吒东海洗澡，无意震动龙宫' },
+                        { num: 4, title: '打死敖丙', desc: '龙王三太子敖丙挑衅，被哪吒打死抽筋' },
+                        { num: 5, title: '龙王索命', desc: '四海龙王找上门来，要李靖交出哪吒' },
+                        { num: 6, title: '割肉还母', desc: '哪吒为不连累父母，剔骨还父、割肉还母' },
+                        { num: 7, title: '莲花重生', desc: '太乙真人以莲花为其重塑肉身' },
+                        { num: 8, title: '追杀李靖', desc: '重生后的哪吒欲报仇，被燃灯古佛阻止' },
+                        { num: 9, title: '父子和解', desc: '哪吒理解父亲苦衷，父子和解' },
+                        { num: 10, title: '伐纣先锋', desc: '哪吒成为武王伐纣的先锋大将' }
+                    ],
+                    characters: [
+                        { name: '哪吒', role: '主角', desc: '叛逆少年神，敢爱敢恨，不畏强权' },
+                        { name: '李靖', role: '父亲', desc: '陈塘关总兵，夹在儿子与龙王之间' },
+                        { name: '太乙真人', role: '师父', desc: '哪吒的师父，阐教十二金仙之一' },
+                        { name: '敖丙', role: '亦敌亦友', desc: '龙王三太子，在新版本中常被塑造为哪吒好友' }
+                    ],
+                    usp: '《哪吒之魔童降世》50亿票房证明了这个IP的商业价值'
+                }
+            },
+            {
+                id: 'wuzetian',
+                name: '武则天',
+                type: '历史人物',
+                desc: '中国唯一女皇帝，从才人到天后到皇帝。权谋与爱情的史诗。',
+                tags: ['宫斗', '女性史诗', '60集'],
+                influence: 5,
+                audience: '10亿',
+                outline: {
+                    logline: '一个14岁入宫的才人，历经太宗、高宗两朝，从尼姑到皇后到太后，最终以67岁高龄登基称帝，成为中国历史上唯一的女皇帝，统治天下15年。',
+                    theme: '女性权力、命运抗争、欲望与牺牲',
+                    target: '25-50岁女性观众，历史剧爱好者',
+                    episodes: [
+                        { num: '1-5', title: '入宫岁月', desc: '14岁入宫为太宗才人，却不得宠幸' },
+                        { num: '6-10', title: '感业寺', desc: '太宗驾崩后入寺为尼，与高宗旧情复燃' },
+                        { num: '11-20', title: '后宫争斗', desc: '重回宫廷，斗败王皇后、萧淑妃，成为皇后' },
+                        { num: '21-30', title: '二圣临朝', desc: '高宗体弱，武后开始参与朝政' },
+                        { num: '31-40', title: '太后摄政', desc: '高宗驾崩，武则天以太后身份把持朝政' },
+                        { num: '41-50', title: '改朝换代', desc: '废黜中宗、睿宗，自立为帝，改国号周' },
+                        { num: '51-55', title: '大周盛世', desc: '执政期间的政治成就与风波' },
+                        { num: '56-60', title: '还政李唐', desc: '病重传位，神龙政变，归葬乾陵' }
+                    ],
+                    characters: [
+                        { name: '武则天', role: '主角', desc: '从才人到女皇，心机深沉却也深爱高宗' },
+                        { name: '李治', role: '高宗', desc: '温柔多情却体弱多病的皇帝' },
+                        { name: '王皇后', role: '对手', desc: '出身名门却手段不及武则天' },
+                        { name: '狄仁杰', role: '重臣', desc: '武则天最信任的大臣' }
+                    ],
+                    usp: '永恒的女性权力故事，每隔几年都有新版本播出'
+                }
+            },
+            {
+                id: 'jigong',
+                name: '济公',
+                type: '宗教人物',
+                desc: '"酒肉穿肠过，佛祖心中留"——疯僧济世，惩恶扬善。',
+                tags: ['喜剧', '神话', '单元剧'],
+                influence: 5,
+                audience: '8亿',
+                outline: {
+                    logline: '南宋时期，灵隐寺有一疯僧，穿破衣、食酒肉，却神通广大，专门惩恶扬善、济困扶危，人称"济公活佛"。',
+                    theme: '真佛不在形式、善恶有报、幽默讽刺',
+                    target: '全年龄段，喜剧爱好者',
+                    episodes: [
+                        { num: 1, title: '疯僧出世', desc: '李修缘出家为僧，却不守清规' },
+                        { num: 2, title: '飞来峰', desc: '济公预言飞来峰，救下全村人' },
+                        { num: 3, title: '戏弄恶霸', desc: '用神通戏弄欺压百姓的恶霸' },
+                        { num: 4, title: '古井运木', desc: '从古井中运出建寺木材' },
+                        { num: 5, title: '救护孤寡', desc: '帮助孤寡老人对抗不孝子' }
+                    ],
+                    characters: [
+                        { name: '济公', role: '主角', desc: '疯癫和尚，实为罗汉转世' },
+                        { name: '道济的师父', role: '配角', desc: '灵隐寺方丈，包容济公' }
+                    ],
+                    usp: '最适合单元剧的IP，每集一个独立故事，老少咸宜'
+                }
+            },
+            {
+                id: 'jiuwei',
+                name: '九尾狐',
+                type: '妖怪传说',
+                desc: '千年狐妖，魅惑人心。苏妲己、狐仙等经典形象的原型。',
+                tags: ['爱情', '悬疑', '24集'],
+                influence: 4,
+                audience: '8亿',
+                outline: {
+                    logline: '一只修炼千年的九尾狐精，为渡情劫化为人形入世，却在与猎妖人的追逐中，渐生情愫。是妖与人的禁忌之恋，还是千年阴谋的开始？',
+                    theme: '物种偏见、禁忌之恋、善恶边界',
+                    target: '18-35岁，女性为主',
+                    episodes: [
+                        { num: '1-4', title: '狐妖现世', desc: '千年九尾狐为渡劫化为人形，进入人间' },
+                        { num: '5-8', title: '猎人与猎物', desc: '与世家猎妖人相遇，互相试探' },
+                        { num: '9-12', title: '暗生情愫', desc: '在共同历险中产生感情' },
+                        { num: '13-16', title: '身份暴露', desc: '九尾狐身份被发现，猎人陷入两难' },
+                        { num: '17-20', title: '千年阴谋', desc: '发现背后更大的阴谋' },
+                        { num: '21-24', title: '共同迎敌', desc: '人妖携手对抗终极反派' }
+                    ],
+                    characters: [
+                        { name: '苏瑾（狐名：九娘）', role: '女主', desc: '千年九尾狐，美艳聪慧，内心孤独' },
+                        { name: '沈云深', role: '男主', desc: '猎妖世家传人，正义却固执' },
+                        { name: '青鸾', role: '女配', desc: '小狐狸，女主的侍从，活泼可爱' }
+                    ],
+                    usp: '东亚共有的妖怪IP，《山河令》《苍兰诀》证明了仙侠市场潜力'
+                }
+            }
+        ],
+        sg: [
+            {
+                id: 'changi',
+                name: '樟宜医院鬼故事',
+                type: '都市传说',
+                desc: '废弃的旧樟宜医院，闹鬼传说众多。新加坡最著名的灵异地点。',
+                tags: ['恐怖', '灵异', '单元剧6集'],
+                influence: 4,
+                audience: '500万+',
+                outline: {
+                    logline: '一群探险YouTuber决定在废弃的樟宜医院拍摄通宵视频，却发现这里的传说全是真的。随着夜深，他们必须面对医院黑暗历史中的亡魂。',
+                    theme: '历史创伤、灵异惊悚、青年冒险',
+                    target: '16-30岁新加坡年轻人，恐怖片爱好者',
+                    episodes: [
+                        { num: 1, title: '废墟探险', desc: '四名YouTuber进入废弃医院拍摄视频' },
+                        { num: 2, title: '旧病历', desc: '发现日据时期的病历，揭示医院黑暗历史' },
+                        { num: 3, title: '第一次遭遇', desc: '团队成员开始看到异象' },
+                        { num: 4, title: '困在医院', desc: '发现无法离开医院，通讯中断' },
+                        { num: 5, title: '真相大白', desc: '了解到日据时期在此发生的屠杀' },
+                        { num: 6, title: '逃出生天', desc: '帮助亡灵安息后，才得以逃脱' }
+                    ],
+                    characters: [
+                        { name: 'Marcus', role: '主角', desc: '探险频道主播，理性怀疑论者' },
+                        { name: 'Sarah', role: '女主', desc: '能感知灵体的女孩' },
+                        { name: '护士亡灵', role: '鬼魂', desc: '日据时期被杀害的本地护士' }
+                    ],
+                    usp: '新加坡最具本土特色的恐怖IP，可结合真实历史'
+                }
+            },
+            {
+                id: 'redhill',
+                name: '红山传说',
+                type: '民间传说',
+                desc: '剑鱼袭击村庄，少年用香蕉树茎挡住鱼口。红山因此得名。',
+                tags: ['奇幻', '少年英雄', '电影'],
+                influence: 3,
+                audience: '300万',
+                outline: {
+                    logline: '古代新加坡，一群巨型剑鱼袭击海边村庄，无数渔民死伤。当大人们束手无策时，一个聪明的少年想出用香蕉树茎做屏障的妙计，却因功高震主而被苏丹所杀，血染红了整座山。',
+                    theme: '智慧少年、嫉妒与陷害、英雄悲剧',
+                    target: '家庭观众，新加坡本地市场',
+                    episodes: [
+                        { num: 1, title: '剑鱼来袭', desc: '巨型剑鱼群开始袭击海边村庄' },
+                        { num: 2, title: '束手无策', desc: '苏丹的军队无法阻止剑鱼' },
+                        { num: 3, title: '少年献计', desc: '少年Hang Nadim提出香蕉茎屏障' },
+                        { num: 4, title: '大获成功', desc: '计策成功，少年成为英雄' },
+                        { num: 5, title: '功高震主', desc: '苏丹嫉妒少年声望，听信谗言' },
+                        { num: 6, title: '血染红山', desc: '少年被杀，血流成河，山变成红色' }
+                    ],
+                    characters: [
+                        { name: 'Hang Nadim', role: '主角', desc: '聪明勇敢的渔村少年' },
+                        { name: '苏丹', role: '反派', desc: '嫉妒心重的统治者' }
+                    ],
+                    usp: '新加坡建国神话级IP，最适合动画电影开发'
+                }
+            },
+            {
+                id: 'tekong',
+                name: '德光岛鬼故事',
+                type: '都市传说',
+                desc: '新加坡服役男生的必听故事，军训岛上的各种灵异事件。',
+                tags: ['恐怖', '军旅', '6集'],
+                influence: 3,
+                audience: '300万',
+                outline: {
+                    logline: '每个新加坡男性都要经历的军训岛上，流传着无数灵异传说：跑步时多出来的人影、厕所里的哭声、半夜响起的立正口令...这是关于一群新兵与岛上亡灵的故事。',
+                    theme: '成长、恐惧、兄弟情、NS文化',
+                    target: '16-30岁新加坡男性',
+                    episodes: [
+                        { num: 1, title: '上岛', desc: '一批新兵登上德光岛，听说各种传言' },
+                        { num: 2, title: '夜跑惊魂', desc: '夜间体能训练时发生异事' },
+                        { num: 3, title: '多出来的床', desc: '兵舍里总是多出一张空床被铺好' },
+                        { num: 4, title: '老兵的警告', desc: '老兵讲述岛上的历史和禁忌' },
+                        { num: 5, title: '对话亡灵', desc: '发现鬼魂是早年训练意外牺牲的士兵' },
+                        { num: 6, title: '告别仪式', desc: '帮助亡灵完成未竟心愿' }
+                    ],
+                    characters: [
+                        { name: '林伟杰', role: '主角', desc: '能看到灵体的新兵' },
+                        { name: '教官陈', role: '配角', desc: '严厉但关心士兵的教官' },
+                        { name: '1970年代的士兵亡灵', role: '鬼魂', desc: '训练意外中牺牲的年轻人' }
+                    ],
+                    usp: '每个新加坡男性都有NS经历，极具本土共鸣'
+                }
+            }
+        ],
+        gr: [
+            {
+                id: 'odysseus',
+                name: '奥德修斯',
+                type: '神话',
+                desc: '特洛伊战争后十年漂泊，与独眼巨人、海妖搏斗终回故乡。',
+                tags: ['冒险', '史诗', '30集'],
+                influence: 5,
+                audience: '10亿',
+                outline: {
+                    logline: '特洛伊战争的英雄奥德修斯，战后踏上归家之路，却因得罪海神波塞冬而被迫在海上漂泊十年。他将面对独眼巨人、海妖塞壬、女巫喀耳刻...最终回到家乡伊萨卡，与等待他二十年的妻子团聚。',
+                    theme: '归家、忠诚、智慧战胜力量',
+                    target: '全球观众，冒险史诗爱好者',
+                    episodes: [
+                        { num: '1-3', title: '特洛伊战后', desc: '奥德修斯与同伴们启程回家' },
+                        { num: '4-6', title: '独眼巨人', desc: '被困独眼巨人洞穴，设计逃脱却得罪波塞冬' },
+                        { num: '7-9', title: '风神之岛', desc: '得到风神赠予的风袋，却功亏一篑' },
+                        { num: '10-12', title: '女巫喀耳刻', desc: '同伴被变成猪，奥德修斯征服女巫' },
+                        { num: '13-15', title: '冥界之旅', desc: '下冥界寻求先知预言' },
+                        { num: '16-18', title: '塞壬之歌', desc: '用蜡封住同伴耳朵，自己绑在桅杆上听塞壬' },
+                        { num: '19-21', title: '卡律布迪斯与斯库拉', desc: '两难选择，牺牲部分同伴' },
+                        { num: '22-24', title: '卡吕普索', desc: '被女神困在岛上七年' },
+                        { num: '25-27', title: '回到伊萨卡', desc: '化装成乞丐回到家乡' },
+                        { num: '28-30', title: '复仇与团聚', desc: '杀死所有求婚者，与妻子团聚' }
+                    ],
+                    characters: [
+                        { name: '奥德修斯', role: '主角', desc: '伊萨卡国王，足智多谋的英雄' },
+                        { name: '佩涅洛佩', role: '妻子', desc: '等待丈夫二十年的忠贞妻子' },
+                        { name: '忒勒马科斯', role: '儿子', desc: '出生时父亲就离开的年轻人' },
+                        { name: '雅典娜', role: '保护神', desc: '一直帮助奥德修斯的女神' }
+                    ],
+                    usp: '荷马史诗，西方文学源头之一，永恒的冒险故事'
+                }
+            },
+            {
+                id: 'medusa',
+                name: '美杜莎',
+                type: '神话',
+                desc: '蛇发女妖，看她一眼就会石化。从受害者到怪物的悲剧。',
+                tags: ['反派视角', '悲剧', '电影'],
+                influence: 4,
+                audience: '8亿',
+                outline: {
+                    logline: '美杜莎曾是雅典娜神殿最美的女祭司，却被海神波塞冬侵犯。雅典娜不惩罚波塞冬，反而将美杜莎变成蛇发怪物。千年后，她的故事需要被重新讲述——从怪物的视角。',
+                    theme: '女性受害者、神的不公、怪物的人性',
+                    target: '18-40岁，女性观众，女权主义视角',
+                    episodes: [
+                        { num: 1, title: '神殿祭司', desc: '年轻美丽的美杜莎在雅典娜神殿侍奉' },
+                        { num: 2, title: '悲剧之夜', desc: '波塞冬在神殿内侵犯了她' },
+                        { num: 3, title: '神的惩罚', desc: '雅典娜将美杜莎变成怪物作为"惩罚"' },
+                        { num: 4, title: '流放岁月', desc: '美杜莎独居荒岛，变得愤怒而绝望' },
+                        { num: 5, title: '珀尔修斯', desc: '英雄珀尔修斯受命来取她的头颅' },
+                        { num: 6, title: '最后对话', desc: '美杜莎与珀尔修斯的最终对峙' }
+                    ],
+                    characters: [
+                        { name: '美杜莎', role: '主角', desc: '从受害者变成怪物的悲剧女性' },
+                        { name: '雅典娜', role: '反派', desc: '惩罚受害者而非加害者的女神' },
+                        { name: '珀尔修斯', role: '执行者', desc: '被利用的英雄' }
+                    ],
+                    usp: '反转经典神话视角，呼应当代女权议题'
+                }
+            }
+        ],
+        no: [
+            {
+                id: 'ragnarok',
+                name: '诸神黄昏',
+                type: '神话',
+                desc: 'Ragnarök——众神与巨人的最终决战，世界毁灭与重生。',
+                tags: ['灾难史诗', '神话', '电影/12集'],
+                influence: 5,
+                audience: '10亿',
+                outline: {
+                    logline: '预言中的诸神黄昏终于到来：洛基挣脱束缚，率领死亡军团与冰霜巨人向阿斯加德进军。奥丁、托尔、弗雷等众神将在这场末日之战中壮烈牺牲，世界将毁灭，然后重生。',
+                    theme: '命运不可逆、英雄壮烈、毁灭与新生',
+                    target: '全球观众，史诗动作片爱好者',
+                    episodes: [
+                        { num: 1, title: '预言之始', desc: '先知预言诸神黄昏即将来临' },
+                        { num: 2, title: '芬里尔挣脱', desc: '被束缚的巨狼芬里尔挣脱锁链' },
+                        { num: 3, title: '洛基归来', desc: '洛基逃离毒蛇下的惩罚' },
+                        { num: 4, title: '冰霜军团', desc: '洛基集结冰霜巨人、火焰巨人' },
+                        { num: 5, title: '英灵殿集结', desc: '奥丁召唤英灵殿的亡灵战士' },
+                        { num: 6, title: '彩虹桥崩塌', desc: '火焰巨人苏尔特踏碎彩虹桥' },
+                        { num: 7, title: '托尔vs尘世巨蟒', desc: '托尔与尘世巨蟒的宿命对决' },
+                        { num: 8, title: '奥丁vs芬里尔', desc: '众神之王被巨狼吞噬' },
+                        { num: 9, title: '弗雷vs苏尔特', desc: '光明之神与火焰巨人的战斗' },
+                        { num: 10, title: '世界焚毁', desc: '苏尔特的火焰焚烧九界' },
+                        { num: 11, title: '沉入深海', desc: '燃烧的世界沉入大海' },
+                        { num: 12, title: '新世界诞生', desc: '幸存的神明建立新世界' }
+                    ],
+                    characters: [
+                        { name: '奥丁', role: '众神之王', desc: '独眼智慧之神，明知必死仍战' },
+                        { name: '托尔', role: '雷神', desc: '与尘世巨蟒同归于尽' },
+                        { name: '洛基', role: '反派', desc: '诡计之神，率军攻打阿斯加德' },
+                        { name: '芬里尔', role: '巨狼', desc: '吞噬奥丁的可怕巨兽' }
+                    ],
+                    usp: '漫威已证明北欧神话的全球商业价值'
+                }
+            },
+            {
+                id: 'loki',
+                name: '洛基',
+                type: '神话',
+                desc: '诡计之神，变形大师。亦正亦邪，最复杂的北欧神灵。',
+                tags: ['反英雄', '喜剧', '24集'],
+                influence: 5,
+                audience: '8亿',
+                outline: {
+                    logline: '洛基，巨人之子却被奥丁收养，他在阿斯加德总是格格不入。他的恶作剧从无伤大雅到越来越危险，最终导致光明之神巴德尔之死。这是一个被误解的局外人如何变成终极反派的故事。',
+                    theme: '身份认同、局外人心理、善恶转变',
+                    target: '18-40岁，反英雄爱好者',
+                    episodes: [
+                        { num: '1-4', title: '巨人之子', desc: '洛基的出生和被奥丁收养' },
+                        { num: '5-8', title: '恶作剧之神', desc: '在阿斯加德的各种恶作剧' },
+                        { num: '9-12', title: '永远的局外人', desc: '始终不被真正接纳的痛苦' },
+                        { num: '13-16', title: '西芙的金发', desc: '剪掉托尔妻子的头发，被迫补偿' },
+                        { num: '17-20', title: '巴德尔之死', desc: '设计杀死光明之神' },
+                        { num: '21-24', title: '被缚与逃脱', desc: '被惩罚、逃脱、走向黑暗' }
+                    ],
+                    characters: [
+                        { name: '洛基', role: '主角', desc: '复杂矛盾的诡计之神' },
+                        { name: '奥丁', role: '养父', desc: '对洛基又爱又防备的众神之王' },
+                        { name: '托尔', role: '兄弟', desc: '与洛基亦敌亦友的雷神' }
+                    ],
+                    usp: '漫威洛基系列证明了这个角色的超高人气'
+                }
+            }
+        ],
+        jp: [
+            {
+                id: 'seimei',
+                name: '安倍晴明',
+                type: '历史+神话',
+                desc: '日本最著名的阴阳师，驱鬼除魔，半人半妖的传说。',
+                tags: ['奇幻', '悬疑', '24集'],
+                influence: 5,
+                audience: '5亿',
+                outline: {
+                    logline: '平安时代，传说半人半狐的阴阳师安倍晴明，以其超凡的术法守护京都。他与武士源博雅成为挚友，一同面对各种妖魔作祟。但晴明的身世之谜，也将揭开平安京暗流涌动的阴谋。',
+                    theme: '半妖身份、友情羁绊、平安时代美学',
+                    target: '18-40岁，日本文化爱好者',
+                    episodes: [
+                        { num: '1-4', title: '初入京都', desc: '年轻的晴明来到京都，展现阴阳术' },
+                        { num: '5-8', title: '与博雅相遇', desc: '结识武士源博雅，成为挚友' },
+                        { num: '9-12', title: '各类怪谈', desc: '处理各种妖魔作祟事件' },
+                        { num: '13-16', title: '身世之谜', desc: '晴明的狐妖母亲身份曝光' },
+                        { num: '17-20', title: '宫廷阴谋', desc: '卷入皇室权力斗争' },
+                        { num: '21-24', title: '终极之战', desc: '对抗企图颠覆平安京的大妖' }
+                    ],
+                    characters: [
+                        { name: '安倍晴明', role: '主角', desc: '半人半狐的天才阴阳师' },
+                        { name: '源博雅', role: '挚友', desc: '正直的武士，晴明唯一的朋友' },
+                        { name: '蜜虫', role: '式神', desc: '晴明的式神助手' }
+                    ],
+                    usp: '《阴阳师》游戏10亿下载量证明了IP价值'
+                }
+            },
+            {
+                id: 'kaguya',
+                name: '辉夜姬',
+                type: '民间传说',
+                desc: '从竹中诞生的月宫公主，五位贵族求婚，最终返回月球。',
+                tags: ['爱情', '奇幻', '电影'],
+                influence: 5,
+                audience: '3亿',
+                outline: {
+                    logline: '一位伐竹老人在发光的竹子中发现了一个婴儿，取名"辉夜姬"。她以惊人的速度长大，美貌倾城。五位贵族向她求婚，她给每人设下不可能的任务。最终，月亮派人来接她回去，留下养父母与求婚者的悲伤。',
+                    theme: '月之孤独、人间情感、离别之美',
+                    target: '全年龄段，艺术电影爱好者',
+                    episodes: [
+                        { num: 1, title: '竹中诞生', desc: '老翁在竹林中发现婴儿' },
+                        { num: 2, title: '神速成长', desc: '辉夜姬三个月长大成人' },
+                        { num: 3, title: '名动京都', desc: '她的美貌传遍全国' },
+                        { num: 4, title: '五人求婚', desc: '五位贵族同时求婚' },
+                        { num: 5, title: '五道难题', desc: '她给每人一个不可能的任务' },
+                        { num: 6, title: '全部失败', desc: '求婚者们要么失败要么欺骗' },
+                        { num: 7, title: '帝王求爱', desc: '连天皇也被她吸引' },
+                        { num: 8, title: '月之使者', desc: '来自月球的使者出现' },
+                        { num: 9, title: '永别人间', desc: '辉夜姬返回月球，留下不死药' },
+                        { num: 10, title: '富士山之烟', desc: '天皇焚烧不死药，烟升富士山' }
+                    ],
+                    characters: [
+                        { name: '辉夜姬', role: '主角', desc: '月亮公主，美丽而孤独' },
+                        { name: '竹取翁', role: '养父', desc: '善良的伐竹老人' },
+                        { name: '五位求婚者', role: '配角', desc: '各有缺陷的贵族' }
+                    ],
+                    usp: '吉卜力《辉夜姬物语》证明了这个IP的艺术价值'
+                }
+            },
+            {
+                id: 'musashi',
+                name: '宫本武藏',
+                type: '历史人物',
+                desc: '"剑圣"——60余战无败绩，二刀流创始人，《五轮书》作者。',
+                tags: ['武侠', '传记', '40集'],
+                influence: 5,
+                audience: '5亿',
+                outline: {
+                    logline: '战国末期，一个叫新免武藏的少年在关原之战中侥幸逃生。此后他踏上修行之路，与各地剑豪决斗，最终在严流岛击败佐佐木小次郎，成为日本历史上最传奇的剑客。',
+                    theme: '武道修行、求道精神、剑与禅',
+                    target: '18-50岁男性，武侠/历史剧爱好者',
+                    episodes: [
+                        { num: '1-5', title: '关原生还', desc: '关原之战后，少年武藏开始流浪' },
+                        { num: '6-10', title: '吉冈道场', desc: '挑战京都名门吉冈家' },
+                        { num: '11-15', title: '二刀流悟道', desc: '开创二刀流剑法' },
+                        { num: '16-20', title: '�的与�的', desc: '与佐佐木小次郎的纠葛' },
+                        { num: '21-30', title: '诸国修行', desc: '周游各国，与各路高手对决' },
+                        { num: '31-35', title: '严流岛', desc: '与佐佐木小次郎的宿命对决' },
+                        { num: '36-40', title: '晚年悟道', desc: '放下剑，写下《五轮书》' }
+                    ],
+                    characters: [
+                        { name: '宫本武藏', role: '主角', desc: '从野蛮少年到剑圣的成长' },
+                        { name: '佐佐木小次郎', role: '宿敌', desc: '燕返剑法的天才剑客' },
+                        { name: '又八', role: '配角', desc: '武藏的儿时伙伴，形成对比' },
+                        { name: '阿通', role: '女主', desc: '一直等待武藏的女子' }
+                    ],
+                    usp: '井上雄彦《浪客行》漫画的成功证明了IP潜力'
+                }
+            }
+        ]
+    };
+    
+    // ===== 渲染函数 =====
+    
+    function renderLiteratureCard(ip) {
+        const statusClass = ip.status === 'public' ? 'public' : 'soon';
+        const statusText = ip.status === 'public' ? '✅ 公版' : `⚠️ ${ip.statusText || '即将公版'}`;
         
-        // 搜索功能
-        document.getElementById('searchLit')?.addEventListener('input', (e) => {
-            filterCards('literature', e.target.value);
-        });
+        return `
+            <div class="ip-card" data-id="${ip.id}" data-type="literature">
+                <div class="ip-card-header">
+                    <span class="ip-name">${ip.name}</span>
+                    <span class="ip-status ${statusClass}">${statusText}</span>
+                </div>
+                <div class="ip-author">${ip.author} · ${ip.era}</div>
+                <div class="ip-desc">${ip.desc}</div>
+                <div class="ip-tags">
+                    ${ip.tags.map(tag => `<span class="ip-tag">${tag}</span>`).join('')}
+                </div>
+                <div class="ip-meta">
+                    <span class="ip-influence">${'⭐'.repeat(ip.influence)}</span>
+                    <span>潜在观众 ${ip.audience}</span>
+                </div>
+                <div class="ip-actions">
+                    <button class="ip-btn secondary" onclick="openModal('${ip.id}', 'literature')">📖 查看原文</button>
+                    <button class="ip-btn primary" onclick="importToStudio('${ip.id}', 'literature')">🎬 导入制作</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderCultureCard(ip) {
+        return `
+            <div class="ip-card culture-card" data-id="${ip.id}" data-type="culture">
+                <div class="ip-card-header">
+                    <span class="ip-name">${ip.name}</span>
+                    <span class="ip-status public">🎭 ${ip.type}</span>
+                </div>
+                <div class="ip-author">${ip.type}</div>
+                <div class="ip-desc">${ip.desc}</div>
+                <div class="ip-tags">
+                    ${ip.tags.map(tag => `<span class="ip-tag">${tag}</span>`).join('')}
+                </div>
+                <div class="ip-meta">
+                    <span class="ip-influence">${'⭐'.repeat(ip.influence)}</span>
+                    <span>潜在观众 ${ip.audience}</span>
+                </div>
+                <div class="ip-actions">
+                    <button class="ip-btn secondary" onclick="openModal('${ip.id}', 'culture')">📋 查看大纲</button>
+                    <button class="ip-btn primary" onclick="importToStudio('${ip.id}', 'culture')">🎬 导入制作</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // ===== 初始化 =====
+    
+    function init() {
+        // 渲染公版文学
+        document.getElementById('cnLitGrid').innerHTML = literatureIPs.cn.map(renderLiteratureCard).join('');
+        document.getElementById('ukLitGrid').innerHTML = literatureIPs.uk.map(renderLiteratureCard).join('');
+        document.getElementById('frLitGrid').innerHTML = literatureIPs.fr.map(renderLiteratureCard).join('');
+        document.getElementById('otherLitGrid').innerHTML = literatureIPs.other.map(renderLiteratureCard).join('');
         
-        document.getElementById('searchCulture')?.addEventListener('input', (e) => {
-            filterCards('culture', e.target.value);
-        });
-        
-        function filterCards(tab, query) {
-            const cards = document.querySelectorAll(`#${tab} .ip-card`);
-            query = query.toLowerCase();
+        // 渲染文化母体
+        document.getElementById('cnCultureGrid').innerHTML = cultureIPs.cn.map(renderCultureCard).join('');
+        document.getElementById('sgCultureGrid').innerHTML = cultureIPs.sg.map(renderCultureCard).join('');
+        document.getElementById('grCultureGrid').innerHTML = cultureIPs.gr.map(renderCultureCard).join('');
+        document.getElementById('noCultureGrid').innerHTML = cultureIPs.no.map(renderCultureCard).join('');
+        document.getElementById('jpCultureGrid').innerHTML = cultureIPs.jp.map(renderCultureCard).join('');
+    }
+    
+    // ===== 弹窗功能 =====
+    
+    function openModal(id, type) {
+        let ip;
+        if (type === 'literature') {
+            ip = [...literatureIPs.cn, ...literatureIPs.uk, ...literatureIPs.fr, ...literatureIPs.other].find(i => i.id === id);
+            renderLiteratureModal(ip);
+        } else {
+            ip = [...cultureIPs.cn, ...cultureIPs.sg, ...cultureIPs.gr, ...cultureIPs.no, ...cultureIPs.jp].find(i => i.id === id);
+            renderCultureModal(ip);
+        }
+        document.getElementById('modalOverlay').classList.add('active');
+    }
+    
+    function renderLiteratureModal(ip) {
+        const modal = document.getElementById('modalContent');
+        modal.innerHTML = `
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">${ip.name}</div>
+                    <div class="modal-subtitle">${ip.author} · ${ip.era}</div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
             
-            cards.forEach(card => {
-                const name = card.querySelector('.ip-name').textContent.toLowerCase();
-                const author = card.querySelector('.ip-author').textContent.toLowerCase();
-                const desc = card.querySelector('.ip-desc').textContent.toLowerCase();
-                
-                if (name.includes(query) || author.includes(query) || desc.includes(query)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            <div class="modal-section">
+                <h4>📖 作品简介</h4>
+                <p>${ip.desc}</p>
+            </div>
+            
+            <div class="modal-section">
+                <h4>📚 原文阅读</h4>
+                <div class="source-links">
+                    ${ip.sourceLinks.map(link => `
+                        <a href="${link.url}" target="_blank" class="source-link">🔗 ${link.name}</a>
+                    `).join('')}
+                </div>
+                ${ip.sourceExcerpt ? `
+                    <div class="source-box">
+                        <pre>${ip.sourceExcerpt}</pre>
+                    </div>
+                ` : ''}
+            </div>
+            
+            <div class="modal-section">
+                <h4>⚖️ 版权状态</h4>
+                <p>${ip.status === 'public' ? 
+                    '✅ 已进入公有领域，可自由使用进行商业创作。' : 
+                    `⚠️ 预计${ip.statusText}进入公有领域。目前使用需注意版权。`
+                }</p>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn import" onclick="importToStudio('${ip.id}', 'literature')">
+                    🎬 一键导入制作系统
+                </button>
+            </div>
+        `;
+    }
+    
+    function renderCultureModal(ip) {
+        const modal = document.getElementById('modalContent');
+        const outline = ip.outline;
+        
+        modal.innerHTML = `
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">${ip.name}</div>
+                    <div class="modal-subtitle">${ip.type}</div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            
+            <div class="modal-section">
+                <h4>🎯 一句话梗概</h4>
+                <p>${outline.logline}</p>
+            </div>
+            
+            <div class="modal-section">
+                <h4>📋 商业化故事大纲</h4>
+                <div class="outline-box">
+                    <div class="outline-section">
+                        <h5>主题</h5>
+                        <p>${outline.theme}</p>
+                    </div>
+                    <div class="outline-section">
+                        <h5>目标观众</h5>
+                        <p>${outline.target}</p>
+                    </div>
+                    <div class="outline-section">
+                        <h5>分集大纲</h5>
+                        <ul style="margin-left: 20px; color: #bbb;">
+                            ${outline.episodes.map(ep => `
+                                <li><strong>第${ep.num}集「${ep.title}」</strong>：${ep.desc}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div class="outline-section">
+                        <h5>核心角色</h5>
+                        <ul style="margin-left: 20px; color: #bbb;">
+                            ${outline.characters.map(c => `
+                                <li><strong>${c.name}</strong>（${c.role}）：${c.desc}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div class="outline-section">
+                        <h5>独特卖点 (USP)</h5>
+                        <p>${outline.usp}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn import" onclick="importToStudio('${ip.id}', 'culture')">
+                    🎬 一键导入制作系统
+                </button>
+            </div>
+        `;
+    }
+    
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('active');
+    }
+    
+    // ===== 导入功能 =====
+    
+    function importToStudio(id, type) {
+        let ip, storyText;
+        
+        if (type === 'literature') {
+            ip = [...literatureIPs.cn, ...literatureIPs.uk, ...literatureIPs.fr, ...literatureIPs.other].find(i => i.id === id);
+            // 对于有原文的，组装故事文本
+            storyText = `【${ip.name}】\n作者：${ip.author}\n\n${ip.desc}\n\n--- 原文节选 ---\n\n${ip.sourceExcerpt || '（请从原文链接获取完整文本）'}`;
+        } else {
+            ip = [...cultureIPs.cn, ...cultureIPs.sg, ...cultureIPs.gr, ...cultureIPs.no, ...cultureIPs.jp].find(i => i.id === id);
+            // 对于文化母体，组装故事大纲
+            const outline = ip.outline;
+            storyText = `【${ip.name}】- 商业化剧本大纲
+
+一句话梗概：
+${outline.logline}
+
+主题：${outline.theme}
+目标观众：${outline.target}
+
+分集大纲：
+${outline.episodes.map(ep => `第${ep.num}集「${ep.title}」：${ep.desc}`).join('\n')}
+
+核心角色：
+${outline.characters.map(c => `${c.name}（${c.role}）：${c.desc}`).join('\n')}
+
+独特卖点：${outline.usp}`;
         }
         
-        // 地区筛选
-        document.getElementById('regionFilter')?.addEventListener('change', (e) => {
-            const region = e.target.value;
-            document.querySelectorAll('#literature .category-section').forEach(section => {
-                if (!region || section.dataset.region === region) {
-                    section.style.display = '';
-                } else {
-                    section.style.display = 'none';
-                }
-            });
-        });
+        // 存储到localStorage，供制作系统读取
+        localStorage.setItem('importedStory', JSON.stringify({
+            id: ip.id,
+            name: ip.name,
+            type: type,
+            text: storyText,
+            tags: ip.tags,
+            timestamp: Date.now()
+        }));
         
-        document.getElementById('cultureRegionFilter')?.addEventListener('change', (e) => {
-            const region = e.target.value;
-            document.querySelectorAll('#culture .category-section').forEach(section => {
-                if (!region || section.dataset.region === region) {
-                    section.style.display = '';
-                } else {
-                    section.style.display = 'none';
-                }
-            });
+        // 跳转到制作系统
+        window.location.href = 'index.html?import=true';
+    }
+    
+    // ===== 标签页切换 =====
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
         });
-        
-        // 返回顶部按钮显示/隐藏
-        window.addEventListener('scroll', () => {
-            const btn = document.querySelector('.back-to-top');
-            if (window.scrollY > 500) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
-            }
+    });
+    
+    // ===== 搜索和筛选 =====
+    
+    document.getElementById('searchLit')?.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('#literature .ip-card').forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(query) ? '' : 'none';
         });
-        
-        // 弹窗功能
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
+    });
+    
+    document.getElementById('searchCulture')?.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('#culture .ip-card').forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+    
+    document.getElementById('regionFilter')?.addEventListener('change', (e) => {
+        const region = e.target.value;
+        document.querySelectorAll('#literature .category-section').forEach(section => {
+            section.style.display = (!region || section.dataset.region === region) ? '' : 'none';
+        });
+    });
+    
+    document.getElementById('cultureRegionFilter')?.addEventListener('change', (e) => {
+        const region = e.target.value;
+        document.querySelectorAll('#culture .category-section').forEach(section => {
+            section.style.display = (!region || section.dataset.region === region) ? '' : 'none';
+        });
+    });
+    
+    // ===== 返回顶部 =====
+    
+    window.addEventListener('scroll', () => {
+        const btn = document.querySelector('.back-to-top');
+        btn.classList.toggle('visible', window.scrollY > 500);
+    });
+    
+    // ===== 点击弹窗外关闭 =====
+    
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('modalOverlay')) {
+            closeModal();
         }
-        
-        document.getElementById('modalOverlay').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('modalOverlay')) {
-                closeModal();
-            }
-        });
+    });
+    
+    // 初始化
+    init();
     </script>
 </body>
 </html>

@@ -44,7 +44,69 @@ const directorStyles = {
 // ===== 初始化 =====
 document.addEventListener('DOMContentLoaded', () => {
     updateDeptStatus();
+    
+    // 检查是否有从IP库导入的内容
+    checkImportedStory();
 });
+
+// ===== 检查导入内容 =====
+function checkImportedStory() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('import') === 'true') {
+        const importedData = localStorage.getItem('importedStory');
+        if (importedData) {
+            try {
+                const data = JSON.parse(importedData);
+                // 填充到输入框
+                const storyInput = document.getElementById('storyInput');
+                if (storyInput) {
+                    storyInput.value = data.text;
+                    updateCharCount();
+                    
+                    // 显示导入成功提示
+                    showImportNotification(data.name, data.type);
+                    
+                    // 清除localStorage中的数据
+                    localStorage.removeItem('importedStory');
+                    
+                    // 清除URL参数
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            } catch (e) {
+                console.error('导入数据解析失败:', e);
+            }
+        }
+    }
+}
+
+// ===== 显示导入成功提示 =====
+function showImportNotification(name, type) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(90deg, #ffd93d, #f5576c);
+        color: #000;
+        padding: 15px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        z-index: 9999;
+        animation: slideDown 0.5s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    `;
+    notification.innerHTML = `
+        ✅ 已成功导入「${name}」${type === 'literature' ? '原文' : '故事大纲'}！
+    `;
+    document.body.appendChild(notification);
+    
+    // 3秒后消失
+    setTimeout(() => {
+        notification.style.animation = 'slideUp 0.5s ease';
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
+}
 
 // ===== 更新字数统计 =====
 function updateCharCount() {
