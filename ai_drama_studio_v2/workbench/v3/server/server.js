@@ -6,10 +6,21 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
-// Claude client - 從環境變數讀取 API Key
+// Claude client - 支持 API Key 或 OAuth Token (Claude Max)
+// 優先級：CLAUDE_CODE_OAUTH_TOKEN > ANTHROPIC_API_KEY
+const apiKey = process.env.CLAUDE_CODE_OAUTH_TOKEN || process.env.ANTHROPIC_API_KEY;
+
+if (!apiKey) {
+  console.error('❌ 請設置 CLAUDE_CODE_OAUTH_TOKEN 或 ANTHROPIC_API_KEY 環境變量');
+  console.log('💡 Claude Max 用戶：運行 "claude /login" 獲取 OAuth Token');
+  console.log('💡 API 用戶：在 console.anthropic.com 獲取 API Key');
+}
+
 const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY
+  apiKey: apiKey
 });
+
+console.log(`🔐 認證方式: ${process.env.CLAUDE_CODE_OAUTH_TOKEN ? 'OAuth Token (Claude Max)' : 'API Key'}`);
 
 const MODEL = 'claude-sonnet-4-20250514';
 
