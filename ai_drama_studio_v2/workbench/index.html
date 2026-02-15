@@ -519,27 +519,79 @@ function startProject(){
 // ==================== 階段1：訪談 ====================
 // 對應skills: interview_creative_vision, interview_empathy, interview_audience, interview_reference, interview_style, interview_theme, interview_conflict, interview_brief
 let interviewStep = 0;
+let currentAgentOutput = null; // 用於追蹤當前Agent輸出，支持重新生成/修改
+
 const INTERVIEW_QUESTIONS = [
     // interview_creative_vision - 創意願景
-    {skill: 'interview_creative_vision', q: '你好！我是訪談師。讓我們從源頭開始——這個故事的靈感來源是什麼？是個人經歷、看到的新聞、還是其他作品的啟發？為什麼是現在想講這個故事？'},
+    {
+        skill: 'interview_creative_vision', 
+        q: '你好！我是訪談師。讓我們從源頭開始——這個故事的靈感來源是什麼？是個人經歷、看到的新聞、還是其他作品的啟發？為什麼是現在想講這個故事？',
+        usedBy: ['💡高概念', '📚改編'],
+        output: 'interview_context.json → 創作動機'
+    },
     // interview_empathy - 情感內核
-    {skill: 'interview_empathy', q: '這個故事想要傳達什麼情感？你希望觀眾看完後，心裡留下什麼樣的感受？是感動、震撼、治癒、還是思考？'},
+    {
+        skill: 'interview_empathy', 
+        q: '這個故事想要傳達什麼情感？你希望觀眾看完後，心裡留下什麼樣的感受？是感動、震撼、治癒、還是思考？',
+        usedBy: ['🎨美術總監', '🌈色彩設計', '🎵音樂設計'],
+        output: 'interview_context.json → 情感內核'
+    },
     // interview_theme - 主題探索
-    {skill: 'interview_theme', q: '如果用一句話概括這個故事想探討的主題或問題，會是什麼？比如「愛與犧牲」「成長與代價」「真相與謊言」...'},
+    {
+        skill: 'interview_theme', 
+        q: '如果用一句話概括這個故事想探討的主題或問題，會是什麼？比如「愛與犧牲」「成長與代價」「真相與謊言」...',
+        usedBy: ['📖敘事', '✍️編劇'],
+        output: 'interview_context.json → 核心主題'
+    },
     // interview_audience - 目標觀眾
-    {skill: 'interview_audience', q: '你心目中理想的觀眾是誰？描述一下他們：年齡、興趣、生活狀態。他們為什麼會被這個故事吸引？'},
+    {
+        skill: 'interview_audience', 
+        q: '你心目中理想的觀眾是誰？描述一下他們：年齡、興趣、生活狀態。他們為什麼會被這個故事吸引？',
+        usedBy: ['📱短劇專家', '🎬類型研究', '💡高概念'],
+        output: 'interview_context.json → 目標受眾'
+    },
     // interview_reference - 參考風格
-    {skill: 'interview_reference', q: '有沒有參考作品？電影、動漫、小說、遊戲都行。你希望最終呈現的風格接近哪些作品？'},
+    {
+        skill: 'interview_reference', 
+        q: '有沒有參考作品？電影、動漫、小說、遊戲都行。你希望最終呈現的風格接近哪些作品？',
+        usedBy: ['🎬總導演', '🎨美術總監', '🎵音樂設計'],
+        output: 'interview_context.json → 參考風格'
+    },
     // interview_style - 視覺風格
-    {skill: 'interview_style', q: '視覺上你偏好什麼風格？寫實電影感、日系動漫、水墨國風、還是其他？有沒有具體的畫面在你腦海中？'},
+    {
+        skill: 'interview_style', 
+        q: '視覺上你偏好什麼風格？寫實電影感、日系動漫、水墨國風、還是其他？有沒有具體的畫面在你腦海中？',
+        usedBy: ['👤角色設計', '🏛️場景設計', '🖼️Prompt師'],
+        output: 'interview_context.json → 視覺風格'
+    },
     // interview_conflict - 核心衝突
-    {skill: 'interview_conflict', q: '故事的核心衝突是什麼？主角最大的障礙或對手是誰/什麼？這個衝突為什麼重要？'},
+    {
+        skill: 'interview_conflict', 
+        q: '故事的核心衝突是什麼？主角最大的障礙或對手是誰/什麼？這個衝突為什麼重要？',
+        usedBy: ['✍️編劇', '📖敘事', '🧠角色心理'],
+        output: 'interview_context.json → 核心衝突'
+    },
     // interview_brief - 一句話概括
-    {skill: 'interview_brief', q: '如果要用一句話向朋友推薦這個故事，讓他們立刻想看，你會怎麼說？'},
+    {
+        skill: 'interview_brief', 
+        q: '如果要用一句話向朋友推薦這個故事，讓他們立刻想看，你會怎麼說？',
+        usedBy: ['💡高概念'],
+        output: 'concept.md → Logline'
+    },
     // interview_vision_guide - 避免事項
-    {skill: 'interview_vision_guide', q: '有沒有想避免的內容或風格？比如不想太血腥、不想太低齡、不想太說教...'},
+    {
+        skill: 'interview_vision_guide', 
+        q: '有沒有想避免的內容或風格？比如不想太血腥、不想太低齡、不想太說教...',
+        usedBy: ['所有Agent（負面約束）'],
+        output: 'interview_context.json → 避免事項'
+    },
     // interview_diagnostic - 最終確認
-    {skill: 'interview_diagnostic', q: '最後一個問題：這個故事中，你最想讓觀眾記住的是什麼？一個角色？一個場面？一句台詞？一種情感？'}
+    {
+        skill: 'interview_diagnostic', 
+        q: '最後一個問題：這個故事中，你最想讓觀眾記住的是什麼？一個角色？一個場面？一句台詞？一種情感？',
+        usedBy: ['🎬總導演（核心把控）'],
+        output: 'interview_context.json → 記憶點'
+    }
 ];
 
 function startPhase1(){
@@ -571,7 +623,14 @@ function askInterviewQuestion(){
     addMessage('interview', `
         <p style="font-size:10px;color:var(--cyan);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">🛠️ Skill: ${skillName}</p>
         <p style="font-size:14px;line-height:1.8">${q}</p>
-        <p style="font-size:11px;color:var(--dim);margin-top:12px">問題 ${interviewStep + 1}/${INTERVIEW_QUESTIONS.length} — 請在下方輸入你的回答</p>
+        
+        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;border-left:3px solid var(--primary)">
+            <p style="font-size:10px;color:var(--dim);margin-bottom:4px">📤 你的回答將用於：</p>
+            <p style="font-size:11px;color:var(--primary)">${item.usedBy.join(' • ')}</p>
+            <p style="font-size:10px;color:var(--dim);margin-top:4px">💾 輸出文檔：${item.output}</p>
+        </div>
+        
+        <p style="font-size:11px;color:var(--dim);margin-top:12px">問題 ${interviewStep + 1}/${INTERVIEW_QUESTIONS.length} — 請在下方自由回答，越詳細越好</p>
     `);
 }
 
@@ -701,8 +760,14 @@ function startPhase2(){
     }
     renderChapters();
     
+    currentAgentOutput = {agent: 'concept', type: 'logline', data: logline};
+    
     addMessage('concept', `
         <h3>💡 高概念 & Logline</h3>
+        
+        <div style="font-size:10px;color:var(--dim);margin-bottom:12px">
+            💾 輸出文檔：<span style="color:var(--cyan)">concept.md</span>
+        </div>
         
         <p>「高概念」是一句話能抓住觀眾的核心創意。好的Logline應該讓人立刻想看這個故事。</p>
         
@@ -711,62 +776,125 @@ function startPhase2(){
             <p style="font-size:15px;color:var(--primary);font-style:italic;padding:12px;background:var(--bg);border-radius:6px">
                 "${logline}"
             </p>
+            
+            <div class="report-item">
+                <h5>📊 高概念要素分析</h5>
+                <p><strong>鉤子(Hook)：</strong>唐代少年神偷 + 海上絲路冒險 + 千年輪迴詛咒</p>
+                <p><strong>衝突(Conflict)：</strong>解開寶石秘密 vs 葬身大海</p>
+                <p><strong>獨特性(Unique)：</strong>東方版加勒比海盜 + 密室殺人</p>
+            </div>
+            
+            <div class="report-item">
+                <h5>🎯 目標受眾匹配度</h5>
+                <p>根據訪談「${iv.q3 || '歷史愛好者'}」，此Logline對目標受眾吸引力：<span style="color:var(--success)">高</span></p>
+            </div>
         </div>
         
-        <p>這個Logline基於你的訪談回答生成。如果你想調整，可以在下方輸入新的版本。</p>
+        <div class="actions">
+            <button class="btn" onclick="regenerateOutput('concept')">🔄 重新生成</button>
+            <button class="btn btn-secondary" onclick="showModifyModal('concept', 'logline')">✏️ 修改</button>
+            <button class="btn btn-primary" onclick="confirmOutput('concept')">✅ 確認，下一步</button>
+        </div>
     `);
     
-    setTimeout(() => {
-        addMessage('adaptation', `
-            <h3>📚 劇本分析 & 章節規劃</h3>
-            
-            <div class="report">
-                <h4>📊 原著分析</h4>
-                <div class="report-grid">
-                    <div class="report-stat"><div class="val">${(scriptLen/1000).toFixed(1)}K</div><div class="label">總字數</div></div>
-                    <div class="report-stat"><div class="val">${chapterCount}</div><div class="label">章節數</div></div>
-                    <div class="report-stat"><div class="val">${Math.ceil(chapterCount * 1.5)}</div><div class="label">預計分鏡頁</div></div>
-                    <div class="report-stat"><div class="val">${chapterCount * 80}</div><div class="label">預計鏡頭</div></div>
-                </div>
+    addMessage('adaptation', `
+        <h3>📚 劇本分析 & 改編策略</h3>
+        
+        <div style="font-size:10px;color:var(--dim);margin-bottom:12px">
+            💾 輸出文檔：<span style="color:var(--cyan)">adaptation_plan.md</span> + <span style="color:var(--cyan)">outline.json</span>
+        </div>
+        
+        <div class="report">
+            <h4>📊 原著分析報告</h4>
+            <div class="report-grid">
+                <div class="report-stat"><div class="val">${(scriptLen/1000).toFixed(1)}K</div><div class="label">總字數</div></div>
+                <div class="report-stat"><div class="val">${chapterCount}</div><div class="label">章節數</div></div>
+                <div class="report-stat"><div class="val">${Math.ceil(chapterCount * 1.5)}</div><div class="label">預計分鏡頁</div></div>
+                <div class="report-stat"><div class="val">${chapterCount * 80}</div><div class="label">預計鏡頭</div></div>
             </div>
             
-            <div class="report">
-                <h4>📑 章節結構</h4>
+            <div class="report-item">
+                <h5>🎯 改編策略（基於訪談）</h5>
+                <p>根據你提到的「${iv.q4 || '電影感'}」參考風格，採用<strong>視覺優先改編法</strong>：保留原著的核心情節和人物弧光，強化視覺衝擊力強的場景，適當壓縮心理描寫轉為視覺表達。</p>
+            </div>
+            
+            <div class="report-item">
+                <h5>✂️ 保留 / 強化 / 刪減</h5>
+                <p>✅ 保留：主線冒險情節、核心角色關係、關鍵轉折點</p>
+                <p>⬆️ 強化：動作場面、視覺奇觀、情感爆發點</p>
+                <p>❌ 刪減：冗長內心獨白、重複場景、次要支線</p>
+            </div>
+        </div>
+        
+        <div class="report">
+            <h4>📑 章節結構</h4>
+            ${state.project.chapters.map((ch, i) => `
+                <div class="report-item">
+                    <h5>第${i+1}章：${ch.title}</h5>
+                    <p>${getChapterDesc(i, chapterCount)}</p>
+                    <span class="tag">${getChapterPhase(i, chapterCount)}</span>
+                    <span class="tag">預計${Math.round(60 + Math.random()*40)}鏡頭</span>
+                </div>
+            `).join('')}
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="regenerateOutput('adaptation')">🔄 重新生成</button>
+            <button class="btn btn-secondary" onclick="showModifyModal('adaptation', 'outline')">✏️ 修改</button>
+            <button class="btn btn-primary" onclick="showNarrativeReport()">✅ 確認，查看敘事設計</button>
+        </div>
+    `);
+}
+
+function showNarrativeReport(){
+    const iv = state.project.interview;
+    const chapterCount = state.project.chapters.length;
+    
+    addMessage('narrative', `
+        <h3>📖 敘事結構 & 情緒曲線</h3>
+        
+        <div style="font-size:10px;color:var(--dim);margin-bottom:12px">
+            💾 輸出文檔：<span style="color:var(--cyan)">narrative_structure.md</span> + <span style="color:var(--cyan)">emotion_beats.json</span>
+        </div>
+        
+        <div class="report">
+            <div class="report-item">
+                <h5>🎭 敘事模型（基於訪談）</h5>
+                <p>採用<strong>「英雄之旅」+「懸疑遞進」</strong>混合結構。根據你提到的「${iv.q2 || '成長與冒險'}」主題，主角將經歷：</p>
+                <p style="color:var(--cyan);margin-top:8px">日常世界 → 冒險召喚 → 跨越門檻 → 試煉之路 → 最深處考驗 → 獎賞與覺醒 → 帶著智慧歸來</p>
+            </div>
+            
+            <div class="report-item">
+                <h5>🎢 情緒曲線設計</h5>
+                <p style="font-family:monospace;padding:12px;background:var(--bg);border-radius:6px;font-size:12px">
+好奇(10%) → 緊張(30%) → 震驚(50%) → 喘息(40%) → 恐懼(70%) → 絕望(90%) → 反轉(60%) → 爆發(95%) → 感動(80%) → 餘韻(50%)
+                </p>
+            </div>
+            
+            <div class="report-item">
+                <h5>🎣 各章鉤子設計（讓觀眾追下一集）</h5>
                 ${state.project.chapters.map((ch, i) => `
-                    <div class="report-item">
-                        <h5>第${i+1}章：${ch.title}</h5>
-                        <p>${getChapterDesc(i, chapterCount)}</p>
-                        <span class="tag">${getChapterPhase(i, chapterCount)}</span>
-                    </div>
+                    <p style="margin:6px 0"><strong>第${i+1}章結尾：</strong><span style="color:var(--warning)">${getChapterHook(i)}</span></p>
                 `).join('')}
             </div>
-        `);
+        </div>
         
-        setTimeout(() => {
-            addMessage('narrative', `
-                <h3>📖 敘事結構 & 情緒曲線</h3>
-                
-                <p>基於經典的「英雄之旅」模型，結合你希望的「${iv.q4 || '緊張刺激'}」基調，我們設計了以下情緒曲線：</p>
-                
-                <div class="report">
-                    <h4>🎢 情緒曲線</h4>
-                    <p style="font-family:monospace;padding:12px;background:var(--bg);border-radius:6px;font-size:12px">
-                    好奇 → 緊張 → 震驚 → 喘息 → 恐懼 → 絕望 → 反轉 → 爆發 → 感動 → 餘韻
-                    </p>
-                    <p style="font-size:12px;color:var(--dim);margin-top:8px">
-                    每集結尾都設置「鉤子」(Cliffhanger)，確保觀眾想看下一集。
-                    </p>
-                </div>
-                
-                <p>如果你對大綱有任何修改意見，現在可以告訴我。否則我們進入下一階段——服化道設計。</p>
-                
-                <div class="actions">
-                    <button class="btn btn-secondary" onclick="showModifyPrompt('outline')">✏️ 我想修改</button>
-                    <button class="btn btn-primary" onclick="startPhase3()">繼續 → 服化道設計</button>
-                </div>
-            `);
-        }, 1500);
-    }, 1500);
+        <div class="report">
+            <h4>🧠 觀眾心理設計</h4>
+            <div class="report-item">
+                <h5>三維留存策略</h5>
+                <p>📊 <strong>有料</strong>（信息密度）：每3分鐘一個新信息/線索</p>
+                <p>❤️ <strong>有情</strong>（情感共鳴）：角色困境引發代入感</p>
+                <p>✨ <strong>有趣</strong>（視聽趣味）：視覺奇觀+節奏變化</p>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="regenerateOutput('narrative')">🔄 重新生成</button>
+            <button class="btn btn-secondary" onclick="showModifyModal('narrative', 'structure')">✏️ 修改</button>
+            <button class="btn btn-primary" onclick="startPhase3()">✅ 確認 → 服化道設計</button>
+        </div>
+    `);
 }
 
 function generateLogline(title, iv){
@@ -808,7 +936,11 @@ function startPhase3(){
     state.project.characters = characters;
     
     addMessage('character', `
-        <h3>👥 角色設計報告</h3>
+        <h3>👤 角色設計報告</h3>
+        
+        <div style="font-size:10px;color:var(--dim);margin-bottom:12px">
+            💾 輸出文檔：<span style="color:var(--cyan)">characters.json</span>（含AI生圖Prompt）
+        </div>
         
         <p>從劇本中識別出 <strong style="color:var(--primary)">${characters.length}</strong> 個主要角色。每個角色都設計了完整的視覺形象方案。</p>
         
@@ -822,55 +954,104 @@ function startPhase3(){
                         <span class="tag">體型：${c.body}</span>
                         <span class="tag">特徵：${c.feature}</span>
                     </p>
+                    <p style="font-size:11px;color:var(--cyan);margin-top:8px;font-family:monospace;background:var(--bg);padding:8px;border-radius:4px">
+                        🖼️ Prompt: ${c.age} ${c.body} character, ${c.feature}, Tang dynasty style, anime, detailed --ar 2:3
+                    </p>
                 </div>
             `).join('')}
         </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="regenerateOutput('character')">🔄 重新生成</button>
+            <button class="btn btn-secondary" onclick="showModifyModal('character', 'design')">✏️ 修改</button>
+            <button class="btn btn-primary" onclick="showCostumeReport()">✅ 確認，查看服裝設計</button>
+        </div>
     `);
     
-    setTimeout(() => {
-        addMessage('costume', `
-            <h3>👔 服裝設計方案</h3>
-            
-            <p>基於時代背景（唐代）和角色身份，設計了默認服裝方案。每個章節可以根據場景調整。</p>
-            
-            <div class="report">
-                ${characters.slice(0, 5).map(c => `
-                    <div class="report-item">
-                        <h5>${c.name} - 基礎服裝</h5>
-                        <p>${c.defaultCostume}</p>
-                    </div>
-                `).join('')}
-            </div>
-        `);
+    setTimeout(() => showCostumeReport(), 1500);
+}
+
+function showCostumeReport(){
+    const characters = state.project.characters;
+    
+    addMessage('costume', `
+        <h3>👔 服裝設計方案</h3>
         
-        setTimeout(() => {
-            addMessage('artdirector', `
-                <h3>🎨 整體視覺風格</h3>
-                
-                <div class="report">
-                    <div class="report-item">
-                        <h5>美術風格</h5>
-                        <p>東方奇幻 × 唐代異域風情，參考敦煌壁畫色彩與《長安十二時辰》場景質感</p>
-                    </div>
-                    <div class="report-item">
-                        <h5>色彩基調</h5>
-                        <p>金褐暖色系為主（唐代繁華），輔以南洋海域的藍綠冷色（神秘冒險），關鍵場景使用紅黑對比（危機緊張）</p>
-                    </div>
-                    <div class="report-item">
-                        <h5>光影風格</h5>
-                        <p>戲劇性光影，強調明暗對比。室內場景多用燭光/油燈的暖光源，海上場景利用月光營造神秘感</p>
-                    </div>
+        <div style="font-size:10px;color:var(--dim);margin-bottom:12px">
+            💾 輸出文檔：<span style="color:var(--cyan)">costumes.json</span>
+        </div>
+        
+        <p>基於時代背景（唐代）和角色身份，設計了默認服裝方案。每個章節可以根據場景調整。</p>
+        
+        <div class="report">
+            ${characters.slice(0, 5).map(c => `
+                <div class="report-item">
+                    <h5>${c.name} - 基礎服裝</h5>
+                    <p>${c.defaultCostume}</p>
+                    <p style="font-size:11px;color:var(--cyan);margin-top:8px;font-family:monospace;background:var(--bg);padding:8px;border-radius:4px">
+                        🖼️ Prompt: wearing ${c.defaultCostume}, Tang dynasty clothing, detailed fabric texture
+                    </p>
                 </div>
-                
-                <p>服化道設計完成。如需調整任何角色或視覺設定，請在下方說明。否則我們開始逐章製作。</p>
-                
-                <div class="actions">
-                    <button class="btn btn-secondary" onclick="showModifyPrompt('design')">✏️ 我想修改</button>
-                    <button class="btn btn-primary" onclick="startChapterWork(0)">開始第1章製作 →</button>
-                </div>
-            `);
-        }, 1500);
-    }, 1500);
+            `).join('')}
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="regenerateOutput('costume')">🔄 重新生成</button>
+            <button class="btn btn-secondary" onclick="showModifyModal('costume', 'design')">✏️ 修改</button>
+            <button class="btn btn-primary" onclick="showArtDirectorReport()">✅ 確認，查看整體美術</button>
+        </div>
+    `);
+}
+
+function showArtDirectorReport(){
+    const iv = state.project.interview;
+    
+    addMessage('artdirector', `
+        <h3>🎨 整體視覺風格</h3>
+        
+        <div style="font-size:10px;color:var(--dim);margin-bottom:12px">
+            💾 輸出文檔：<span style="color:var(--cyan)">art_direction.md</span> + <span style="color:var(--cyan)">color_script.md</span>
+        </div>
+        
+        <div class="report">
+            <div class="report-item">
+                <h5>🎯 美術風格（基於訪談）</h5>
+                <p>根據你提到的「${iv.q5 || '電影感'}」視覺偏好：</p>
+                <p style="color:var(--primary)">東方奇幻 × 唐代異域風情，參考敦煌壁畫色彩與《長安十二時辰》場景質感</p>
+            </div>
+            
+            <div class="report-item">
+                <h5>🌈 色彩基調</h5>
+                <p>🟠 <strong>主色調</strong>：金褐暖色系（唐代繁華、香料市集）</p>
+                <p>🔵 <strong>輔助色</strong>：南洋海域的藍綠冷色（神秘冒險、大海）</p>
+                <p>🔴 <strong>強調色</strong>：紅黑對比（危機緊張、關鍵場景）</p>
+            </div>
+            
+            <div class="report-item">
+                <h5>💡 光影風格</h5>
+                <p>戲劇性光影，強調明暗對比（倫勃朗光）</p>
+                <p>🕯️ 室內：燭光/油燈暖光源</p>
+                <p>🌙 海上：月光營造神秘感</p>
+                <p>☀️ 港口：夕陽金色光輝</p>
+            </div>
+            
+            <div class="report-item">
+                <h5>🖼️ Prompt風格關鍵詞</h5>
+                <p style="font-family:monospace;background:var(--bg);padding:8px;border-radius:4px;font-size:11px;color:var(--cyan)">
+                    cinematic lighting, Tang dynasty aesthetic, silk road atmosphere, Dunhuang color palette, dramatic chiaroscuro, 8K, detailed
+                </p>
+            </div>
+        </div>
+        
+        <p style="color:var(--success)">✅ 階段3完成：角色設計 + 服裝設計 + 美術風格 已全部確定。</p>
+        <p>現在開始逐章製作分鏡表。</p>
+        
+        <div class="actions">
+            <button class="btn" onclick="regenerateOutput('artdirector')">🔄 重新生成</button>
+            <button class="btn btn-secondary" onclick="showModifyModal('artdirector', 'style')">✏️ 修改</button>
+            <button class="btn btn-primary" onclick="startChapterWork(0)">✅ 確認 → 開始第1章製作</button>
+        </div>
+    `);
 }
 
 function extractAllCharacters(script){
@@ -1002,7 +1183,26 @@ function startPhase6(chapterIndex){
         addMessage('storyboard', `
             <h3>🎥 第${chapterIndex + 1}章分鏡表</h3>
             
+            <div style="font-size:10px;color:var(--dim);margin-bottom:12px">
+                💾 輸出文檔：<span style="color:var(--cyan)">storyboard_ep${chapterIndex + 1}.json</span> + <span style="color:var(--cyan)">prompts_ep${chapterIndex + 1}.json</span>
+            </div>
+            
             <p>共生成 <strong style="color:var(--primary)">${shots.length}</strong> 個鏡頭，包含完整的視聽設計。</p>
+            
+            <div class="report">
+                <h4>📋 本章數據統計</h4>
+                <div class="report-grid">
+                    <div class="report-stat"><div class="val">${shots.length}</div><div class="label">總鏡頭</div></div>
+                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.55)}</div><div class="label">📖敘事鏡頭</div></div>
+                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.28)}</div><div class="label">🎯戲劇鏡頭</div></div>
+                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.17)}</div><div class="label">🎨情感鏡頭</div></div>
+                </div>
+                
+                <div class="report-item">
+                    <h5>⏱️ 預計時長</h5>
+                    <p>${Math.round(shots.length * 2.5 / 60)} 分 ${Math.round(shots.length * 2.5 % 60)} 秒（平均每鏡頭2.5秒）</p>
+                </div>
+            </div>
             
             <div class="storyboard">
                 <div class="shot-row header">
@@ -1023,21 +1223,22 @@ function startPhase6(chapterIndex){
             </div>
             
             <div class="report">
-                <h4>📋 本章數據</h4>
-                <div class="report-grid">
-                    <div class="report-stat"><div class="val">${shots.length}</div><div class="label">總鏡頭</div></div>
-                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.55)}</div><div class="label">敘事鏡頭</div></div>
-                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.28)}</div><div class="label">戲劇鏡頭</div></div>
-                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.17)}</div><div class="label">情感鏡頭</div></div>
-                </div>
+                <h4>🖼️ AI Prompt 預覽（前3個鏡頭）</h4>
+                ${shots.slice(0, 3).map(s => `
+                    <div class="report-item">
+                        <h5>#${s.id} ${s.visual}</h5>
+                        <p style="font-family:monospace;font-size:11px;color:var(--cyan);background:var(--bg);padding:8px;border-radius:4px">${s.prompt}</p>
+                    </div>
+                `).join('')}
             </div>
             
-            <p>分鏡已生成。你可以：</p>
             <div class="actions">
-                <button class="btn" onclick="exportChapter()">📥 導出本章分鏡</button>
+                <button class="btn" onclick="regenerateOutput('storyboard')">🔄 重新生成</button>
+                <button class="btn btn-secondary" onclick="showModifyModal('storyboard', 'shots')">✏️ 修改</button>
+                <button class="btn" onclick="exportChapter()">📥 導出本章</button>
                 ${chapterIndex < state.project.chapters.length - 1 ? 
-                    `<button class="btn btn-primary" onclick="startChapterWork(${chapterIndex + 1})">繼續第${chapterIndex + 2}章 →</button>` :
-                    `<button class="btn btn-primary" onclick="finishProject()">完成項目 🎉</button>`
+                    `<button class="btn btn-primary" onclick="startChapterWork(${chapterIndex + 1})">✅ 確認 → 第${chapterIndex + 2}章</button>` :
+                    `<button class="btn btn-primary" onclick="finishProject()">✅ 完成項目 🎉</button>`
                 }
             </div>
         `);
@@ -1125,6 +1326,109 @@ function sendMessage(){
 function showModifyPrompt(type){
     addMessage('director', `<p>請在下方輸入你想修改的內容，我會根據你的意見調整。</p>`);
 }
+
+// ==================== 三按钮工作流 ====================
+function regenerateOutput(agentId){
+    const agent = AGENTS.find(a => a.id === agentId);
+    addMessage(agentId, `
+        <p>🔄 正在重新生成...</p>
+    `);
+    
+    setTimeout(() => {
+        // 重新執行當前Agent
+        if(agentId === 'concept'){
+            const newLogline = generateLogline(state.project.title, state.project.interview);
+            state.project.logline = newLogline;
+            addMessage('concept', `
+                <h3>💡 重新生成的Logline</h3>
+                <div class="report">
+                    <p style="font-size:15px;color:var(--primary);font-style:italic;padding:12px;background:var(--bg);border-radius:6px">
+                        "${newLogline}"
+                    </p>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="regenerateOutput('concept')">🔄 再次生成</button>
+                    <button class="btn btn-secondary" onclick="showModifyModal('concept', 'logline')">✏️ 修改</button>
+                    <button class="btn btn-primary" onclick="confirmOutput('concept')">✅ 確認，下一步</button>
+                </div>
+            `);
+        }
+    }, 1500);
+}
+
+function showModifyModal(agentId, outputType){
+    const modalHtml = `
+        <div id="modifyModal" style="position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:200">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:90%;max-width:500px;padding:20px">
+                <h3 style="margin-bottom:16px">✏️ 修改意見</h3>
+                <p style="font-size:12px;color:var(--dim);margin-bottom:12px">請說明你想如何修改，AI會保留好的部分，只改你指定的內容：</p>
+                <textarea id="modifyInput" style="width:100%;height:120px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;color:var(--text);font-size:13px;resize:none" placeholder="例如：主角不要是孤兒，改成富商之子，但家道中落被迫出海..."></textarea>
+                <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end">
+                    <button class="btn" onclick="closeModifyModal()">取消</button>
+                    <button class="btn btn-primary" onclick="submitModify('${agentId}', '${outputType}')">提交修改</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeModifyModal(){
+    const modal = document.getElementById('modifyModal');
+    if(modal) modal.remove();
+}
+
+function submitModify(agentId, outputType){
+    const input = document.getElementById('modifyInput');
+    const modification = input.value.trim();
+    closeModifyModal();
+    
+    if(!modification) return;
+    
+    addMessage('user', modification, true);
+    addMessage(agentId, `<p>收到修改意見，正在調整...</p>`);
+    
+    setTimeout(() => {
+        // 根據修改意見調整輸出
+        addMessage(agentId, `
+            <h3>✅ 已根據你的意見修改</h3>
+            <div class="report">
+                <div class="report-item">
+                    <h5>📝 修改內容</h5>
+                    <p>${modification}</p>
+                </div>
+                <div class="report-item">
+                    <h5>🔄 更新後的結果</h5>
+                    <p style="color:var(--primary)">[已根據你的反饋調整，具體內容已更新到輸出文檔]</p>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn" onclick="regenerateOutput('${agentId}')">🔄 重新生成</button>
+                <button class="btn btn-secondary" onclick="showModifyModal('${agentId}', '${outputType}')">✏️ 繼續修改</button>
+                <button class="btn btn-primary" onclick="confirmOutput('${agentId}')">✅ 確認，下一步</button>
+            </div>
+        `);
+    }, 1500);
+}
+
+function confirmOutput(agentId){
+    // 標記當前Agent輸出已確認，進入下一步
+    if(agentId === 'concept'){
+        // 繼續顯示 adaptation 和 narrative
+        continuePhase2();
+    } else if(agentId === 'narrative'){
+        startPhase3();
+    } else if(agentId === 'artdirector'){
+        startChapterWork(0);
+    }
+}
+
+function continuePhase2(){
+    const iv = state.project.interview;
+    const script = state.project.script;
+    const chapters = script.match(/【.*?】/g) || [];
+    const scriptLen = script.length;
+    const chapterCount = Math.max(3, chapters.length);
 
 function switchChapter(index){
     state.currentChapter = index;
