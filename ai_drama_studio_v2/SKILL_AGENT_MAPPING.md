@@ -1,7 +1,7 @@
 # 🔗 Skill → Agent 完整映射表
 
 > **原则**：每个Skill都有Agent调用，每个Agent都被总导演编排
-> **当前**：241 Skills → 30 Agents ✅
+> **当前**：249 Skills → 30 Agents ✅
 
 ---
 
@@ -24,10 +24,10 @@
 | 美術 | costume | 👔 服裝設計 | 3,5 | 3 |
 | 美術 | scene | 🏛️ 場景設計 | 3,6 | 7 |
 | 美術 | color | 🌈 色彩設計 | 3,6 | 1 |
-| 表演 | expression | 😊 表情設計 | 6 | 3 |
-| 表演 | acting | 🎭 演技指導 | 6 | 2 |
-| 表演 | pose | 🕺 動作設計 | 6 | 4 |
-| 表演 | psychology | 🧠 角色心理 | 4,6 | 3 |
+| 表演 | expression | 😊 表情設計 | 6 | 4 |
+| 表演 | acting | 🎭 演技指導 | 6 | 7 |
+| 表演 | pose | 🕺 動作設計 | 6 | 8 |
+| 表演 | psychology | 🧠 角色心理 | 4,6 | 6 |
 | AI輸出 | prompt | 🖼️ Prompt師 | 6 | 17 |
 | AI輸出 | platform | 🔧 平台適配 | 6 | 19 |
 | 專項 | vfx | 💥 VFX特效 | 6 | 15 |
@@ -164,26 +164,29 @@ color_emotion
 
 ---
 
-## 🎭 表演組 (4 Agents)
+## 🎭 表演組 (4 Agents) - 已擴充
 
 ### expression - 表情設計
 ```
-facial_expressions, acting_microexpression, eyes_detailed
+facial_expressions, acting_microexpression, eyes_detailed, acting_subtext
 ```
 
-### acting - 演技指導
+### acting - 演技指導 ⬆️ 新增7個Skills
 ```
-body_language, emotion_visual
-```
-
-### pose - 動作設計
-```
-action_poses, action_choreography, action_martial_arts, action_special_moves
+body_language, emotion_visual, acting_stanislavski, acting_method,
+acting_subtext, movement_daily, gesture_cultural
 ```
 
-### psychology - 角色心理
+### pose - 動作設計 ⬆️ 新增4個Skills
 ```
-dialogue_craft, audience_emotion_prediction, audience_persona
+action_poses, action_choreography, action_martial_arts, action_special_moves,
+fight_wuxia, fight_street, movement_daily, gesture_cultural
+```
+
+### psychology - 角色心理 ⬆️ 新增3個Skills
+```
+dialogue_craft, audience_emotion_prediction, audience_persona,
+psychology_motivation, acting_stanislavski, acting_method
 ```
 
 ---
