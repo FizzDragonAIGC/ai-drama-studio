@@ -1,210 +1,142 @@
-# 👻 恐怖风格 Skill
-> 恐怖片视觉美学Prompt指南
+# 🎭 恐怖類型技能
 
----
+## 元信息
+- **技能ID**: genre_horror
+- **所屬Agent**: 類型Agent
+- **參考書籍**: 《恐怖電影》+ 《驚悚寫作》
+- **難度**: ⭐⭐⭐⭐
 
-## 📐 恐怖氛围
+## 恐怖類型核心
 
-### 视觉元素
-| 元素 | 效果 | Prompt |
-|------|------|--------|
-| 暗影 | 不安、隐藏 | deep shadows, darkness |
-| 雾气 | 神秘、压抑 | fog, mist, haze |
-| 底光 | 诡异、变形 | under lighting, horror lighting |
-| 扭曲 | 不自然 | distorted, twisted |
-| 腐朽 | 死亡、衰败 | decayed, rotting, decrepit |
-
-### 色彩方案
-| 方案 | Prompt |
-|------|--------|
-| 暗绿调 | sickly green, eerie green tint |
-| 深蓝调 | cold blue, midnight blue |
-| 血红 | blood red, crimson |
-| 灰暗 | desaturated, washed out colors |
-| 高对比 | high contrast, stark shadows |
-
----
-
-## 🎯 恐怖类型
-
-### 心理恐怖
+### 恐懼來源
 ```
-psychological horror,
-unsettling atmosphere,
-subtle dread, paranoia,
-distorted reality,
-mental anguish, uncanny
+1. 未知：看不見的威脅
+2. 失控：無法掌控局面
+3. 孤立：無處求援
+4. 變異：熟悉事物變陌生
+5. 死亡：最終極恐懼
 ```
 
-### 血腥恐怖
+### 恐怖類型分類
 ```
-gore horror,
-blood splatter, visceral,
-graphic, violent,
-body horror, gruesome
-```
-
-### 超自然恐怖
-```
-supernatural horror,
-ghosts, spirits, demons,
-otherworldly, paranormal,
-haunted, cursed
+超自然恐怖：鬼、惡魔、詛咒
+心理恐怖：瘋狂、幻覺、不可靠敘述
+身體恐怖：變異、疾病、gore
+怪物恐怖：異形、殭屍、吸血鬼
+氛圍恐怖：壓迫感、慢節奏、暗示
 ```
 
-### 怪物恐怖
-```
-creature horror,
-monster, beast,
-nightmarish creature,
-horrifying, monstrous
-```
+## 視覺技法
 
-### 氛围恐怖
+### 光影
 ```
-atmospheric horror,
-creepy environment,
-abandoned, desolate,
-ominous, foreboding,
-slow dread, tension
+- 大量陰影
+- 低調照明
+- 移動光源（手電筒）
+- 突然的亮光（閃電）
+
+Prompt: dark shadows, low-key lighting,
+        flashlight beam, horror atmosphere
 ```
 
----
-
-## 📊 恐怖场景
-
-### 经典场景
-| 场景 | Prompt |
-|------|--------|
-| 废弃医院 | abandoned hospital, horror |
-| 废弃屋 | haunted house, old mansion |
-| 墓地 | graveyard, cemetery, tombstones |
-| 黑暗森林 | dark forest, twisted trees |
-| 地下室 | dark basement, cellar |
-| 走廊 | long dark hallway, endless corridor |
-| 废弃学校 | abandoned school, empty classroom |
-| 镜子 | creepy mirror, reflection horror |
-
-### 场景Prompt模板
+### 構圖
 ```
-horror scene, [场景类型],
-dark atmosphere, eerie,
-[光线效果], unsettling,
-ominous, dread,
-[时间：night/fog/storm]
+- 負空間（暗示威脅）
+- 傾斜角度（不安）
+- 極端視角（脆弱）
+- 局部遮擋（想像恐懼）
+
+Prompt: dutch angle, unsettling composition,
+        negative space, lurking shadows
 ```
 
----
-
-## 🎭 恐怖角色
-
-### 鬼怪设计
-| 类型 | Prompt |
-|------|--------|
-| 日式怨灵 | yurei, Japanese ghost, pale |
-| 西式幽灵 | ghost, spectral, translucent |
-| 女鬼 | female ghost, long black hair |
-| 恶魔 | demon, horns, evil |
-| 丧尸 | zombie, undead, rotting |
-| 怪物 | monster, nightmare creature |
-
-### 恐怖表情
-| 表情 | Prompt |
-|------|--------|
-| 诡异微笑 | creepy smile, unsettling grin |
-| 空洞眼神 | hollow eyes, dead stare |
-| 扭曲面容 | distorted face, twisted features |
-| 恐惧表情 | terrified expression, screaming |
-| 疯狂表情 | crazed expression, manic |
-
----
-
-## 📋 恐怖特效
-
-### 视觉效果
-| 效果 | Prompt |
-|------|--------|
-| 闪烁光线 | flickering light |
-| 静电干扰 | static, glitch |
-| 模糊鬼影 | blurred figure, motion blur ghost |
-| 血液 | blood, dripping blood |
-| 裂缝 | cracks, breaking |
-| 蜘蛛网 | cobwebs, spider webs |
-
-### 氛围效果
-| 效果 | Prompt |
-|------|--------|
-| 压迫感 | oppressive atmosphere |
-| 窒息感 | suffocating, claustrophobic |
-| 不安感 | unsettling, disturbing |
-| 毛骨悚然 | spine-chilling, hair-raising |
-| 阴森恐怖 | sinister, menacing |
-
----
-
-## 🔧 恐怖Prompt模板
-
-### 场景恐怖
+### 色調
 ```
-horror scene, [场景],
-dark, eerie atmosphere,
-[天气/时间], fog/mist,
-abandoned, decrepit,
-unsettling, ominous,
-horror film aesthetic
+- 冷色調（藍、綠）
+- 去飽和
+- 突然的紅色（血、警告）
+- 蒼白膚色
 ```
 
-### 角色恐怖
+## 敘事技法
+
+### 鋪墊
 ```
-horror character, [角色类型],
-[恐怖特征], pale,
-dark atmosphere, eerie,
-supernatural, ghostly,
-terrifying presence
+- 平靜→異常（打破日常）
+- 小異常累積
+- 規則暗示（某個時間不能做某事）
+- 背景故事（這裡發生過什麼）
 ```
 
-### 氛围恐怖
+### 節奏
 ```
-psychological horror,
-unsettling imagery,
-[subtle恐怖元素],
-creepy, disturbing,
-uncanny valley,
-dread and tension
+緊張構建：
+安靜→聲音→安靜→更大的聲音
+
+假驚嚇（Jump Scare）：
+緊張→原來是貓→真正的威脅
+
+慢燒：
+不急於揭示，持續壓迫
 ```
 
----
-
-## 📊 恐怖风格参考
-
-### 日式恐怖 (J-Horror)
+### 威脅呈現
 ```
-Japanese horror style,
-yurei, onryo, long black hair,
-pale skin, white dress,
-psychological, slow dread,
-Ringu/Ju-On inspired
+第一階段：暗示存在
+第二階段：部分顯現
+第三階段：完全揭示（可能令人失望，謹慎）
+
+規則：觀眾想像的比你能拍的更可怕
 ```
 
-### 西式恐怖
+## 角色設計
+
+### 受害者
 ```
-Western horror style,
-gothic, Victorian horror,
-jump scare aesthetic,
-graphic, intense,
-classic horror movie
+有明顯弱點
+觀眾能產生共情
+做出合理但錯誤的決定
 ```
 
-### 现代恐怖
+### 威脅源
 ```
-modern horror,
-found footage style,
-realistic horror,
-psychological thriller,
-everyday turned nightmare
+有規則（但不完全清楚）
+有起源（悲劇性更佳）
+幾乎不可戰勝
 ```
 
----
+## AI番劇恐怖場景
 
-*Skill版本: 1.0*
-*创建时间: 2026-02-14*
+```json
+{
+  "horror_scene": {
+    "type": "超自然恐怖",
+    "setup": "她獨自在老房子裡聽到腳步聲",
+    "visual": {
+      "lighting": "單一光源（蠟燭）",
+      "shadows": "移動的陰影",
+      "color": "冷藍色調"
+    },
+    "sound_design": "地板嘎吱聲、呼吸聲",
+    "prompt": "girl alone in old house, single candle light,
+               long shadows, cold blue tones, horror atmosphere,
+               something lurking in darkness, unsettling"
+  }
+}
+```
+
+## 恐怖清單
+
+```
+✅ 有效技法：
+- 讓觀眾等待
+- 用聲音暗示
+- 限制視野
+- 打破安全感
+
+❌ 避免：
+- 過多Jump Scare
+- 太早揭示怪物
+- 邏輯不通的行為
+- 過度血腥取代恐懼
+```

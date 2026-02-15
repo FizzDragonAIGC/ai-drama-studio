@@ -5,486 +5,1192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FizzDragon AI Drama Studio</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+SC:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box}
-        :root{--red:#ff0033;--black:#0a0a0a;--card:#1a1a1a;--gray:#333;--text:#fff;--dim:#888;--green:#0f0}
-        body{font-family:'Noto Sans SC',sans-serif;background:var(--black);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+        :root{
+            --bg:#0a0a0c;--surface:#111114;--surface2:#1a1a1f;
+            --border:#2a2a32;--text:#f0f0f2;--dim:#888890;
+            --primary:#ff6b35;--primary-dark:#e55a2b;
+            --success:#22c55e;--cyan:#06b6d4;--pink:#ec4899;--purple:#a855f7;
+            --warning:#eab308;
+            --radius:10px;--radius-sm:6px;
+        }
+        body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
         
-        .header{padding:20px;border-bottom:1px solid var(--red);display:flex;justify-content:space-between;align-items:center;background:var(--card)}
-        .logo{font-family:'Orbitron',sans-serif;font-size:24px;color:var(--red);text-shadow:0 0 10px rgba(255,0,51,0.5)}
-        .lang-switch{display:flex;gap:5px}
-        .lang-btn{background:var(--gray);border:1px solid var(--gray);color:var(--text);padding:5px 10px;cursor:pointer;font-size:12px}
-        .lang-btn.active{border-color:var(--red);color:var(--red)}
+        /* Layout */
+        .app{display:grid;grid-template-columns:280px 1fr 260px;height:100vh}
         
-        .main{flex:1;display:flex;overflow:hidden}
+        /* Left Panel - Agents */
+        .panel-left{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:20px}
+        .panel-left h2{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+        .agent-group{margin-bottom:20px}
+        .agent-group-title{font-size:11px;color:var(--dim);margin-bottom:8px;padding-left:4px}
+        .agent-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);margin-bottom:4px;cursor:default;transition:all .2s}
+        .agent-item.active{background:var(--primary);color:#fff}
+        .agent-item.done{opacity:.6}
+        .agent-item.done::after{content:'✓';margin-left:auto;color:var(--success);font-size:11px}
+        .agent-item .icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14px}
+        .agent-item .name{font-size:12px}
+        .agent-item .step{font-size:10px;color:var(--dim);margin-left:auto}
+        .agent-item.active .step{color:rgba(255,255,255,.7)}
         
-        .sidebar{width:200px;background:var(--card);border-right:1px solid var(--gray);padding:15px;overflow-y:auto}
-        .sidebar h3{font-size:12px;color:var(--red);margin-bottom:10px;font-family:'Orbitron'}
-        .agent-item{padding:8px;margin-bottom:5px;cursor:pointer;border-left:2px solid transparent;font-size:13px}
-        .agent-item:hover{background:rgba(255,0,51,0.1);border-left-color:var(--red)}
-        .agent-item.active{background:var(--red);border-left-color:#fff}
-        .agent-icon{margin-right:8px}
+        /* Center - Main Chat */
+        .panel-center{display:flex;flex-direction:column;overflow:hidden}
+        .header{padding:16px 24px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+        .header-left{display:flex;align-items:center;gap:16px}
+        .logo{font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .phase-indicator{font-size:12px;color:var(--dim);padding:4px 12px;background:var(--surface2);border-radius:20px}
+        .header-right{display:flex;gap:8px}
+        .lang-btn{padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:var(--radius-sm);cursor:pointer;font-size:11px}
+        .lang-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
         
-        .chat{flex:1;display:flex;flex-direction:column;min-width:0}
-        .messages{flex:1;overflow-y:auto;padding:20px}
-        .msg{margin-bottom:20px;animation:fadeIn .3s}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+        .chat-area{flex:1;overflow-y:auto;padding:24px}
+        .chat-area::-webkit-scrollbar{width:6px}
+        .chat-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+        
+        .message{margin-bottom:24px;animation:fadeIn .3s}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
         .msg-agent{display:flex;gap:12px}
-        .msg-avatar{width:40px;height:40px;background:var(--gray);border:2px solid var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
-        .msg-content{flex:1}
-        .msg-name{font-family:'Orbitron';color:var(--red);font-size:13px;margin-bottom:8px}
-        .msg-text{background:var(--card);padding:15px;border-left:3px solid var(--red);line-height:1.7}
-        .msg-text h3{color:var(--red);margin-bottom:10px}
-        .msg-user{display:flex;justify-content:flex-end}
-        .msg-user .msg-text{background:var(--red);border-left:none;border-right:3px solid #fff;max-width:70%}
+        .msg-avatar{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--pink));border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+        .msg-body{flex:1}
+        .msg-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+        .msg-name{font-size:11px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:.5px}
+        .msg-time{font-size:10px;color:var(--dim)}
+        .msg-content{background:var(--surface);border:1px solid var(--border);padding:16px 20px;border-radius:var(--radius);border-top-left-radius:2px}
+        .msg-content h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+        .msg-content p{color:var(--dim);font-size:13px;margin-bottom:10px;line-height:1.7}
+        .msg-content ul,.msg-content ol{margin:12px 0;padding-left:20px}
+        .msg-content li{color:var(--dim);font-size:13px;margin-bottom:6px}
+        .msg-content strong{color:var(--text)}
+        .msg-user{justify-content:flex-end}
+        .msg-user .msg-content{background:var(--primary);border:none;color:#fff;max-width:70%;border-radius:var(--radius);border-top-right-radius:2px}
+        .msg-user .msg-content p{color:rgba(255,255,255,.9)}
         
-        .options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}
-        .options.c1{grid-template-columns:1fr}
-        .options.c3{grid-template-columns:repeat(3,1fr)}
-        .opt-btn{background:var(--black);border:2px solid var(--gray);padding:15px;text-align:left;cursor:pointer;color:var(--text);transition:all .2s}
-        .opt-btn:hover{border-color:var(--red);transform:translateY(-2px)}
-        .opt-btn .icon{font-size:24px;margin-bottom:5px}
-        .opt-btn .title{font-weight:700;margin-bottom:3px}
-        .opt-btn .desc{font-size:11px;color:var(--dim)}
+        /* Report Box */
+        .report{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:16px 0}
+        .report h4{font-size:13px;color:var(--primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+        .report-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+        .report-stat{background:var(--bg);padding:12px;border-radius:var(--radius-sm);text-align:center}
+        .report-stat .val{font-size:22px;font-weight:700;color:var(--primary)}
+        .report-stat .label{font-size:11px;color:var(--dim);margin-top:4px}
+        .report-item{background:var(--bg);padding:12px;border-radius:var(--radius-sm);margin:8px 0}
+        .report-item h5{font-size:13px;color:var(--text);margin-bottom:4px}
+        .report-item p{font-size:12px;color:var(--dim)}
+        .report-item .tag{display:inline-block;font-size:10px;padding:2px 8px;background:var(--surface);border-radius:10px;color:var(--cyan);margin-right:4px}
         
-        .input-area{padding:15px;border-top:1px solid var(--gray);background:var(--card)}
-        .input-box{display:flex;gap:10px;border:2px solid var(--red);background:var(--black)}
-        .input-box textarea{flex:1;background:transparent;border:none;padding:12px;color:var(--text);font-size:14px;resize:none;outline:none}
-        .input-box button{background:var(--red);border:none;padding:12px 20px;color:#fff;font-family:'Orbitron';cursor:pointer}
+        /* Actions */
+        .actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+        .btn{padding:10px 20px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:500;transition:all .2s}
+        .btn:hover{border-color:var(--primary);background:rgba(255,107,53,.1)}
+        .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+        .btn-primary:hover{background:var(--primary-dark)}
+        .btn-secondary{border-color:var(--cyan);color:var(--cyan)}
+        .btn-secondary:hover{background:rgba(6,182,212,.1)}
         
-        .stats{width:250px;background:var(--card);border-left:1px solid var(--gray);padding:15px;overflow-y:auto}
-        .stats h3{font-size:12px;color:var(--red);margin-bottom:10px;font-family:'Orbitron'}
-        .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
-        .stat-card{background:var(--black);padding:15px;text-align:center;border:1px solid var(--gray)}
-        .stat-val{font-size:24px;color:var(--red);font-family:'Orbitron'}
-        .stat-label{font-size:10px;color:var(--dim)}
+        .input-area{padding:16px 24px;background:var(--surface);border-top:1px solid var(--border)}
+        .input-wrap{display:flex;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:6px}
+        .input-wrap:focus-within{border-color:var(--primary)}
+        .input-wrap textarea{flex:1;background:transparent;border:none;padding:10px;color:var(--text);font-size:13px;resize:none;outline:none;font-family:inherit}
+        .input-wrap button{background:var(--primary);border:none;padding:10px 20px;color:#fff;font-weight:500;border-radius:var(--radius-sm);cursor:pointer}
         
-        .q-input{display:flex;gap:10px;margin-top:15px;background:var(--black);border:1px solid var(--red);padding:10px}
-        .q-input input{flex:1;background:transparent;border:none;color:var(--text);outline:none}
-        .q-input button{background:var(--red);border:none;padding:8px 15px;color:#fff;cursor:pointer}
+        /* Right Panel - Skills & Progress */
+        .panel-right{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:20px}
+        .panel-right h2{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+        .progress-section{margin-bottom:24px}
+        .progress-bar-wrap{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:8px}
+        .progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--pink));transition:width .5s}
+        .progress-label{font-size:11px;color:var(--dim)}
+        .chapter-nav{margin:16px 0}
+        .chapter-btn{display:block;width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);cursor:pointer;font-size:12px;text-align:left;margin-bottom:6px;transition:all .2s}
+        .chapter-btn.active{border-color:var(--primary);background:rgba(255,107,53,.1)}
+        .chapter-btn.done{opacity:.6}
+        .chapter-btn.done::after{content:' ✓';color:var(--success)}
         
-        .modal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+        .skills-section{margin-top:24px}
+        .skill-tag{display:inline-block;font-size:10px;padding:4px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--dim);margin:2px}
+        .skill-tag.active{border-color:var(--cyan);color:var(--cyan);background:rgba(6,182,212,.1)}
+        
+        .export-section{margin-top:24px;padding-top:16px;border-top:1px solid var(--border)}
+        .export-btn{width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);cursor:pointer;font-size:12px;margin-bottom:8px}
+        .export-btn:hover{border-color:var(--success);color:var(--success)}
+        
+        /* Modal */
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px}
         .modal.hide{display:none}
-        .modal-box{background:var(--card);border:2px solid var(--red);width:100%;max-width:600px;max-height:80vh;overflow:auto}
-        .modal-head{padding:15px;border-bottom:1px solid var(--gray);display:flex;justify-content:space-between;align-items:center}
-        .modal-head h2{font-family:'Orbitron';color:var(--red)}
-        .close-btn{background:none;border:none;color:var(--text);font-size:24px;cursor:pointer}
-        .modal-body{padding:15px}
-        .modal-body textarea{width:100%;height:250px;background:var(--black);border:1px solid var(--gray);padding:15px;color:var(--text);resize:vertical}
-        .modal-body textarea:focus{border-color:var(--red);outline:none}
-        .modal-foot{padding:15px;display:flex;gap:10px;justify-content:flex-end}
-        .btn{padding:10px 20px;cursor:pointer;font-family:'Orbitron';border:1px solid var(--gray);background:var(--black);color:var(--text)}
-        .btn:hover{border-color:var(--red)}
-        .btn-red{background:var(--red);border-color:var(--red)}
+        .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:600px}
+        .modal-header{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .modal-header h2{font-size:16px}
+        .modal-close{background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer}
+        .modal-body{padding:20px}
+        .modal-body textarea{width:100%;height:200px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;color:var(--text);font-size:13px;resize:vertical}
+        .modal-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
         
-        .skill-tag{display:inline-block;background:var(--black);border:1px solid var(--gray);padding:4px 10px;margin:3px;font-size:11px}
-        .skill-tag.on{border-color:var(--red);color:var(--red)}
+        /* Storyboard Table */
+        .storyboard{margin:16px 0}
+        .shot-row{display:grid;grid-template-columns:60px 1fr 1fr 1fr;gap:8px;padding:10px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:6px;font-size:12px}
+        .shot-row.header{background:var(--surface2);font-weight:600;color:var(--text)}
+        .shot-num{color:var(--primary);font-weight:600}
+        .shot-cell{color:var(--dim)}
+        .shot-cell.highlight{color:var(--cyan)}
         
-        @media(max-width:900px){.sidebar,.stats{display:none}}
+        @media(max-width:1024px){.app{grid-template-columns:1fr}.panel-left,.panel-right{display:none}}
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">FIZZDRAGON</div>
-        <div class="lang-switch">
-            <button class="lang-btn active" onclick="setLang('zh')">简体</button>
-            <button class="lang-btn" onclick="setLang('tw')">繁體</button>
-            <button class="lang-btn" onclick="setLang('en')">EN</button>
-        </div>
-    </header>
+<div class="app">
+    <!-- Left Panel: Agents -->
+    <aside class="panel-left">
+        <h2>🤖 Agents</h2>
+        <div id="agentList"></div>
+    </aside>
     
-    <div class="main">
-        <aside class="sidebar">
-            <h3>AGENTS (30)</h3>
-            <div id="agentList"></div>
-        </aside>
-        
-        <section class="chat">
-            <div class="messages" id="msgs"></div>
-            <div class="input-area">
-                <div class="input-box">
-                    <textarea id="userInput" rows="1" placeholder=""></textarea>
-                    <button onclick="sendMsg()" data-i18n="send">发送</button>
-                </div>
+    <!-- Center: Main Chat -->
+    <main class="panel-center">
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">FizzDragon</div>
+                <span class="phase-indicator" id="phaseIndicator">準備開始</span>
             </div>
-        </section>
-        
-        <aside class="stats">
-            <h3>STATUS</h3>
-            <div class="stat-grid">
-                <div class="stat-card"><div class="stat-val" id="sAgents">0</div><div class="stat-label">Agents</div></div>
-                <div class="stat-card"><div class="stat-val" id="sSkills">0</div><div class="stat-label">Skills</div></div>
-                <div class="stat-card"><div class="stat-val" id="sShots">0</div><div class="stat-label">Shots</div></div>
-                <div class="stat-card"><div class="stat-val" id="sPrompts">0</div><div class="stat-label">Prompts</div></div>
+            <div class="header-right">
+                <button class="lang-btn active" onclick="setLang('zh')">简体</button>
+                <button class="lang-btn" onclick="setLang('tw')">繁體</button>
+                <button class="lang-btn" onclick="setLang('en')">EN</button>
             </div>
-            <h3 data-i18n="project">项目</h3>
-            <div id="projInfo" style="font-size:13px;color:var(--dim)">-</div>
-        </aside>
-    </div>
-    
-    <div class="modal hide" id="modal">
-        <div class="modal-box">
-            <div class="modal-head">
-                <h2 data-i18n="import_script">导入剧本</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <textarea id="scriptInput" data-i18n-placeholder="paste_script"></textarea>
-            </div>
-            <div class="modal-foot">
-                <button class="btn" onclick="loadDemo()" data-i18n="load_demo">加载示例</button>
-                <button class="btn btn-red" onclick="submitScript()" data-i18n="start">开始制作</button>
+        </header>
+        <div class="chat-area" id="chatArea"></div>
+        <div class="input-area">
+            <div class="input-wrap">
+                <textarea id="userInput" rows="2" placeholder="輸入你的想法...（對話式，自由回答）"></textarea>
+                <button onclick="sendMessage()">發送</button>
             </div>
         </div>
+    </main>
+    
+    <!-- Right Panel: Skills & Progress -->
+    <aside class="panel-right">
+        <h2>📊 進度</h2>
+        <div class="progress-section">
+            <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+            <div class="progress-label" id="progressLabel">0% 完成</div>
+        </div>
+        
+        <h2>📑 章節</h2>
+        <div class="chapter-nav" id="chapterNav"></div>
+        
+        <h2>🛠️ 當前Skills</h2>
+        <div class="skills-section" id="skillsList"></div>
+        
+        <div class="export-section">
+            <button class="export-btn" onclick="exportChapter()">📥 導出當前章節</button>
+            <button class="export-btn" onclick="exportAll()">📦 導出完整項目</button>
+        </div>
+    </aside>
+</div>
+
+<!-- Import Modal -->
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>📚 導入劇本</h2>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <textarea id="scriptInput" placeholder="貼上你的小說、劇本或故事大綱..."></textarea>
+            <p style="font-size:11px;color:var(--dim);margin-top:8px">支持任意長度的文本，系統會自動分析結構</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="loadDemo()">載入示例</button>
+            <button class="btn btn-primary" onclick="startProject()">開始項目</button>
+        </div>
     </div>
+</div>
 
 <script>
-const i18n = {
-    zh: {
-        send: "发送", project: "项目", import_script: "导入剧本", paste_script: "粘贴你的剧本...",
-        load_demo: "加载示例", start: "开始制作", welcome: "欢迎来到 FizzDragon AI番剧工作台",
-        welcome_desc: "30个专业Agent + 200个技能，把你的故事变成电影级番剧",
-        quick_mode: "快速模式", quick_desc: "已有剧本，快速生成",
-        novel_mode: "长篇改编", novel_desc: "10万字+小说改编",
-        idea_mode: "从想法开始", idea_desc: "只有idea，帮你发展",
-        import_btn: "导入剧本", import_desc: "粘贴内容开始",
-        analyzing: "剧本分析完成", next_step: "继续下一步", next_desc: "回答问题完善制作",
-        q_audience: "问题1：目标观众是谁？",
-        teen: "Z世代", teen_desc: "15-25岁",
-        worker: "打工人", worker_desc: "25-35岁",
-        all_age: "全年龄", all_desc: "老少皆宜",
-        niche: "垂直圈层", niche_desc: "特定粉丝群",
-        q_style: "问题2：视觉风格？",
-        q_duration: "问题3：每集多长？",
-        min3: "3分钟", shots45: "约45镜头",
-        min5: "5分钟", shots75: "约75镜头", 
-        min8: "8分钟", shots100: "约100镜头",
-        min10: "10分钟", shots150: "约150镜头",
-        designing: "设计中...", done: "完成！", export_all: "导出全部"
-    },
-    tw: {
-        send: "發送", project: "項目", import_script: "導入劇本", paste_script: "貼上你的劇本...",
-        load_demo: "載入範例", start: "開始製作", welcome: "歡迎來到 FizzDragon AI番劇工作台",
-        welcome_desc: "30個專業Agent + 200個技能，把你的故事變成電影級番劇",
-        quick_mode: "快速模式", quick_desc: "已有劇本，快速生成",
-        novel_mode: "長篇改編", novel_desc: "10萬字+小說改編",
-        idea_mode: "從想法開始", idea_desc: "只有idea，幫你發展",
-        import_btn: "導入劇本", import_desc: "貼上內容開始",
-        analyzing: "劇本分析完成", next_step: "繼續下一步", next_desc: "回答問題完善製作",
-        q_audience: "問題1：目標觀眾是誰？",
-        teen: "Z世代", teen_desc: "15-25歲",
-        worker: "打工人", worker_desc: "25-35歲",
-        all_age: "全年齡", all_desc: "老少皆宜",
-        niche: "垂直圈層", niche_desc: "特定粉絲群",
-        q_style: "問題2：視覺風格？",
-        q_duration: "問題3：每集多長？",
-        min3: "3分鐘", shots45: "約45鏡頭",
-        min5: "5分鐘", shots75: "約75鏡頭",
-        min8: "8分鐘", shots100: "約100鏡頭",
-        min10: "10分鐘", shots150: "約150鏡頭",
-        designing: "設計中...", done: "完成！", export_all: "導出全部"
-    },
-    en: {
-        send: "Send", project: "Project", import_script: "Import Script", paste_script: "Paste your script...",
-        load_demo: "Load Demo", start: "Start", welcome: "Welcome to FizzDragon AI Drama Studio",
-        welcome_desc: "30 Pro Agents + 200 Skills, turn your story into cinematic content",
-        quick_mode: "Quick Mode", quick_desc: "Have script, generate fast",
-        novel_mode: "Novel Adapt", novel_desc: "100k+ words novel",
-        idea_mode: "From Idea", idea_desc: "Just an idea, we develop",
-        import_btn: "Import Script", import_desc: "Paste content to start",
-        analyzing: "Script Analyzed", next_step: "Continue", next_desc: "Answer questions to refine",
-        q_audience: "Q1: Target Audience?",
-        teen: "Gen Z", teen_desc: "15-25 years",
-        worker: "Workers", worker_desc: "25-35 years",
-        all_age: "All Ages", all_desc: "Universal",
-        niche: "Niche", niche_desc: "Specific fans",
-        q_style: "Q2: Visual Style?",
-        q_duration: "Q3: Episode Length?",
-        min3: "3 min", shots45: "~45 shots",
-        min5: "5 min", shots75: "~75 shots",
-        min8: "8 min", shots100: "~100 shots",
-        min10: "10 min", shots150: "~150 shots",
-        designing: "Designing...", done: "Done!", export_all: "Export All"
-    }
-};
+// ==================== 系統配置 ====================
 
-let lang = 'zh';
-let step = 0;
-let project = { title:'', style:'', shots:0, prompts:0 };
-let activeAgents = new Set();
-
-const agents = [
-    {id:'director',icon:'🎬',name:{zh:'总导演',tw:'總導演',en:'Director'}},
-    {id:'concept',icon:'💡',name:{zh:'高概念',tw:'高概念',en:'Concept'}},
-    {id:'interview',icon:'🎤',name:{zh:'访谈',tw:'訪談',en:'Interview'}},
-    {id:'screenwriter',icon:'✍️',name:{zh:'编剧',tw:'編劇',en:'Writer'}},
-    {id:'adaptation',icon:'📚',name:{zh:'改编',tw:'改編',en:'Adaptation'}},
-    {id:'narrative',icon:'📖',name:{zh:'叙事',tw:'敘事',en:'Narrative'}},
-    {id:'storyboard',icon:'🎥',name:{zh:'分镜',tw:'分鏡',en:'Storyboard'}},
-    {id:'cinematography',icon:'📷',name:{zh:'摄影',tw:'攝影',en:'Camera'}},
-    {id:'character',icon:'👤',name:{zh:'角色',tw:'角色',en:'Character'}},
-    {id:'expression',icon:'😊',name:{zh:'表情',tw:'表情',en:'Expression'}},
-    {id:'acting',icon:'🎭',name:{zh:'演技',tw:'演技',en:'Acting'}},
-    {id:'vfx',icon:'💥',name:{zh:'特效',tw:'特效',en:'VFX'}},
-    {id:'prompt',icon:'🖼️',name:{zh:'Prompt',tw:'Prompt',en:'Prompt'}},
-    {id:'psychology',icon:'🧠',name:{zh:'心理',tw:'心理',en:'Psychology'}}
+// 29個Agent及其職責和出場階段
+const AGENTS = [
+    // 統籌組 - 全程 (2)
+    {id:'director', icon:'🎬', name:'總導演', group:'統籌', phase:'全程', skills:[
+        'directing_visual_storytelling','directing_blocking','directing_actor_direction','directing_climax',
+        'directing_emotional_arc','directing_pacing','directing_tone','director_kubrick','director_wong_karwai',
+        'director_miyazaki','director_shinkai','director_nolan','director_satoshi_kon','director_wes_anderson','director_kitano'
+    ]},
+    {id:'concept', icon:'💡', name:'高概念', group:'統籌', phase:'階段2', skills:[
+        'concept_high_concept','hook_design','addictive_design','viral_elements',
+        'cool_factor_design','cute_factor_design','tear_jerker_design','comedy_design'
+    ]},
+    
+    // 故事組 - 階段1-2 (4)
+    {id:'interview', icon:'🎤', name:'訪談師', group:'故事', phase:'階段1', skills:[
+        'interview_creative_vision','interview_empathy','interview_diagnostic','interview_audience',
+        'interview_brief','interview_conflict','interview_reference','interview_style','interview_theme','interview_vision_guide'
+    ]},
+    {id:'screenwriter', icon:'✍️', name:'編劇', group:'故事', phase:'階段2-4', skills:[
+        'screenwriting_mcgee_story','screenwriting_save_the_cat','screenwriting_syd_field','screenwriting_sequence_approach',
+        'screenwriting_premise','screenwriting_conflict','screenwriting_subplot','screenwriting_scene_writing',
+        'screenwriting_action_lines','screenwriting_exposition','screenwriting_foreshadowing','screenwriting_payoff',
+        'screenwriting_flashback','screenwriting_montage','screenwriting_voiceover','screenwriting_opening','screenwriting_twist',
+        'screenwriting_adaptation','script_subtext','script_action_lines','script_flashback','script_montage',
+        'script_scene_heading','script_transition','script_visual_writing','script_voiceover','script_writing_complete',
+        'dialogue_craft','tv_drama_writing'
+    ]},
+    {id:'adaptation', icon:'📚', name:'改編', group:'故事', phase:'階段2', skills:[
+        'adaptation_novel_analysis','adaptation_structure','adaptation_pacing','adaptation_character_arc',
+        'adaptation_dialogue','adaptation_episode','adaptation_novel_to_script','adaptation_scene_selection','adaptation_visual'
+    ]},
+    {id:'narrative', icon:'📖', name:'敘事', group:'故事', phase:'階段2-4', skills:[
+        'story_heros_journey','outline_emotional_arc','outline_cliffhanger','outline_act_structure',
+        'outline_episode_hook','outline_information','outline_scene_sequence','outline_subplot',
+        'outline_time_management','outline_series_design','anime_narrative','pacing_rhythm'
+    ]},
+    
+    // 導演組 - 階段6 (4)
+    {id:'storyboard', icon:'🎥', name:'分鏡', group:'導演', phase:'階段6', skills:[
+        'cinematography_shots','cinematography_composition','cinematography_movement',
+        'camera_angles','camera_movement_advanced','aspect_ratios'
+    ]},
+    {id:'cinematography', icon:'📷', name:'攝影', group:'導演', phase:'階段6', skills:[
+        'camera_angles','camera_movement_advanced','perspective_depth',
+        'directing_coverage','directing_master_shot','directing_single_take'
+    ]},
+    {id:'editing', icon:'✂️', name:'剪輯', group:'導演', phase:'階段6', skills:[
+        'editing_rhythm','short_form_pacing','pacing_rhythm'
+    ]},
+    {id:'blocking', icon:'🎯', name:'調度', group:'導演', phase:'階段6', skills:[
+        'directing_blocking','directing_180_rule','directing_crossing_line','directing_geography',
+        'directing_eye_trace','directing_establishing','directing_insert','directing_reaction_shot',
+        'directing_sequence','directing_subtext','directing_suspense','directing_tension','scene_types'
+    ]},
+    
+    // 美術組 - 階段3,5,6 (5)
+    {id:'artdirector', icon:'🎨', name:'美術總監', group:'美術', phase:'階段3', skills:[
+        'art_styles_detailed','color_emotion','lighting_cinematic','worldbuilding_bible'
+    ]},
+    {id:'character', icon:'👤', name:'角色設計', group:'美術', phase:'階段3', skills:[
+        'character_design_silhouette','character_design_expression','character_design_face','character_design_body_type',
+        'character_design_age','character_design_archetype','character_design_contrast','character_design_ensemble',
+        'character_design_hero','character_design_mentor','character_design_model_sheet','character_design_personality',
+        'character_design_posture','character_design_proportion','character_design_shape_language',
+        'character_design_sidekick','character_design_turnaround','character_design_villain','eyes_detailed'
+    ]},
+    {id:'costume', icon:'👔', name:'服裝設計', group:'美術', phase:'階段3,5', skills:[
+        'clothing_modern','hair_styles','materials_textures'
+    ]},
+    {id:'scene', icon:'🏛️', name:'場景設計', group:'美術', phase:'階段3,6', skills:[
+        'background_elements','weather_atmosphere','prompt_architecture','prompt_interior',
+        'prompt_landscape','prompt_vehicle','prompt_weapon'
+    ]},
+    {id:'color', icon:'🌈', name:'色彩設計', group:'美術', phase:'階段3,6', skills:[
+        'color_emotion'
+    ]},
+    
+    // 表演組 - 階段6 (4)
+    {id:'expression', icon:'😊', name:'表情設計', group:'表演', phase:'階段6', skills:[
+        'facial_expressions','acting_microexpression','eyes_detailed'
+    ]},
+    {id:'acting', icon:'🎭', name:'演技指導', group:'表演', phase:'階段6', skills:[
+        'body_language','emotion_visual'
+    ]},
+    {id:'pose', icon:'🕺', name:'動作設計', group:'表演', phase:'階段6', skills:[
+        'action_poses','action_choreography','action_martial_arts','action_special_moves'
+    ]},
+    {id:'psychology', icon:'🧠', name:'角色心理', group:'表演', phase:'階段4,6', skills:[
+        'dialogue_craft','audience_emotion_prediction','audience_persona'
+    ]},
+    
+    // AI輸出組 - 階段6 (2)
+    {id:'prompt', icon:'🖼️', name:'Prompt師', group:'AI輸出', phase:'階段6', skills:[
+        'ai_midjourney','ai_stable_diffusion','ai_flux','ai_dalle','ai_leonardo',
+        'prompt_portrait','prompt_full_body','prompt_group','prompt_action','prompt_emotion',
+        'prompt_architecture','prompt_interior','prompt_landscape','prompt_vehicle','prompt_weapon',
+        'prompt_negative','quality_modifiers'
+    ]},
+    {id:'platform', icon:'🔧', name:'平台適配', group:'AI輸出', phase:'階段6', skills:[
+        'ai_prompt_engineering','ai_consistency','ai_controlnet','ai_lora','ai_inpainting','ai_outpainting',
+        'ai_upscaling','ai_img2img','ai_face_swap','ai_style_transfer','ai_negative_prompt',
+        'ai_runway','ai_pika','ai_kling','ai_txt2video','ai_img2video','ai_lip_sync','ai_voice_clone','ai_music_gen'
+    ]},
+    
+    // 專項組 - 各階段 (8)
+    {id:'vfx', icon:'💥', name:'VFX特效', group:'專項', phase:'階段6', skills:[
+        'vfx_compositing','vfx_green_screen','vfx_matte_painting','vfx_particle','vfx_fluid',
+        'vfx_fire','vfx_water','vfx_smoke','vfx_explosion','vfx_destruction',
+        'vfx_weather_effects','vfx_magic','vfx_superhero_powers','vfx_creature','vfx_environment'
+    ]},
+    {id:'manga', icon:'💢', name:'漫畫效果', group:'專項', phase:'階段6', skills:[
+        'manga_panel_design','manga_narrative','manga_visual_effects','manga_page_layout','manga_flow',
+        'manga_gutter','manga_splash_page','manga_speed_lines','manga_focus_lines','manga_screen_tone',
+        'manga_onomatopoeia','manga_emotion_symbols','manga_chibi','webtoon_design','anime_effects'
+    ]},
+    {id:'genre', icon:'🎬', name:'類型研究', group:'專項', phase:'階段2', skills:[
+        'genre_mystery','genre_fantasy','genre_romance','genre_comedy','genre_horror',
+        'genre_scifi','genre_action','genre_drama','genre_thriller','genre_crime',
+        'genre_war','genre_wuxia','genre_xianxia'
+    ]},
+    {id:'era', icon:'📜', name:'時代考據', group:'專項', phase:'階段3', skills:['culture_history']},
+    {id:'culture', icon:'🌍', name:'文化顧問', group:'專項', phase:'階段3', skills:['culture_history','worldbuilding_bible']},
+    {id:'music', icon:'🎵', name:'音樂設計', group:'專項', phase:'階段6', skills:['ai_music_gen','editing_rhythm']},
+    {id:'lighting', icon:'💡', name:'燈光設計', group:'專項', phase:'階段6', skills:['lighting_cinematic']},
+    {id:'weather', icon:'🌤️', name:'氛圍設計', group:'專項', phase:'階段6', skills:['weather_atmosphere','vfx_weather_effects']},
+    
+    // 短劇專家 - 新增 (1)
+    {id:'shortform', icon:'📱', name:'短劇專家', group:'專項', phase:'階段2,6', skills:[
+        'short_drama','short_form_hook','short_form_pacing','short_form_cliffhanger','short_form_vertical',
+        'short_form_mobile_first','short_form_attention','short_form_series','short_form_character',
+        'short_form_conflict','short_form_twist','short_form_emotion','short_form_comedy',
+        'short_form_romance','short_form_suspense','short_form_algorithm'
+    ]}
 ];
 
-function T(key) { return i18n[lang][key] || key; }
+// 流程階段 - 30 Agents 全覆蓋
+const PHASES = [
+    {id:1, name:'劇本導入 + 訪談', agents:['director','interview']},
+    {id:2, name:'大綱 / Logline / 章節', agents:['concept','screenwriter','adaptation','narrative','genre','shortform']},
+    {id:3, name:'服化道 + 人物形象', agents:['artdirector','character','costume','scene','color','era','culture']},
+    {id:4, name:'章節劇本', agents:['screenwriter','narrative','psychology']},
+    {id:5, name:'章節服裝確定', agents:['costume','color']},
+    {id:6, name:'章節分鏡', agents:['storyboard','cinematography','editing','blocking','expression','acting','pose','prompt','platform','vfx','manga','music','lighting','weather','shortform']},
+    {id:7, name:'下一章節', agents:[]},
+    {id:8, name:'完整輸出', agents:['director']}
+];
 
-function setLang(l) {
-    lang = l;
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.includes(l==='zh'?'简':l==='tw'?'繁':'EN')));
-    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = T(el.dataset.i18nPlaceholder); });
+// ==================== 狀態管理 ====================
+let state = {
+    lang: 'zh',
+    phase: 0,
+    currentChapter: 0,
+    project: {
+        title: '',
+        script: '',
+        interview: {},
+        logline: '',
+        outline: [],
+        characters: [],
+        chapters: []
+    },
+    activeAgents: [],
+    messages: []
+};
+
+// ==================== UI渲染 ====================
+function renderAgents(){
+    const groups = {};
+    AGENTS.forEach(a => {
+        if(!groups[a.group]) groups[a.group] = [];
+        groups[a.group].push(a);
+    });
+    
+    let html = '';
+    for(const [group, agents] of Object.entries(groups)){
+        html += `<div class="agent-group"><div class="agent-group-title">${group}組</div>`;
+        agents.forEach(a => {
+            const isActive = state.activeAgents.includes(a.id);
+            const cls = isActive ? 'active' : '';
+            html += `<div class="agent-item ${cls}">
+                <span class="icon">${a.icon}</span>
+                <span class="name">${a.name}</span>
+                <span class="step">${a.phase}</span>
+            </div>`;
+        });
+        html += '</div>';
+    }
+    document.getElementById('agentList').innerHTML = html;
 }
 
-function renderAgents() {
-    document.getElementById('agentList').innerHTML = agents.map(a => 
-        `<div class="agent-item${activeAgents.has(a.id)?' active':''}" data-id="${a.id}">
-            <span class="agent-icon">${a.icon}</span>${a.name[lang]}
-        </div>`
-    ).join('');
+function renderSkills(){
+    const activeSkills = [];
+    AGENTS.forEach(a => {
+        if(state.activeAgents.includes(a.id)){
+            activeSkills.push(...a.skills);
+        }
+    });
+    
+    const allSkills = [...new Set(AGENTS.flatMap(a => a.skills))];
+    let html = allSkills.slice(0, 20).map(s => {
+        const isActive = activeSkills.includes(s);
+        return `<span class="skill-tag ${isActive ? 'active' : ''}">${s.replace(/_/g,' ')}</span>`;
+    }).join('');
+    
+    document.getElementById('skillsList').innerHTML = html;
 }
 
-function activate(id) {
-    activeAgents.add(id);
-    renderAgents();
-    document.getElementById('sAgents').textContent = activeAgents.size;
+function renderChapters(){
+    const chapters = state.project.chapters || [];
+    let html = '';
+    
+    if(chapters.length === 0){
+        html = '<p style="font-size:12px;color:var(--dim)">尚未生成章節</p>';
+    } else {
+        chapters.forEach((ch, i) => {
+            const isActive = i === state.currentChapter;
+            const isDone = ch.storyboard && ch.storyboard.length > 0;
+            html += `<button class="chapter-btn ${isActive?'active':''} ${isDone?'done':''}" onclick="switchChapter(${i})">
+                第${i+1}章：${ch.title || '未命名'}
+            </button>`;
+        });
+    }
+    document.getElementById('chapterNav').innerHTML = html;
 }
 
-function addMsg(agent, html) {
-    const a = agents.find(x=>x.id===agent) || {icon:'🤖',name:{zh:agent,tw:agent,en:agent}};
-    document.getElementById('msgs').innerHTML += `
-        <div class="msg msg-agent">
-            <div class="msg-avatar">${a.icon}</div>
-            <div class="msg-content">
-                <div class="msg-name">${a.name[lang]} AGENT</div>
-                <div class="msg-text">${html}</div>
+function updateProgress(){
+    const total = 8; // 總階段數
+    const pct = Math.round((state.phase / total) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = `${pct}% - ${PHASES[state.phase-1]?.name || '準備中'}`;
+    document.getElementById('phaseIndicator').textContent = PHASES[state.phase-1]?.name || '準備開始';
+}
+
+function addMessage(agentId, content, isUser = false){
+    const agent = AGENTS.find(a => a.id === agentId) || {icon:'💬', name:'系統'};
+    state.messages.push({agentId, content, isUser, time: new Date()});
+    
+    const chat = document.getElementById('chatArea');
+    const msgClass = isUser ? 'message msg-user' : 'message msg-agent';
+    
+    if(isUser){
+        chat.innerHTML += `<div class="${msgClass}"><div class="msg-content"><p>${content}</p></div></div>`;
+    } else {
+        chat.innerHTML += `
+        <div class="${msgClass}">
+            <div class="msg-avatar">${agent.icon}</div>
+            <div class="msg-body">
+                <div class="msg-header">
+                    <span class="msg-name">${agent.name}</span>
+                </div>
+                <div class="msg-content">${content}</div>
             </div>
         </div>`;
-    scrollDown();
+    }
+    chat.scrollTop = chat.scrollHeight;
 }
 
-function addUser(text) {
-    document.getElementById('msgs').innerHTML += `
-        <div class="msg msg-user"><div class="msg-text">${text}</div></div>`;
-    scrollDown();
-}
-
-function scrollDown() {
-    const m = document.getElementById('msgs');
-    m.scrollTop = m.scrollHeight;
-}
-
-function openModal() { document.getElementById('modal').classList.remove('hide'); }
-function closeModal() { document.getElementById('modal').classList.add('hide'); }
-
-function loadDemo() {
-    document.getElementById('scriptInput').value = `《赛博浪人》
-类型：赛博朋克 / 动作
-时长：每集8分钟
-
-第一集：Ghost in the Wire
-
-【开场】霓虹灯在雨中模糊成一片光海...
-零，曾是最顶尖的企业黑客，现在是被通缉的幽灵。
-
-【中段】地下酒吧
-Luna：又来找工作？
-零：我需要钱。有人要我的命。
-
-【转折】当零接触AI核心时——
-AI：你终于来了，零。我是你女儿的意识备份。
-
-【结尾】零带着AI核心逃出大厦。
-"小雪...爸爸来救你了。"`;
-}
-
-function submitScript() {
-    const s = document.getElementById('scriptInput').value.trim();
-    if (!s) return alert('请输入内容');
-    project.script = s;
-    closeModal();
-    addUser(T('import_btn'));
-    analyzeScript(s);
-}
-
-function analyzeScript(s) {
-    activate('screenwriter');
-    const titleMatch = s.match(/《(.+?)》/);
-    project.title = titleMatch ? titleMatch[1] : s.substring(0,20);
-    
-    addMsg('screenwriter', `
-        <h3>📝 ${T('analyzing')}</h3>
-        <p><strong style="color:var(--red)">《${project.title}》</strong></p>
-        <div class="options c1">
-            <button class="opt-btn" onclick="askAudience()">
-                <div class="title">▶️ ${T('next_step')}</div>
-                <div class="desc">${T('next_desc')}</div>
-            </button>
-        </div>
-    `);
-    step = 1;
-}
-
-function askAudience() {
-    activate('director');
-    addMsg('director', `
-        <h3>🎬 ${T('q_audience')}</h3>
-        <div class="options">
-            <button class="opt-btn" onclick="setAudience('teen')"><div class="icon">🔥</div><div class="title">${T('teen')}</div><div class="desc">${T('teen_desc')}</div></button>
-            <button class="opt-btn" onclick="setAudience('worker')"><div class="icon">💼</div><div class="title">${T('worker')}</div><div class="desc">${T('worker_desc')}</div></button>
-            <button class="opt-btn" onclick="setAudience('all')"><div class="icon">🌍</div><div class="title">${T('all_age')}</div><div class="desc">${T('all_desc')}</div></button>
-            <button class="opt-btn" onclick="setAudience('niche')"><div class="icon">🎯</div><div class="title">${T('niche')}</div><div class="desc">${T('niche_desc')}</div></button>
-        </div>
-    `);
-    step = 2;
-}
-
-function setAudience(a) {
-    project.audience = a;
-    addUser(T(a));
-    askStyle();
-}
-
-function askStyle() {
-    activate('genre');
-    addMsg('director', `
-        <h3>🎨 ${T('q_style')}</h3>
-        <div class="options c3">
-            <button class="opt-btn" onclick="setStyle('cyberpunk')"><div class="icon">🌃</div><div class="title">Cyberpunk</div></button>
-            <button class="opt-btn" onclick="setStyle('ghibli')"><div class="icon">🌸</div><div class="title">Ghibli</div></button>
-            <button class="opt-btn" onclick="setStyle('anime')"><div class="icon">✨</div><div class="title">Anime</div></button>
-            <button class="opt-btn" onclick="setStyle('realistic')"><div class="icon">📸</div><div class="title">Realistic</div></button>
-            <button class="opt-btn" onclick="setStyle('chinese')"><div class="icon">🏮</div><div class="title">Chinese</div></button>
-            <button class="opt-btn" onclick="setStyle('cartoon')"><div class="icon">🎨</div><div class="title">Cartoon</div></button>
-        </div>
-    `);
-    step = 3;
-}
-
-function setStyle(s) {
-    project.style = s;
-    addUser(s);
-    askDuration();
-}
-
-function askDuration() {
-    addMsg('director', `
-        <h3>⏱️ ${T('q_duration')}</h3>
-        <div class="options">
-            <button class="opt-btn" onclick="setDuration(3,45)"><div class="icon">⚡</div><div class="title">${T('min3')}</div><div class="desc">${T('shots45')}</div></button>
-            <button class="opt-btn" onclick="setDuration(5,75)"><div class="icon">📱</div><div class="title">${T('min5')}</div><div class="desc">${T('shots75')}</div></button>
-            <button class="opt-btn" onclick="setDuration(8,100)"><div class="icon">🎬</div><div class="title">${T('min8')}</div><div class="desc">${T('shots100')}</div></button>
-            <button class="opt-btn" onclick="setDuration(10,150)"><div class="icon">🎥</div><div class="title">${T('min10')}</div><div class="desc">${T('shots150')}</div></button>
-        </div>
-    `);
-    step = 4;
-}
-
-function setDuration(m, shots) {
-    project.duration = m;
-    project.shots = shots;
-    addUser(`${m} min (${shots} shots)`);
-    document.getElementById('sShots').textContent = shots;
-    startDesign();
-}
-
-function startDesign() {
-    activate('storyboard');
-    activate('cinematography');
-    activate('character');
-    
-    addMsg('storyboard', `
-        <h3>🎥 ${T('designing')}</h3>
-        <p>${T('designing')} <strong>${project.shots}</strong> shots...</p>
-        <div class="skill-tag on">visual_storytelling</div>
-        <div class="skill-tag on">cinematography</div>
-        <div class="skill-tag on">character_design</div>
-        <div class="options c1">
-            <button class="opt-btn" onclick="finishDesign()">
-                <div class="title">▶️ ${T('next_step')}</div>
-            </button>
-        </div>
-    `);
-    document.getElementById('sSkills').textContent = 12;
-    step = 5;
-}
-
-function finishDesign() {
-    activate('expression');
-    activate('acting');
-    activate('psychology');
-    
-    addMsg('acting', `
-        <h3>🎭 ${T('designing')}</h3>
-        <p>Adding emotions & acting...</p>
-        <div class="skill-tag on">facial_expressions</div>
-        <div class="skill-tag on">acting_performance</div>
-        <div class="skill-tag on">psychology</div>
-        <div class="options c1">
-            <button class="opt-btn" onclick="generatePrompts()">
-                <div class="title">🖼️ Generate Prompts</div>
-            </button>
-        </div>
-    `);
-    document.getElementById('sSkills').textContent = 18;
-    step = 6;
-}
-
-function generatePrompts() {
-    activate('prompt');
-    activate('vfx');
-    project.prompts = project.shots;
-    document.getElementById('sPrompts').textContent = project.prompts;
-    document.getElementById('sSkills').textContent = 24;
-    
-    addMsg('prompt', `
-        <h3>🖼️ ${T('done')}</h3>
-        <p>Generated <strong style="color:var(--red)">${project.prompts}</strong> prompts!</p>
-        <div style="background:var(--black);padding:10px;margin:10px 0;border-left:2px solid var(--red);font-family:monospace;font-size:12px;color:#0f0">
-            ${project.style} style, cinematic shot, ${project.title}, dramatic lighting, 8k, masterpiece --ar 16:9 --v 6
-        </div>
-        <div class="options c1">
-            <button class="opt-btn" onclick="alert('Export coming soon!')">
-                <div class="title">📥 ${T('export_all')}</div>
-            </button>
-        </div>
-    `);
-    
-    addMsg('director', `
-        <h3>🔥 ${T('done')}</h3>
-        <p><strong>《${project.title}》</strong></p>
-        <p>Style: ${project.style} | Shots: ${project.shots} | Prompts: ${project.prompts}</p>
-        <p style="margin-top:10px">Agents: ${activeAgents.size} | Skills: 24</p>
-    `);
-    step = 7;
-}
-
-function sendMsg() {
-    const inp = document.getElementById('userInput');
-    const t = inp.value.trim();
-    if (!t) return;
-    addUser(t);
-    inp.value = '';
-}
-
-function init() {
+function activateAgents(agentIds){
+    state.activeAgents = agentIds;
     renderAgents();
-    setLang('zh');
-    activate('director');
+    renderSkills();
+}
+
+// ==================== 流程控制 ====================
+function openModal(){ document.getElementById('modal').classList.remove('hide'); }
+function closeModal(){ document.getElementById('modal').classList.add('hide'); }
+
+function loadDemo(){
+    document.getElementById('scriptInput').value = `《海上絲綢之路密碼》
+
+類型：歷史冒險 / 懸疑 / 東方奇幻
+時代：唐代
+地點：廣州蕃坊 → 南洋航線 → 婆羅浮屠
+
+【楔子】
+茅草棚內，香煙繚繞。占夢師手持銀鏈，粉紅色的光從波斯貴婦的胸口透出。
+小猴子藏在房梁上，等待時機。他是蕃坊最靈活的小偷。
+當他的手指觸碰那顆粉紅寶石時，詭異的幻象閃過腦海——鮮血、火焰、還有一個少女的臉...
+
+【第一章 廣州蕃坊】
+怀圣寺的光塔高聳，金頂在夕陽下閃耀。這是大唐最繁華的港口，各國商人雲集於此。
+紅髮盲老人在榕樹下講述海上傳說，孩子們圍坐聆聽...
+小猴子穿梭在熙攘的人群中，他的目標是那個波斯商人的錢袋...
+
+【第二章 夜海啟航】
+大蕃舶如巨獸，停泊在碼頭。這艘船將駛向南洋，載著香料、絲綢，還有無數人的命運。
+小猴子追尋小菩薩蠻的身影，他必須登上這艘船...
+
+【第三章 黑帆賊船】
+月光下的大海，遠處出現黑色帆影。
+「海盜！」瞭望手的驚叫聲劃破夜空...`;
+}
+
+function startProject(){
+    const script = document.getElementById('scriptInput').value.trim();
+    if(!script){ alert('請輸入劇本內容'); return; }
     
-    addMsg('director', `
-        <h3>🔥 ${T('welcome')}</h3>
-        <p>${T('welcome_desc')}</p>
-        <div class="options">
-            <button class="opt-btn" onclick="openModal()"><div class="icon">⚡</div><div class="title">${T('quick_mode')}</div><div class="desc">${T('quick_desc')}</div></button>
-            <button class="opt-btn" onclick="openModal()"><div class="icon">📚</div><div class="title">${T('novel_mode')}</div><div class="desc">${T('novel_desc')}</div></button>
-            <button class="opt-btn" onclick="openModal()"><div class="icon">💡</div><div class="title">${T('idea_mode')}</div><div class="desc">${T('idea_desc')}</div></button>
-            <button class="opt-btn" onclick="openModal()"><div class="icon">📝</div><div class="title">${T('import_btn')}</div><div class="desc">${T('import_desc')}</div></button>
+    state.project.script = script;
+    state.project.title = script.match(/《(.+?)》/)?.[1] || '未命名項目';
+    
+    closeModal();
+    state.phase = 1;
+    updateProgress();
+    
+    // 開始階段1：訪談
+    startPhase1();
+}
+
+// ==================== 階段1：訪談 ====================
+// 對應skills: interview_creative_vision, interview_empathy, interview_audience, interview_reference, interview_style, interview_theme, interview_conflict, interview_brief
+let interviewStep = 0;
+const INTERVIEW_QUESTIONS = [
+    // interview_creative_vision - 創意願景
+    {skill: 'interview_creative_vision', q: '你好！我是訪談師。讓我們從源頭開始——這個故事的靈感來源是什麼？是個人經歷、看到的新聞、還是其他作品的啟發？為什麼是現在想講這個故事？'},
+    // interview_empathy - 情感內核
+    {skill: 'interview_empathy', q: '這個故事想要傳達什麼情感？你希望觀眾看完後，心裡留下什麼樣的感受？是感動、震撼、治癒、還是思考？'},
+    // interview_theme - 主題探索
+    {skill: 'interview_theme', q: '如果用一句話概括這個故事想探討的主題或問題，會是什麼？比如「愛與犧牲」「成長與代價」「真相與謊言」...'},
+    // interview_audience - 目標觀眾
+    {skill: 'interview_audience', q: '你心目中理想的觀眾是誰？描述一下他們：年齡、興趣、生活狀態。他們為什麼會被這個故事吸引？'},
+    // interview_reference - 參考風格
+    {skill: 'interview_reference', q: '有沒有參考作品？電影、動漫、小說、遊戲都行。你希望最終呈現的風格接近哪些作品？'},
+    // interview_style - 視覺風格
+    {skill: 'interview_style', q: '視覺上你偏好什麼風格？寫實電影感、日系動漫、水墨國風、還是其他？有沒有具體的畫面在你腦海中？'},
+    // interview_conflict - 核心衝突
+    {skill: 'interview_conflict', q: '故事的核心衝突是什麼？主角最大的障礙或對手是誰/什麼？這個衝突為什麼重要？'},
+    // interview_brief - 一句話概括
+    {skill: 'interview_brief', q: '如果要用一句話向朋友推薦這個故事，讓他們立刻想看，你會怎麼說？'},
+    // interview_vision_guide - 避免事項
+    {skill: 'interview_vision_guide', q: '有沒有想避免的內容或風格？比如不想太血腥、不想太低齡、不想太說教...'},
+    // interview_diagnostic - 最終確認
+    {skill: 'interview_diagnostic', q: '最後一個問題：這個故事中，你最想讓觀眾記住的是什麼？一個角色？一個場面？一句台詞？一種情感？'}
+];
+
+function startPhase1(){
+    activateAgents(['director', 'interview']);
+    
+    addMessage('director', `
+        <h3>🎬 項目啟動</h3>
+        <p>歡迎來到 FizzDragon AI Drama Studio！</p>
+        <p>《<strong>${state.project.title}</strong>》已成功導入。在開始製作之前，我們的訪談師想和你聊聊，了解你對這個項目的想法。</p>
+        <p style="color:var(--cyan)">這是一個對話式的訪談，請自由回答，不需要選擇題。你的回答會影響後續所有Agent的創作方向。</p>
+    `);
+    
+    setTimeout(() => {
+        interviewStep = 0;
+        askInterviewQuestion();
+    }, 1000);
+}
+
+function askInterviewQuestion(){
+    if(interviewStep >= INTERVIEW_QUESTIONS.length){
+        finishInterview();
+        return;
+    }
+    
+    const item = INTERVIEW_QUESTIONS[interviewStep];
+    const q = item.q.replace('{title}', state.project.title);
+    const skillName = item.skill.replace(/_/g, ' ');
+    
+    addMessage('interview', `
+        <p style="font-size:10px;color:var(--cyan);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">🛠️ Skill: ${skillName}</p>
+        <p style="font-size:14px;line-height:1.8">${q}</p>
+        <p style="font-size:11px;color:var(--dim);margin-top:12px">問題 ${interviewStep + 1}/${INTERVIEW_QUESTIONS.length} — 請在下方輸入你的回答</p>
+    `);
+}
+
+function handleInterviewAnswer(answer){
+    state.project.interview[`q${interviewStep}`] = answer;
+    interviewStep++;
+    
+    // 給予回應後問下一題
+    const responses = [
+        '謝謝分享！這個初衷很有意義。',
+        '明白了，這種情感共鳴很重要。',
+        '了解，我們會針對這類觀眾設計。',
+        '很好的參考，我記下了。',
+        '這個基調會貫穿整個作品。',
+        '收到！這會成為我們的創作核心。'
+    ];
+    
+    if(interviewStep <= INTERVIEW_QUESTIONS.length){
+        setTimeout(() => {
+            if(interviewStep < INTERVIEW_QUESTIONS.length){
+                addMessage('interview', `<p>${responses[interviewStep-1]}</p>`);
+                setTimeout(askInterviewQuestion, 800);
+            } else {
+                finishInterview();
+            }
+        }, 500);
+    }
+}
+
+function finishInterview(){
+    const iv = state.project.interview;
+    
+    // 使用的skills列表
+    const usedSkills = INTERVIEW_QUESTIONS.map(q => q.skill);
+    
+    addMessage('interview', `
+        <h3>✅ 訪談完成</h3>
+        
+        <div class="report">
+            <h4>🛠️ 使用的Skills</h4>
+            <p style="font-size:12px;color:var(--dim);margin-bottom:8px">共調用 ${usedSkills.length} 個專業訪談技能：</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px">
+                ${usedSkills.map(s => `<span class="skill-tag active">${s.replace(/_/g,' ')}</span>`).join('')}
+            </div>
+        </div>
+        
+        <div class="report">
+            <h4>📝 創意願景摘要</h4>
+            <div class="report-item">
+                <h5>💡 創作動機 & 靈感來源</h5>
+                <p>${iv.q0 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>❤️ 情感內核</h5>
+                <p>${iv.q1 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>🎯 核心主題</h5>
+                <p>${iv.q2 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>👥 目標觀眾</h5>
+                <p>${iv.q3 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>🎬 參考作品</h5>
+                <p>${iv.q4 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>🎨 視覺風格偏好</h5>
+                <p>${iv.q5 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>⚔️ 核心衝突</h5>
+                <p>${iv.q6 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>📢 一句話推薦</h5>
+                <p>${iv.q7 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>🚫 避免事項</h5>
+                <p>${iv.q8 || '—'}</p>
+            </div>
+            <div class="report-item">
+                <h5>⭐ 最想被記住的</h5>
+                <p>${iv.q9 || '—'}</p>
+            </div>
+        </div>
+        
+        <p style="color:var(--cyan)">以上10個維度的信息將指導所有29個Agent的創作方向。每個後續步驟都會顯示「根據訪談」提示。</p>
+        
+        <div class="actions">
+            <button class="btn btn-primary" onclick="startPhase2()">繼續 → 大綱設計</button>
         </div>
     `);
+}
+
+// ==================== 階段2：大綱設計 ====================
+function startPhase2(){
+    state.phase = 2;
+    updateProgress();
+    activateAgents(['concept', 'screenwriter', 'adaptation', 'narrative', 'genre']);
+    
+    // 分析劇本
+    const script = state.project.script;
+    const chapters = script.match(/【.*?】/g) || [];
+    const scriptLen = script.length;
+    const iv = state.project.interview;
+    
+    // 生成Logline
+    const logline = generateLogline(state.project.title, iv);
+    state.project.logline = logline;
+    
+    // 生成章節
+    const chapterCount = Math.max(3, chapters.length);
+    state.project.chapters = [];
+    for(let i = 0; i < chapterCount; i++){
+        state.project.chapters.push({
+            id: i,
+            title: chapters[i]?.replace(/【|】/g, '') || `第${i+1}章`,
+            summary: '',
+            scenes: [],
+            storyboard: [],
+            costumes: {}
+        });
+    }
+    renderChapters();
+    
+    addMessage('concept', `
+        <h3>💡 高概念 & Logline</h3>
+        
+        <p>「高概念」是一句話能抓住觀眾的核心創意。好的Logline應該讓人立刻想看這個故事。</p>
+        
+        <div class="report">
+            <h4>🎯 Logline</h4>
+            <p style="font-size:15px;color:var(--primary);font-style:italic;padding:12px;background:var(--bg);border-radius:6px">
+                "${logline}"
+            </p>
+        </div>
+        
+        <p>這個Logline基於你的訪談回答生成。如果你想調整，可以在下方輸入新的版本。</p>
+    `);
+    
+    setTimeout(() => {
+        addMessage('adaptation', `
+            <h3>📚 劇本分析 & 章節規劃</h3>
+            
+            <div class="report">
+                <h4>📊 原著分析</h4>
+                <div class="report-grid">
+                    <div class="report-stat"><div class="val">${(scriptLen/1000).toFixed(1)}K</div><div class="label">總字數</div></div>
+                    <div class="report-stat"><div class="val">${chapterCount}</div><div class="label">章節數</div></div>
+                    <div class="report-stat"><div class="val">${Math.ceil(chapterCount * 1.5)}</div><div class="label">預計分鏡頁</div></div>
+                    <div class="report-stat"><div class="val">${chapterCount * 80}</div><div class="label">預計鏡頭</div></div>
+                </div>
+            </div>
+            
+            <div class="report">
+                <h4>📑 章節結構</h4>
+                ${state.project.chapters.map((ch, i) => `
+                    <div class="report-item">
+                        <h5>第${i+1}章：${ch.title}</h5>
+                        <p>${getChapterDesc(i, chapterCount)}</p>
+                        <span class="tag">${getChapterPhase(i, chapterCount)}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `);
+        
+        setTimeout(() => {
+            addMessage('narrative', `
+                <h3>📖 敘事結構 & 情緒曲線</h3>
+                
+                <p>基於經典的「英雄之旅」模型，結合你希望的「${iv.q4 || '緊張刺激'}」基調，我們設計了以下情緒曲線：</p>
+                
+                <div class="report">
+                    <h4>🎢 情緒曲線</h4>
+                    <p style="font-family:monospace;padding:12px;background:var(--bg);border-radius:6px;font-size:12px">
+                    好奇 → 緊張 → 震驚 → 喘息 → 恐懼 → 絕望 → 反轉 → 爆發 → 感動 → 餘韻
+                    </p>
+                    <p style="font-size:12px;color:var(--dim);margin-top:8px">
+                    每集結尾都設置「鉤子」(Cliffhanger)，確保觀眾想看下一集。
+                    </p>
+                </div>
+                
+                <p>如果你對大綱有任何修改意見，現在可以告訴我。否則我們進入下一階段——服化道設計。</p>
+                
+                <div class="actions">
+                    <button class="btn btn-secondary" onclick="showModifyPrompt('outline')">✏️ 我想修改</button>
+                    <button class="btn btn-primary" onclick="startPhase3()">繼續 → 服化道設計</button>
+                </div>
+            `);
+        }, 1500);
+    }, 1500);
+}
+
+function generateLogline(title, iv){
+    const templates = [
+        `當{protagonist}意外獲得{item}，他必須踏上{journey}，在{deadline}之前{goal}，否則{stakes}。`,
+        `一個{trait}的{protagonist}發現{discovery}，被迫捲入{conflict}，唯一的希望是{solution}。`,
+        `在{setting}，{protagonist}遇見{catalyst}，開始了一段{journey}，最終明白{theme}。`
+    ];
+    
+    // 簡化版：根據標題生成
+    if(title.includes('絲綢之路')){
+        return `唐代廣州，一個13歲的街頭神偷意外捲入跨越南洋的尋寶冒險，在海上密室殺人案與千年輪迴詛咒中，他必須解開寶石的秘密，否則所有人都將葬身大海。`;
+    }
+    return `一個平凡的主角，被迫踏上不平凡的旅程，在重重困難中成長，最終找到真正重要的東西。`;
+}
+
+function getChapterDesc(i, total){
+    const descs = ['世界觀建立，主角登場，日常生活與性格展現','觸發事件，打破平衡，故事正式啟動','初次挑戰，展現能力，結識盟友','深入冒險，揭示秘密，中點反轉','最大危機，黑暗時刻，失去一切','覺醒重生，最終對決，高潮爆發','收束伏筆，結局呈現，餘韻留白'];
+    return descs[Math.min(i, descs.length-1)];
+}
+
+function getChapterPhase(i, total){
+    if(i === 0) return '開篇';
+    if(i === total - 1) return '結局';
+    if(i < total * 0.3) return '鋪墊';
+    if(i < total * 0.7) return '發展';
+    return '高潮';
+}
+
+// ==================== 階段3：服化道 ====================
+function startPhase3(){
+    state.phase = 3;
+    updateProgress();
+    activateAgents(['artdirector','character','costume','scene','color','era','culture']);
+    
+    // 提取角色
+    const script = state.project.script;
+    const characters = extractAllCharacters(script);
+    state.project.characters = characters;
+    
+    addMessage('character', `
+        <h3>👥 角色設計報告</h3>
+        
+        <p>從劇本中識別出 <strong style="color:var(--primary)">${characters.length}</strong> 個主要角色。每個角色都設計了完整的視覺形象方案。</p>
+        
+        <div class="report">
+            ${characters.map(c => `
+                <div class="report-item">
+                    <h5>${c.name} <span style="color:var(--dim);font-weight:normal">(${c.role})</span></h5>
+                    <p>${c.description}</p>
+                    <p style="margin-top:6px">
+                        <span class="tag">年齡：${c.age}</span>
+                        <span class="tag">體型：${c.body}</span>
+                        <span class="tag">特徵：${c.feature}</span>
+                    </p>
+                </div>
+            `).join('')}
+        </div>
+    `);
+    
+    setTimeout(() => {
+        addMessage('costume', `
+            <h3>👔 服裝設計方案</h3>
+            
+            <p>基於時代背景（唐代）和角色身份，設計了默認服裝方案。每個章節可以根據場景調整。</p>
+            
+            <div class="report">
+                ${characters.slice(0, 5).map(c => `
+                    <div class="report-item">
+                        <h5>${c.name} - 基礎服裝</h5>
+                        <p>${c.defaultCostume}</p>
+                    </div>
+                `).join('')}
+            </div>
+        `);
+        
+        setTimeout(() => {
+            addMessage('artdirector', `
+                <h3>🎨 整體視覺風格</h3>
+                
+                <div class="report">
+                    <div class="report-item">
+                        <h5>美術風格</h5>
+                        <p>東方奇幻 × 唐代異域風情，參考敦煌壁畫色彩與《長安十二時辰》場景質感</p>
+                    </div>
+                    <div class="report-item">
+                        <h5>色彩基調</h5>
+                        <p>金褐暖色系為主（唐代繁華），輔以南洋海域的藍綠冷色（神秘冒險），關鍵場景使用紅黑對比（危機緊張）</p>
+                    </div>
+                    <div class="report-item">
+                        <h5>光影風格</h5>
+                        <p>戲劇性光影，強調明暗對比。室內場景多用燭光/油燈的暖光源，海上場景利用月光營造神秘感</p>
+                    </div>
+                </div>
+                
+                <p>服化道設計完成。如需調整任何角色或視覺設定，請在下方說明。否則我們開始逐章製作。</p>
+                
+                <div class="actions">
+                    <button class="btn btn-secondary" onclick="showModifyPrompt('design')">✏️ 我想修改</button>
+                    <button class="btn btn-primary" onclick="startChapterWork(0)">開始第1章製作 →</button>
+                </div>
+            `);
+        }, 1500);
+    }, 1500);
+}
+
+function extractAllCharacters(script){
+    const chars = [
+        {name:'小猴子', role:'主角', age:'13歲', body:'瘦小靈活', feature:'機警的眼神', description:'蕃坊街頭的少年神偷，身手如猴般靈活。表面玩世不恭，內心渴望歸屬。因意外捲入寶石事件，命運徹底改變。', defaultCostume:'破舊的灰褐色短打，腰間繫著布帶，赤足或草鞋，便於攀爬'},
+        {name:'小菩薩蠻', role:'女主角', age:'15歲', body:'纖細柔弱', feature:'如菩薩般寧靜', description:'神秘的南洋少女，身世成謎。總是白衣素淨，手持佛珠。似乎與千年前的輪迴有關。', defaultCostume:'白色南洋風格長裙，頭戴銀飾，腕戴佛珠串'},
+        {name:'蕃長', role:'重要配角', age:'45歲', body:'高大魁梧', feature:'絡腮鬍', description:'大食商人，船隊的領袖。威嚴中帶著深沉的憂鬱，背負著不為人知的秘密。', defaultCostume:'大食風格長袍，頭纏布巾，佩戴金飾'},
+        {name:'卜夢師', role:'神秘角色', age:'年齡不詳', body:'纖細', feature:'蒙面，淡褐色眼眸', description:'能窺見過去與未來的占卜師。言語如謎，立場模糊，是敵是友難以判斷。', defaultCostume:'深紫色蒙面長袍，銀質飾品，手持銀鏈'},
+        {name:'紅髮盲老人', role:'配角', age:'70歲', body:'枯瘦', feature:'紅髮，雙目失明', description:'港口的說書人，講述的每個故事都暗藏玄機。是小猴子重要的引路人。', defaultCostume:'灰白色粗布長衫，拄著竹杖'}
+    ];
+    
+    // 檢查劇本中是否提到這些角色
+    return chars.filter(c => script.includes(c.name) || c.role === '主角');
+}
+
+// ==================== 階段4-6：章節製作 ====================
+function startChapterWork(chapterIndex){
+    state.currentChapter = chapterIndex;
+    state.phase = 4;
+    updateProgress();
+    renderChapters();
+    
+    const chapter = state.project.chapters[chapterIndex];
+    
+    addMessage('director', `
+        <h3>📖 第${chapterIndex + 1}章：${chapter.title}</h3>
+        <p>開始製作第${chapterIndex + 1}章的完整分鏡。這個階段將依次完成：</p>
+        <ol>
+            <li>章節劇本精修</li>
+            <li>角色服裝確定</li>
+            <li>完整分鏡表（含所有視聽元素）</li>
+        </ol>
+    `);
+    
+    setTimeout(() => startPhase4(chapterIndex), 1000);
+}
+
+function startPhase4(chapterIndex){
+    activateAgents(['screenwriter','narrative','psychology']);
+    const chapter = state.project.chapters[chapterIndex];
+    
+    addMessage('screenwriter', `
+        <h3>✍️ 章節劇本</h3>
+        
+        <div class="report">
+            <h4>第${chapterIndex + 1}章：${chapter.title}</h4>
+            <div class="report-item">
+                <h5>章節概要</h5>
+                <p>${getChapterDesc(chapterIndex, state.project.chapters.length)}</p>
+            </div>
+            <div class="report-item">
+                <h5>情緒節拍</h5>
+                <p>開場：${['平靜','緊張','神秘','歡快'][chapterIndex % 4]} → 發展：逐漸升溫 → 結尾：${['懸念','震撼','感動','反轉'][chapterIndex % 4]}</p>
+            </div>
+            <div class="report-item">
+                <h5>本章鉤子（讓觀眾想看下一集）</h5>
+                <p style="color:var(--warning)">${getChapterHook(chapterIndex)}</p>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn btn-primary" onclick="startPhase5(${chapterIndex})">確認 → 服裝確定</button>
+        </div>
+    `);
+}
+
+function getChapterHook(i){
+    const hooks = [
+        '小猴子的手指觸碰寶石的瞬間，血腥的幻象閃過——這顆寶石，究竟隱藏著什麼秘密？',
+        '船緩緩駛離港口，小猴子不知道的是，這艘船上，有人帶著殺意...',
+        '黑帆逐漸逼近，船長的臉色驟變：「是『食人魔』的船...」',
+        '當第一具屍體被發現時，所有人都意識到——兇手，就在他們之中。',
+        '卜夢師的預言成真了：「今夜，還會有人死。」',
+        '真相即將揭曉，但小猴子發現——他寧願永遠不知道這個答案...'
+    ];
+    return hooks[i % hooks.length];
+}
+
+function startPhase5(chapterIndex){
+    state.phase = 5;
+    updateProgress();
+    activateAgents(['costume','color']);
+    
+    const characters = state.project.characters;
+    
+    addMessage('costume', `
+        <h3>👔 本章服裝確定</h3>
+        
+        <p>根據第${chapterIndex + 1}章的場景和情節，確定各角色在本章的服裝：</p>
+        
+        <div class="report">
+            ${characters.map(c => `
+                <div class="report-item">
+                    <h5>${c.name}</h5>
+                    <p>${c.defaultCostume}</p>
+                    <p style="font-size:11px;color:var(--cyan);margin-top:4px">本章特殊：${getChapterCostume(c.name, chapterIndex)}</p>
+                </div>
+            `).join('')}
+        </div>
+        
+        <div class="actions">
+            <button class="btn btn-primary" onclick="startPhase6(${chapterIndex})">確認 → 生成分鏡</button>
+        </div>
+    `);
+}
+
+function getChapterCostume(name, chapter){
+    if(chapter === 0) return '初始登場造型，無特殊變化';
+    if(chapter === 1 && name === '小猴子') return '換上水手服飾，準備上船';
+    if(chapter === 2) return '夜間場景，可能有披風或斗篷';
+    return '根據場景微調';
+}
+
+function startPhase6(chapterIndex){
+    state.phase = 6;
+    updateProgress();
+    activateAgents(['storyboard','cinematography','editing','blocking','expression','acting','pose','prompt','platform','vfx','manga','music','lighting','weather']);
+    
+    addMessage('storyboard', `
+        <h3>🎬 完整分鏡表生成中...</h3>
+        <p>正在調用所有相關Agent，生成第${chapterIndex + 1}章的完整分鏡...</p>
+    `);
+    
+    setTimeout(() => {
+        const shots = generateChapterStoryboard(chapterIndex);
+        state.project.chapters[chapterIndex].storyboard = shots;
+        renderChapters();
+        
+        addMessage('storyboard', `
+            <h3>🎥 第${chapterIndex + 1}章分鏡表</h3>
+            
+            <p>共生成 <strong style="color:var(--primary)">${shots.length}</strong> 個鏡頭，包含完整的視聽設計。</p>
+            
+            <div class="storyboard">
+                <div class="shot-row header">
+                    <div>鏡頭</div>
+                    <div>畫面描述</div>
+                    <div>攝影/運鏡</div>
+                    <div>音效/配樂</div>
+                </div>
+                ${shots.slice(0, 8).map(s => `
+                    <div class="shot-row">
+                        <div class="shot-num">#${s.id}</div>
+                        <div class="shot-cell">${s.visual}</div>
+                        <div class="shot-cell highlight">${s.camera}</div>
+                        <div class="shot-cell">${s.audio}</div>
+                    </div>
+                `).join('')}
+                ${shots.length > 8 ? `<p style="text-align:center;color:var(--dim);font-size:12px;padding:12px">... 共 ${shots.length} 個鏡頭，完整內容請導出查看</p>` : ''}
+            </div>
+            
+            <div class="report">
+                <h4>📋 本章數據</h4>
+                <div class="report-grid">
+                    <div class="report-stat"><div class="val">${shots.length}</div><div class="label">總鏡頭</div></div>
+                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.55)}</div><div class="label">敘事鏡頭</div></div>
+                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.28)}</div><div class="label">戲劇鏡頭</div></div>
+                    <div class="report-stat"><div class="val">${Math.round(shots.length * 0.17)}</div><div class="label">情感鏡頭</div></div>
+                </div>
+            </div>
+            
+            <p>分鏡已生成。你可以：</p>
+            <div class="actions">
+                <button class="btn" onclick="exportChapter()">📥 導出本章分鏡</button>
+                ${chapterIndex < state.project.chapters.length - 1 ? 
+                    `<button class="btn btn-primary" onclick="startChapterWork(${chapterIndex + 1})">繼續第${chapterIndex + 2}章 →</button>` :
+                    `<button class="btn btn-primary" onclick="finishProject()">完成項目 🎉</button>`
+                }
+            </div>
+        `);
+    }, 2000);
+}
+
+function generateChapterStoryboard(chapterIndex){
+    const shots = [];
+    const count = 60 + Math.floor(Math.random() * 40); // 60-100個鏡頭
+    
+    const visuals = ['建立鏡頭：場景全貌','人物登場：主角入畫','對話場景：雙人中景','情緒特寫：眼神變化','動作場景：快速移動','環境空鏡：氛圍渲染','轉場鏡頭：時間推移'];
+    const cameras = ['固定/中景','推進/特寫','橫移/跟拍','俯拍/大全景','手持/主觀','航拍/建立','切換/蒙太奇'];
+    const audios = ['環境音：市集喧囂','配樂：緊張弦樂','音效：腳步聲','旁白：內心獨白','對白：角色交談','靜音：強調','音樂漸強'];
+    
+    for(let i = 1; i <= count; i++){
+        shots.push({
+            id: i,
+            visual: visuals[Math.floor(Math.random() * visuals.length)],
+            camera: cameras[Math.floor(Math.random() * cameras.length)],
+            audio: audios[Math.floor(Math.random() * audios.length)],
+            prompt: `Scene ${i}, ${state.project.title}, cinematic lighting, 8k --ar 16:9`,
+            acting: '表情：專注 / 肢體：自然站姿',
+            lighting: ['自然光','燭光','月光','背光剪影'][Math.floor(Math.random() * 4)]
+        });
+    }
+    return shots;
+}
+
+// ==================== 完成項目 ====================
+function finishProject(){
+    state.phase = 8;
+    updateProgress();
+    activateAgents(['director']);
+    
+    const totalShots = state.project.chapters.reduce((sum, ch) => sum + (ch.storyboard?.length || 0), 0);
+    
+    addMessage('director', `
+        <h3>🎉 項目製作完成！</h3>
+        
+        <div class="report">
+            <h4>📊 項目總覽</h4>
+            <div class="report-grid">
+                <div class="report-stat"><div class="val">${state.project.chapters.length}</div><div class="label">總章節</div></div>
+                <div class="report-stat"><div class="val">${totalShots}</div><div class="label">總鏡頭</div></div>
+                <div class="report-stat"><div class="val">${state.project.characters.length}</div><div class="label">角色數</div></div>
+                <div class="report-stat"><div class="val">${Math.round(totalShots * 0.5)}</div><div class="label">預計時長(秒)</div></div>
+            </div>
+        </div>
+        
+        <div class="report">
+            <h4>🎭 故事情緒弧線</h4>
+            <p>好奇開場 → 危機觸發 → 層層深入 → 最黑暗時刻 → 終極反轉 → 情感釋放 → 留白餘韻</p>
+        </div>
+        
+        <div class="report">
+            <h4>🎣 觀眾留存設計</h4>
+            <p>每章結尾都設置了「鉤子」，製造懸念，讓觀眾迫不及待想看下一集。同時通過「有情」（角色情感）、「有料」（信息密度）、「有趣」（視聽趣味）三維設計確保觀看體驗。</p>
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="exportAll()">📦 導出完整項目</button>
+            <button class="btn btn-primary" onclick="location.reload()">開始新項目</button>
+        </div>
+    `);
+}
+
+// ==================== 工具函數 ====================
+function sendMessage(){
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    
+    addMessage('user', text, true);
+    
+    // 根據當前階段處理輸入
+    if(state.phase === 1 && interviewStep < INTERVIEW_QUESTIONS.length){
+        handleInterviewAnswer(text);
+    } else {
+        // 通用修改處理
+        addMessage('director', `<p>收到你的反饋：「${text}」。我會根據這個調整後續的設計。</p>`);
+    }
+}
+
+function showModifyPrompt(type){
+    addMessage('director', `<p>請在下方輸入你想修改的內容，我會根據你的意見調整。</p>`);
+}
+
+function switchChapter(index){
+    state.currentChapter = index;
+    renderChapters();
+    addMessage('director', `<p>已切換到第${index + 1}章。</p>`);
+}
+
+function setLang(l){
+    state.lang = l;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function exportChapter(){
+    const ch = state.project.chapters[state.currentChapter];
+    if(!ch?.storyboard?.length){
+        alert('當前章節尚未生成分鏡');
+        return;
+    }
+    
+    let csv = '鏡頭,畫面描述,攝影運鏡,音效配樂,Prompt,演技,燈光\n';
+    ch.storyboard.forEach(s => {
+        csv += `${s.id},"${s.visual}","${s.camera}","${s.audio}","${s.prompt}","${s.acting}","${s.lighting}"\n`;
+    });
+    
+    download(csv, `${state.project.title}_第${state.currentChapter + 1}章_分鏡.csv`, 'text/csv');
+}
+
+function exportAll(){
+    let txt = `《${state.project.title}》完整分鏡項目\n${'='.repeat(50)}\n\n`;
+    
+    txt += `【Logline】\n${state.project.logline}\n\n`;
+    
+    txt += `【角色列表】\n`;
+    state.project.characters.forEach(c => {
+        txt += `${c.name}（${c.role}）：${c.description}\n服裝：${c.defaultCostume}\n\n`;
+    });
+    
+    state.project.chapters.forEach((ch, i) => {
+        txt += `\n${'='.repeat(50)}\n第${i + 1}章：${ch.title}\n${'='.repeat(50)}\n`;
+        if(ch.storyboard?.length){
+            ch.storyboard.forEach(s => {
+                txt += `[#${s.id}] ${s.visual} | ${s.camera} | ${s.audio}\n`;
+            });
+        }
+    });
+    
+    download(txt, `${state.project.title}_完整項目.txt`, 'text/plain');
+}
+
+function download(content, filename, type){
+    const blob = new Blob([content], {type: type + ';charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+}
+
+// ==================== 初始化 ====================
+function init(){
+    renderAgents();
+    renderSkills();
+    renderChapters();
+    updateProgress();
+    openModal();
 }
 
 document.addEventListener('DOMContentLoaded', init);

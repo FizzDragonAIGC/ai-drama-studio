@@ -1,222 +1,152 @@
-# 🧙 奇幻风格 Skill
-> 奇幻/魔法世界Prompt指南
+# 🎭 奇幻類型技能
 
----
+## 元信息
+- **技能ID**: genre_fantasy
+- **所屬Agent**: 類型Agent
+- **參考書籍**: 《奇幻世界構建》+ 《英雄之旅》
+- **難度**: ⭐⭐⭐⭐
 
-## 📐 奇幻分类
+## 奇幻類型核心
 
-### 高奇幻
+### 核心元素
 ```
-特点：完整魔法世界
-Prompt:
-high fantasy, epic,
-magical world, detailed lore,
-Lord of the Rings inspired,
-grand adventure
-```
-
-### 低奇幻
-```
-特点：现实世界+魔法元素
-Prompt:
-low fantasy, subtle magic,
-real world setting,
-hidden magic, urban fantasy
+1. 魔法系統
+2. 奇幻生物
+3. 異世界/第二世界
+4. 英雄旅程
+5. 善惡對立（通常）
 ```
 
-### 黑暗奇幻
+### 奇幻類型分類
 ```
-特点：黑暗、暴力
-Prompt:
-dark fantasy, gritty,
-morally grey, violent,
-Game of Thrones inspired,
-mature themes
-```
-
-### 童话奇幻
-```
-特点：明亮、温馨
-Prompt:
-fairy tale fantasy,
-whimsical, magical,
-bright colors, enchanted,
-Disney inspired
+高奇幻：異世界、史詩、善惡
+低奇幻：現實世界+魔法元素
+都市奇幻：現代城市+超自然
+黑暗奇幻：陰暗、道德灰色
+仙俠：東方修仙體系
+童話：經典故事改編
 ```
 
----
+## 視覺技法
 
-## 🎯 奇幻场景
-
-### 自然场景
-| 场景 | Prompt |
-|------|--------|
-| 魔法森林 | enchanted forest, magical |
-| 精灵王国 | elven kingdom, ethereal |
-| 龙穴 | dragon's lair, treasure hoard |
-| 魔法湖泊 | mystical lake, glowing water |
-| 古老遗迹 | ancient ruins, magical |
-| 魔法花园 | magical garden, fantasy flowers |
-
-### 建筑场景
-| 场景 | Prompt |
-|------|--------|
-| 城堡 | fantasy castle, towering |
-| 魔法塔 | wizard tower, magical spire |
-| 地下城 | dungeon, underground |
-| 神殿 | temple, sacred shrine |
-| 酒馆 | fantasy tavern, medieval inn |
-| 魔法学院 | magic academy, Hogwarts style |
-| 漂浮岛 | floating island, sky castle |
-
----
-
-## 📊 奇幻种族
-
-### 常见种族
-| 种族 | Prompt |
-|------|--------|
-| 精灵 | elf, elven, pointed ears |
-| 矮人 | dwarf, dwarven, short stout |
-| 兽人 | orc, orcish, green skin |
-| 半兽人 | beast folk, animal features |
-| 吸血鬼 | vampire, pale, fangs |
-| 狼人 | werewolf, wolf form |
-| 美人鱼 | mermaid, fish tail |
-| 天使 | angel, wings, divine |
-| 恶魔 | demon, horns, dark |
-
-### 幻想生物
-| 生物 | Prompt |
-|------|--------|
-| 龙 | dragon, western dragon |
-| 凤凰 | phoenix, fire bird |
-| 独角兽 | unicorn, white horse horn |
-| 狮鹫 | griffin, lion eagle |
-| 九尾狐 | nine-tailed fox, kitsune |
-| 史莱姆 | slime, gelatinous |
-| 哥布林 | goblin, small green |
-| 巨人 | giant, enormous |
-
----
-
-## 🎭 魔法元素
-
-### 魔法类型
-| 类型 | Prompt |
-|------|--------|
-| 火焰魔法 | fire magic, flames |
-| 冰雪魔法 | ice magic, frost |
-| 雷电魔法 | lightning magic, thunder |
-| 治愈魔法 | healing magic, holy light |
-| 黑暗魔法 | dark magic, shadows |
-| 召唤魔法 | summoning magic, creature |
-| 元素魔法 | elemental magic |
-| 时间魔法 | time magic, temporal |
-
-### 魔法视觉效果
-| 效果 | Prompt |
-|------|--------|
-| 魔法阵 | magic circle, runes |
-| 魔法光环 | magical aura, glowing |
-| 魔法粒子 | magical particles, sparkles |
-| 法杖发光 | staff glowing, wand light |
-| 咒语文字 | spell runes, ancient text |
-| 能量流 | energy flow, mana stream |
-
----
-
-## 📋 奇幻服装
-
-### 角色服装
-| 类型 | Prompt |
-|------|--------|
-| 法师袍 | wizard robes, mage clothes |
-| 骑士甲 | knight armor, plate mail |
-| 游侠装 | ranger outfit, leather |
-| 精灵装 | elven attire, elegant |
-| 王族服 | royal attire, crown, cape |
-| 盗贼装 | rogue outfit, hooded |
-| 祭司袍 | priest robes, holy |
-| 野蛮人 | barbarian, fur, tribal |
-
----
-
-## 🔧 奇幻Prompt模板
-
-### 奇幻场景
+### 世界構建
 ```
-fantasy landscape, [场景],
-magical atmosphere,
-[时间], [天气],
-mystical, enchanted,
-detailed, epic fantasy
+視覺規則：
+- 魔法是什麼顏色/形態？
+- 建築風格？
+- 自然環境？
+- 服裝設計？
+
+Prompt: fantasy world, magical atmosphere,
+        [時代風格], [文化元素]
 ```
 
-### 奇幻角色
+### 魔法視覺化
 ```
-fantasy character, [种族],
-[职业], [服装],
-[武器/道具],
-magical, detailed,
-fantasy art style
+魔法效果類型：
+- 光系：光芒、粒子
+- 元素系：火焰、冰霜、雷電
+- 靈魂系：幽光、幻影
+- 自然系：藤蔓、生長
+
+Prompt: magical effects, glowing runes,
+        [元素類型] magic, fantasy lighting
 ```
 
-### 魔法场景
+### 色調
 ```
-magic scene, [角色] casting [魔法],
-[魔法效果], glowing,
-magical energy, [颜色],
-dramatic, fantasy art,
-detailed
-```
-
----
-
-## 📊 奇幻风格参考
-
-### 魔戒风
-```
-Lord of the Rings style,
-epic fantasy, Middle-earth,
-grand scale, detailed,
-cinematic, realistic fantasy
+高奇幻：明亮、飽和、黃金
+黑暗奇幻：暗調、紅黑
+仙俠：水墨、青綠
+童話：粉嫩、夢幻
 ```
 
-### 龙与地下城风
+## 敘事技法
+
+### 魔法系統
 ```
-D&D style, Dungeons and Dragons,
-adventure party, epic fantasy,
-varied races and classes,
-detailed fantasy
+規則：
+- 魔法有代價
+- 魔法有限制
+- 規則一致
+
+Sanderson第一法則：
+解決問題的魔法 = 必須被讀者理解的魔法
 ```
 
-### 哈利波特风
+### 英雄旅程
 ```
-Harry Potter style,
-magical school, wizarding world,
-whimsical magic,
-British fantasy
-```
-
-### 吉卜力奇幻
-```
-Ghibli fantasy style,
-whimsical, heartwarming,
-nature spirits, magical creatures,
-soft colors, hand-painted
-```
-
-### 黑魂风
-```
-Dark Souls style,
-dark fantasy, gothic,
-grim, decrepit,
-detailed armor, challenging,
-atmospheric
+經典結構：
+1. 日常世界
+2. 冒險召喚
+3. 拒絕召喚
+4. 遇見導師
+5. 跨越門檻
+6. 試煉、盟友、敵人
+7. 接近深處
+8. 磨難
+9. 獎賞
+10. 返回之路
+11. 復活
+12. 攜帶藥水回歸
 ```
 
----
+### 善惡對立
+```
+經典：明確的善與惡
+現代：道德灰色、複雜動機
 
-*Skill版本: 1.0*
-*创建时间: 2026-02-14*
+反派需要：
+- 清晰的動機
+- 可理解（不一定同情）
+- 與主角有對照
+```
+
+## AI番劇奇幻場景
+
+```json
+{
+  "fantasy_scene": {
+    "type": "高奇幻",
+    "setup": "魔法師在古老的塔樓施法",
+    "visual": {
+      "location": "古老石塔",
+      "magic": "藍色符文光芒",
+      "atmosphere": "神秘、莊嚴"
+    },
+    "prompt": "wizard casting spell in ancient tower,
+               glowing blue runes floating in air,
+               magical particles, mystical atmosphere,
+               fantasy lighting, dramatic shadows,
+               epic fantasy scene"
+  }
+}
+```
+
+## 奇幻生物設計
+
+```
+設計原則：
+- 有現實基礎（混合動物）
+- 符合生態邏輯
+- 與魔法系統相關
+- 有文化/象徵意義
+
+例：龍 = 蛇 + 蜥蜴 + 鳥 + 火焰
+```
+
+## 奇幻清單
+
+```
+✅ 有效技法：
+- 魔法有規則
+- 世界觀一致
+- 熟悉+新奇的平衡
+- 視覺風格統一
+
+❌ 避免：
+- 魔法萬能
+- 邏輯不一致
+- 過度借鑑現有IP
+- 設定大於故事
+```

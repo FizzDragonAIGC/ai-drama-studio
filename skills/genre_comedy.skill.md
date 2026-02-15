@@ -1,128 +1,159 @@
-# 😂 喜剧片风格 Skill
-> 来源：《喜剧的结构》《幽默写作技巧》
+# 🎭 喜劇類型技能
 
----
+## 元信息
+- **技能ID**: genre_comedy
+- **所屬Agent**: 類型Agent
+- **參考書籍**: 《喜劇寫作的秘密》
+- **難度**: ⭐⭐⭐
 
-## 📐 喜剧核心技法
+## 喜劇類型核心
 
-| 技法 | 原理 | AI应用 |
-|------|------|--------|
-| 🎭 **反差** | 期待与现实不符 | contrast, unexpected twist |
-| ⏰ **时机** | 笑点的精准投放 | comedic timing, beat |
-| 🔁 **重复** | 三次法则递进 | callback, running gag |
-| 😅 **尴尬** | 社死时刻 | awkward moment, cringe |
-| 🤡 **夸张** | 放大日常荒诞 | exaggerated, over the top |
-
----
-
-## 🎯 喜剧类型分解
-
-### 喜剧风格
-| 类型 | 特点 | AI描述 |
-|------|------|--------|
-| 闹剧 | 肢体搞笑 | slapstick, physical comedy |
-| 讽刺 | 社会批评 | satirical, ironic, witty |
-| 荒诞 | 超现实幽默 | absurd, surreal comedy |
-| 黑色幽默 | 暗黑搞笑 | dark comedy, gallows humor |
-| 浪漫喜剧 | 爱情搞笑 | romantic comedy, rom-com |
-| 恶搞 | 戏仿模仿 | parody, spoof, mockery |
-
-### 笑点构建
-| 技法 | 结构 | 示例 |
-|------|------|------|
-| 铺垫+反转 | 建立期待→打破 | setup + punchline |
-| 误会 | 信息不对称 | misunderstanding, confusion |
-| 回调 | 前面埋梗后面用 | callback to earlier joke |
-| 升级 | 同一笑话递增 | escalation, getting worse |
-
----
-
-## 🎬 喜剧角色类型
-
-### 经典喜剧组合
-| 组合 | 特点 | AI描述 |
-|------|------|--------|
-| 傻瓜+直男 | 一个搞怪一个吐槽 | fool and straight man |
-| 菜鸟+老手 | 新人犯蠢老人受苦 | rookie and veteran |
-| 损友组合 | 互相坑害 | frenemies, bickering duo |
-| 全员疯狂 | 没有正常人 | ensemble of idiots |
-
-### 喜剧表情
-| 表情 | 场合 | AI描述 |
-|------|------|--------|
-| 傻笑 | 得意忘形 | goofy grin, silly smile |
-| 惊呆 | 见证荒诞 | shocked face, jaw dropped |
-| 无语 | 吐槽时刻 | deadpan, unimpressed |
-| 尴尬 | 社死瞬间 | awkward smile, embarrassed |
-| 狡黠 | 恶作剧前 | mischievous grin, scheming |
-
----
-
-## 🔥 喜剧视觉效果
-
-### 闹剧动作
-| 动作 | 效果 | AI描述 |
-|------|------|--------|
-| 摔倒 | 经典搞笑 | falling over, slipping |
-| 撞门 | 出场笑果 | walking into door |
-| 追逐 | 闹剧高潮 | chase sequence, running chaos |
-| 扮鬼脸 | 表情喜剧 | making faces, silly expression |
-
-### 喜剧构图
-| 构图 | 用途 | AI描述 |
-|------|------|--------|
-| 对比 | 强调反差 | size contrast, juxtaposition |
-| 留白 | 等待反应 | negative space, reaction shot |
-| 特写 | 表情笑点 | close-up on face, expression |
-
----
-
-## 📋 喜剧场景模板
-
+### 幽默來源
 ```
-【喜剧场景设计】
-
-场景：[描述环境]
-角色：[列出参与者]
-
-铺垫：
-[建立期待]
-
-笑点：
-[反转/意外/尴尬]
-
-反应镜头：
-[角色的搞笑反应]
-
-AI Prompt：
-[角色描述], [表情], 
-comedic scene, funny moment,
-[光影柔和], [色调明亮]
+1. 意外：打破預期
+2. 誇張：放大現實
+3. 對比：不協調
+4. 重複：三次法則
+5. 認同：觀眾的共鳴
 ```
 
----
+### 喜劇類型分類
+```
+情境喜劇：處境造成笑點
+動作喜劇：肢體/視覺笑點
+諷刺喜劇：社會批評
+浪漫喜劇：愛情+搞笑
+黑色喜劇：死亡/黑暗話題
+無厘頭：荒誕邏輯
+```
 
-## 🎯 喜剧节奏控制
+## 視覺技法
 
-| 节奏 | 用途 | 技巧 |
-|------|------|------|
-| 快 | 闹剧场面 | 快速剪辑、连续笑点 |
-| 慢 | 尴尬时刻 | 停顿、沉默、等待 |
-| 停顿 | 吐槽反应 | 留白让笑点发酵 |
-| 加速 | 混乱升级 | 事态失控的递进 |
+### 時機（Timing）
+```
+喜劇 = 時機
+- 停頓（beat）
+- 反應時間
+- 剪輯節奏
 
----
+太快：笑點還沒理解
+太慢：笑點過期
+```
 
-## 💡 喜剧写作提示
+### 構圖
+```
+- 對比大小
+- 誇張表情特寫
+- 意外出現（畫面邊緣）
+- 前景/背景對比
 
-1. **意外**：打破观众预期
-2. **真实**：来源于生活的荒诞
-3. **人物**：角色的缺陷制造笑料
-4. **节奏**：铺垫要够，收割要准
-5. **态度**：角色认真观众才会笑
+Prompt: exaggerated expressions, comedic timing,
+        visual contrast, funny reaction shot
+```
 
----
+### 表情
+```
+- 誇張化
+- 反應鏡頭
+- 呆滯表情（deadpan）
+- 崩潰表情
+```
 
-*Skill版本: 1.0*
-*适用: AI番剧喜剧场面设计*
-*创建时间: 2026-02-14*
+## 敘事技法
+
+### 三次法則
+```
+第一次：建立
+第二次：強化
+第三次：打破/誇張
+
+例：
+他滑倒了（建立）
+他又滑倒了（預期）
+他這次...成功了，然後掉進水池（反轉）
+```
+
+### 遞進
+```
+問題越來越大
+謊言越來越多
+尷尬越來越深
+
+觀眾看著角色挖坑
+```
+
+### 反差
+```
+嚴肅 + 荒謬
+期待 + 失望
+自信 + 失敗
+```
+
+## 喜劇角色
+
+### 角色類型
+```
+呆萌型：無辜製造笑點
+吐槽型：正常人的反應
+作死型：自己挖坑
+傲嬌型：口是心非
+```
+
+### 角色關係
+```
+經典搭配：
+- 直人 + 傻瓜
+- 冷面 + 熱情
+- 精英 + 草根
+```
+
+## AI番劇喜劇場景
+
+```json
+{
+  "comedy_scene": {
+    "type": "尷尬喜劇",
+    "setup": "他要裝酷但失敗了",
+    "visual": {
+      "beat1": "自信pose",
+      "beat2": "意外發生",
+      "beat3": "尷尬表情特寫"
+    },
+    "timing": "pose停頓2秒→意外→反應",
+    "prompt": "confident pose, then embarrassing fail,
+               exaggerated facial expression,
+               comedic reaction, anime comedy style,
+               over-the-top expression"
+  }
+}
+```
+
+## 喜劇時機
+
+```
+節拍控制：
+1. 鋪墊（Setup）
+2. 停頓（Beat）
+3. 笑點（Punchline）
+4. 反應（Reaction）
+
+停頓是關鍵：
+- 讓觀眾有時間預期
+- 然後打破預期
+```
+
+## 喜劇清單
+
+```
+✅ 有效技法：
+- 角色有缺陷
+- 處境可以認同
+- 笑點鋪墊
+- 表情誇張
+
+❌ 避免：
+- 解釋笑點
+- 笑點太長
+- 太刻意
+- 傷害弱勢群體
+```

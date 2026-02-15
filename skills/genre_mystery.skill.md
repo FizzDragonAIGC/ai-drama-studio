@@ -1,150 +1,168 @@
-# 🔍 悬疑片风格 Skill
-> 来源：《推理小说技法》《悬疑叙事结构》
+# 🎭 懸疑類型技能
 
----
+## 元信息
+- **技能ID**: genre_mystery
+- **所屬Agent**: 類型Agent
+- **參考書籍**: 《懸疑小說寫作》+ 《希區柯克的電影技法》
+- **難度**: ⭐⭐⭐⭐
 
-## 📐 悬疑片核心元素
+## 懸疑類型核心
 
-| 元素 | 功能 | AI Prompt |
-|------|------|-----------|
-| ❓ **谜题** | 核心驱动 | mystery, puzzle, enigma |
-| 🔍 **线索** | 解谜路径 | clues, evidence, hints |
-| 🎭 **嫌疑** | 多方猜测 | suspects, doubt, suspicion |
-| 💡 **揭露** | 真相大白 | revelation, truth unveiled |
-| 🌀 **反转** | 打破预期 | plot twist, unexpected |
-
----
-
-## 🎯 悬疑片类型
-
-### 悬疑风格
-| 类型 | 特点 | AI描述 |
-|------|------|--------|
-| 本格推理 | 公平解谜 | fair-play mystery, detective |
-| 社会派 | 动机探究 | social mystery, motive |
-| 密室 | 不可能犯罪 | locked room, impossible crime |
-| 心理悬疑 | 人心难测 | psychological mystery |
-| 悬念悬疑 | 观众知道更多 | suspense, dramatic irony |
-| 叙述诡计 | 叙事欺骗 | unreliable narrator |
-
-### 谜题类型
-| 类型 | 核心问题 | AI关键词 |
-|------|----------|----------|
-| 犯罪 | 谁是凶手 | whodunit |
-| 手法 | 如何做到 | howdunit |
-| 动机 | 为何如此 | whydunit |
-| 身份 | 他是谁 | identity mystery |
-
----
-
-## 🎬 悬疑视觉语言
-
-### 悬疑镜头
-| 技法 | 效果 | AI描述 |
-|------|------|--------|
-| 特写 | 线索强调 | close-up on clue, detail |
-| 主观镜头 | 侦探视角 | POV shot, detective's view |
-| 隐藏 | 关键遮挡 | obscured, partially hidden |
-| 反复 | 回溯真相 | flashback, revisiting scene |
-| 监视 | 被观察感 | surveillance, being watched |
-
-### 悬疑色调
-| 氛围 | 色调 | AI描述 |
-|------|------|--------|
-| 阴郁 | 灰蓝暗调 | moody, gray-blue tones |
-| 复古 | 褐色怀旧 | sepia, vintage, noir |
-| 紧张 | 高对比 | high contrast, sharp |
-| 迷雾 | 朦胧不清 | foggy, hazy, unclear |
-
----
-
-## 👤 悬疑角色设计
-
-### 角色类型
-| 类型 | 特征 | AI描述 |
-|------|------|--------|
-| 侦探 | 敏锐冷静 | detective, sharp-eyed, analytical |
-| 嫌疑人 | 各怀心事 | suspect, hiding something |
-| 目击者 | 知道部分 | witness, knows something |
-| 受害者 | 引发事件 | victim, catalyst |
-| 凶手 | 隐藏身份 | culprit, hidden identity |
-
-### 悬疑表情
-| 状态 | 表现 | AI描述 |
-|------|------|--------|
-| 沉思 | 分析推理 | contemplating, thinking deeply |
-| 狐疑 | 不相信 | suspicious, doubtful |
-| 隐瞒 | 心虚闪躲 | hiding something, evasive |
-| 恍然 | 真相大悟 | realization, eureka moment |
-| 揭露 | 指出真凶 | accusation, pointing out |
-
----
-
-## 🔥 悬疑场景设计
-
-### 经典场景
-| 场景 | 元素 | AI描述 |
-|------|------|--------|
-| 案发现场 | 线索遍布 | crime scene, evidence scattered |
-| 审讯室 | 心理博弈 | interrogation room, confrontation |
-| 密室 | 封闭空间 | locked room, sealed |
-| 故宅 | 秘密藏身 | old mansion, secrets |
-| 雨夜 | 氛围营造 | rainy night, mysterious |
-
-### 线索设计
+### 核心問題
 ```
-【公平推理原则】
+誰幹的？（Whodunit）
+怎麼幹的？（Howdunit）
+為什麼？（Whydunit）
 
-1. 所有线索必须呈现给观众
-2. 凶手在早期就要出场
-3. 谜底揭晓时观众要"啊原来如此"
-4. 不能有超自然解释
-5. 侦探不能是凶手
+至少回答一個核心問題
 ```
 
----
-
-## 📋 悬疑场景模板
-
+### 懸疑 vs 驚悚
 ```
-【悬疑场景设计】
+懸疑：觀眾和主角一起尋找答案
+驚悚：觀眾知道威脅，主角不知道
 
-场景：[案发/调查/审讯/揭露]
-谜题类型：[谁/如何/为何]
-
-线索设计：
-- 显性线索：[观众能注意到的]
-- 隐性线索：[需要推理的]
-- 红鲱鱼：[误导性信息]
-
-人物状态：
-- 侦探：[分析态度]
-- 嫌疑人：[隐瞒程度]
-
-视觉设计：
-- 镜头：[强调/隐藏什么]
-- 光影：[制造什么氛围]
-- 色调：[阴郁/紧张/揭晓]
-
-AI Prompt：
-mystery scene, [场景类型],
-detective, investigation,
-[光影效果], [色调],
-cinematic, suspenseful
+可以混合使用
 ```
 
----
+## 視覺技法
 
-## 💡 悬疑片法则
+### 光影
+```
+- 明暗對比
+- 隱藏信息的陰影
+- 聚光燈效果（強調線索）
+- 不完整的視野
 
-1. **公平原则**：线索要足够但不明显
-2. **误导技巧**：红鲱鱼引开注意
-3. **逻辑严密**：解答必须合理
-4. **节奏控制**：信息释放的时机
-5. **揭露高潮**：真相大白要有冲击
+Prompt: noir lighting, shadows hiding secrets,
+        spotlight on clue, partial visibility
+```
 
----
+### 構圖
+```
+- 局部特寫（線索）
+- 偷窺視角
+- 遮擋構圖
+- 鏡子/反射
 
-*Skill版本: 1.0*
-*适用: AI番剧悬疑场面设计*
-*创建时间: 2026-02-14*
+Prompt: voyeuristic angle, obscured view,
+        close-up on evidence, mystery framing
+```
+
+### 色調
+```
+- 低飽和度
+- 冷色調
+- 黑白閃回
+- 紅色警示
+```
+
+## 敘事技法
+
+### 線索設置
+```
+公平遊戲規則：
+- 線索必須展示給觀眾
+- 但可以分散注意力
+- 觀眾可以推理出答案
+
+紅鯡魚：
+- 誤導性線索
+- 合理但錯誤的嫌疑人
+```
+
+### 信息控制
+```
+揭露時機：
+- 太早 → 無聊
+- 太晚 → 混亂
+- 剛好 → 觀眾有「啊哈」感
+
+層次揭露：
+- 表層真相
+- 深層真相
+- 最終真相
+```
+
+### 懸念構建
+```
+問題累積：
+- 每解決一個問題
+- 引出更大的問題
+
+倒計時：
+- 時間壓力
+- 必須在某時間前解決
+```
+
+## 角色設計
+
+### 偵探角色
+```
+有特殊技能
+有明顯怪癖
+與案件有個人關聯（更好）
+```
+
+### 嫌疑人
+```
+每個都有動機
+每個都有機會
+每個都有秘密
+```
+
+## AI番劇懸疑場景
+
+```json
+{
+  "mystery_scene": {
+    "type": "發現線索",
+    "setup": "偵探在犯罪現場發現異常",
+    "visual": {
+      "lighting": "手電筒光束",
+      "focus": "地上的腳印",
+      "atmosphere": "緊張"
+    },
+    "clue": "腳印指向相反方向",
+    "prompt": "detective with flashlight, crime scene,
+               dramatic shadows, close-up on footprints,
+               noir atmosphere, mystery thriller,
+               tension building"
+  }
+}
+```
+
+## 懸疑結構
+
+```
+經典結構：
+1. 案件發生
+2. 調查開始
+3. 收集線索
+4. 嫌疑人出現
+5. 誤導方向
+6. 新線索打破
+7. 最終推理
+8. 揭曉真相
+
+反轉類型：
+- 敘述者是兇手
+- 沒有兇手（意外/自殺）
+- 偵探就是兇手
+```
+
+## 懸疑清單
+
+```
+✅ 有效技法：
+- 公平展示所有線索
+- 讓觀眾能參與推理
+- 紅鯡魚要合理
+- 真相要令人滿意
+
+❌ 避免：
+- 隱藏關鍵信息
+- 突然出現新角色是兇手
+- 太多巧合
+- 解釋過於複雜
+```

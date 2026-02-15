@@ -20,9 +20,9 @@
 - 公版文学 + 文化母体
 - 路径：`ai_drama_studio_v2/ip_library/`
 
-### 测试案例
-- 《边城》沈从文 - 完成全局设计
-- 路径：`ai_drama_studio_v2/projects/biancheng/`
+### 项目路径
+- 《边城》: `ai_drama_studio_v2/projects/biancheng/`
+- 《海上絲綢之路密碼》: `ai_drama_studio_v2/projects/silkroad/`
 
 ## 25-Agent系统
 - **核心理念**：AI番剧 = 漫画 + 电影 + AI
@@ -38,11 +38,15 @@
 - 现代改编策略：经典IP + 打工人视角（如浪浪山）
 
 ## AI番剧工作台 (完成!)
-- **线上版**: https://pv4qnn.csb.app
+- **线上版**: https://stcws8.csb.app
 - **本地**: `ai_drama_studio_v2/workbench/index.html`
-- **规模**: 30 Agents × 200 Skills
+- **规模**: 26 Agents × 241 Skills (目标500)
 - **三语**: 简体/繁體/English
 - **UI**: 黑红赛博朋克 + FizzDragon品牌
+
+## 测试项目
+- **《海上絲綢之路密碼》**: 155,025字 → 10集/1000镜头/80分钟 ✅
+- **《边城》沈从文**: 完成全局设计 ✅
 
 ## 待办
 - [ ] 导出功能（Excel/JSON）

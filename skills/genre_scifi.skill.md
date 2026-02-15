@@ -1,220 +1,151 @@
-# 🚀 科幻风格 Skill
-> 科幻片视觉美学Prompt指南
+# 🎭 科幻類型技能
 
----
+## 元信息
+- **技能ID**: genre_scifi
+- **所屬Agent**: 類型Agent
+- **參考書籍**: 《科幻電影》+ 《世界構建》
+- **難度**: ⭐⭐⭐⭐
 
-## 📐 科幻分类
+## 科幻類型核心
 
-### 硬科幻
+### 核心問題
 ```
-特点：科学准确、现实基础
-Prompt:
-hard sci-fi, realistic,
-scientifically accurate,
-NASA aesthetic, near future,
-practical technology
-```
+「如果...會怎樣？」
+（What if...?）
 
-### 软科幻
-```
-特点：社会主题、人文关怀
-Prompt:
-soft sci-fi, philosophical,
-social commentary,
-humanistic, thought-provoking
+例：
+如果機器人有感情？
+如果人類可以上傳意識？
+如果時間可以旅行？
 ```
 
-### 太空歌剧
+### 科幻類型分類
 ```
-特点：史诗规模、冒险
-Prompt:
-space opera, epic scale,
-grand adventure, starships,
-galactic civilization,
-Star Wars inspired
-```
-
-### 赛博朋克
-```
-特点：高科技低生活
-Prompt:
-cyberpunk, neon lights,
-rain-slicked streets,
-high tech low life,
-corporate dystopia,
-Blade Runner inspired
+硬科幻：科學準確、技術導向
+軟科幻：社會/人文主題
+太空歌劇：太空冒險、史詩
+反烏托邦：未來社會批判
+賽博朋克：高科技+低生活
+時間旅行：因果邏輯
+外星接觸：人類視角的他者
 ```
 
----
+## 視覺技法
 
-## 🎯 科幻场景
-
-### 太空场景
-| 场景 | Prompt |
-|------|--------|
-| 太空 | outer space, cosmos, stars |
-| 星球表面 | alien planet surface |
-| 太空站 | space station, orbital station |
-| 飞船内部 | spaceship interior, cockpit |
-| 太空行走 | spacewalk, EVA |
-| 星际穿越 | hyperspace, warp, jump |
-
-### 未来城市
-| 场景 | Prompt |
-|------|--------|
-| 未来都市 | futuristic city, megacity |
-| 飞行汽车 | flying cars, air traffic |
-| 全息广告 | holographic advertisements |
-| 高楼大厦 | towering skyscrapers |
-| 贫民窟 | cyberpunk slums, undercity |
-| 空中平台 | floating platforms, sky bridges |
-
-### 科技设施
-| 场景 | Prompt |
-|------|--------|
-| 实验室 | high-tech laboratory |
-| 控制室 | control room, command center |
-| 工厂 | automated factory, assembly line |
-| 数据中心 | data center, server room |
-| 医疗舱 | medical bay, cryo chamber |
-
----
-
-## 📊 科幻元素
-
-### 科技装备
-| 元素 | Prompt |
-|------|--------|
-| 全息投影 | hologram, holographic display |
-| 力场 | force field, energy shield |
-| 激光 | laser beam, energy weapon |
-| 机械臂 | mechanical arm, cybernetic |
-| 动力装甲 | power armor, exosuit |
-| VR界面 | VR interface, virtual reality |
-| 神经接口 | neural interface, brain implant |
-
-### 载具
-| 元素 | Prompt |
-|------|--------|
-| 太空飞船 | spaceship, starship |
-| 战斗机 | space fighter, starfighter |
-| 悬浮车 | hover car, antigravity vehicle |
-| 机甲 | mecha, giant robot |
-| 穿梭机 | shuttle, transport ship |
-
-### 外星/AI
-| 元素 | Prompt |
-|------|--------|
-| 外星人 | alien, extraterrestrial |
-| 机器人 | robot, android |
-| AI核心 | AI core, artificial intelligence |
-| 有机机械 | organic mechanical, bio-mech |
-
----
-
-## 🎭 科幻视觉风格
-
-### 色彩方案
-| 方案 | Prompt |
-|------|--------|
-| 赛博蓝粉 | cyan and magenta, neon |
-| 冷蓝调 | cold blue, sterile |
-| 橙蓝对比 | orange and blue, sci-fi |
-| 金属色 | metallic, chrome |
-| 全息彩虹 | holographic, iridescent |
-
-### 光效
-| 效果 | Prompt |
-|------|--------|
-| 霓虹灯 | neon lights, neon glow |
-| 全息光 | holographic light |
-| 激光 | laser lights |
-| LED | LED lights, digital |
-| 能量光 | energy glow, power core |
-
----
-
-## 📋 科幻Prompt模板
-
-### 太空场景
+### 世界構建
 ```
-sci-fi space scene,
-[太空元素], starfield,
-[飞船/星球], vast cosmos,
-epic scale, cinematic,
-detailed, futuristic
+必須有視覺規則：
+- 這個世界的科技長什麼樣？
+- 日常生活如何體現技術？
+- 熟悉+陌生的平衡
+
+Prompt: futuristic [元素], sci-fi aesthetic,
+        advanced technology, [時代風格]
 ```
 
-### 未来城市
+### 標誌性元素
 ```
-futuristic city, sci-fi,
-[赛博朋克/乌托邦/废土],
-[时间], [天气],
-neon lights, holographic,
-advanced technology,
-cinematic, detailed
+賽博朋克：
+- 霓虹燈
+- 雨夜
+- 廣告牌
+- 身體改造
+
+太空歌劇：
+- 星艦
+- 行星
+- 異星風景
+
+反烏托邦：
+- 統一服裝
+- 監控
+- 灰色調
 ```
 
-### 科幻角色
+### 色調
 ```
-sci-fi character,
-[角色描述], [服装/装备],
-futuristic outfit,
-[科技元素],
-sleek design, advanced,
-cinematic lighting
+賽博朋克：霓虹紫、電子藍
+太空：深藍、星光
+反烏托邦：灰色、單一色
+硬科幻：金屬銀、科技白
 ```
 
----
+## 敘事技法
 
-## 🔧 科幻参考风格
+### 世界觀呈現
+```
+Show, Don't Tell：
+- 用日常行為展示技術
+- 用角色反應解釋規則
+- 避免大段解說
 
-### 星球大战风
-```
-Star Wars style,
-space opera, epic,
-starships, droids,
-alien species,
-classic sci-fi aesthetic
-```
-
-### 银翼杀手风
-```
-Blade Runner style,
-neo-noir sci-fi,
-rain, neon, dark,
-dystopian, atmospheric,
-retrofuturism
+例：不說「這是全息通訊」
+   而是角色自然地接起全息電話
 ```
 
-### 星际迷航风
+### 科技與人性
 ```
-Star Trek style,
-utopian future,
-clean technology,
-exploration, discovery,
-sleek interiors
-```
-
-### 攻壳机动队风
-```
-Ghost in the Shell style,
-cyberpunk, futuristic Japan,
-cyborgs, hacking,
-philosophical, detailed,
-anime sci-fi
+科幻的核心是人：
+- 技術如何改變人？
+- 人性如何在技術中體現？
+- 什麼讓我們成為人？
 ```
 
-### 沙丘风
+### 規則一致性
 ```
-Dune style,
-desert planet, epic,
-ancient future, ornate,
-organic technology,
-mystical sci-fi
+建立規則後必須遵守
+- 不能臨時改變邏輯
+- 限制讓故事更有力
 ```
 
----
+## AI番劇科幻場景
 
-*Skill版本: 1.0*
-*创建时间: 2026-02-14*
+```json
+{
+  "scifi_scene": {
+    "type": "賽博朋克",
+    "setup": "雨夜的霓虹街道",
+    "visual": {
+      "lighting": "霓虹燈反射",
+      "weather": "雨夜",
+      "tech": "全息廣告、飛行汽車"
+    },
+    "atmosphere": "孤獨、都市感",
+    "prompt": "cyberpunk street at night, neon lights,
+               rain-soaked pavement, holographic ads,
+               flying vehicles in distance,
+               lone figure with umbrella,
+               Blade Runner aesthetic"
+  }
+}
+```
+
+## 科幻子類型視覺
+
+```json
+{
+  "subgenres": {
+    "cyberpunk": "neon, rain, urban decay, body mods",
+    "space_opera": "starships, planets, epic scale",
+    "dystopia": "surveillance, uniformity, gray tones",
+    "hard_scifi": "realistic tech, clean design, functional",
+    "biopunk": "organic tech, genetic mutation, nature meets machine"
+  }
+}
+```
+
+## 科幻清單
+
+```
+✅ 有效技法：
+- 一個核心「如果」
+- 規則清晰且一致
+- 科技服務於故事
+- 保持人性核心
+
+❌ 避免：
+- 過度解釋技術
+- 邏輯漏洞
+- 為酷而酷
+- 忽略人物
+```

@@ -1,199 +1,154 @@
-# 💕 浪漫风格 Skill
-> 浪漫/爱情场景Prompt指南
+# 🎭 愛情類型技能
 
----
+## 元信息
+- **技能ID**: genre_romance
+- **所屬Agent**: 類型Agent
+- **參考書籍**: 《愛情電影》+ 《羅曼史寫作》
+- **難度**: ⭐⭐⭐
 
-## 📐 浪漫氛围
+## 愛情類型核心
 
-### 视觉元素
-| 元素 | 效果 | Prompt |
-|------|------|--------|
-| 柔光 | 温馨、梦幻 | soft lighting, diffused |
-| 背光 | 轮廓光、浪漫 | backlit, rim light |
-| 暖色 | 温暖、亲密 | warm tones, golden |
-| 花瓣 | 浪漫、唯美 | flower petals, sakura |
-| 星空 | 浪漫、永恒 | starry sky, stars |
-
-### 色彩方案
-| 方案 | Prompt |
-|------|--------|
-| 粉色系 | pink tones, soft pink |
-| 金色系 | golden, warm golden light |
-| 紫色系 | lavender, purple haze |
-| 暖色调 | warm color palette |
-| 柔和色 | soft pastel colors |
-
----
-
-## 🎯 浪漫场景
-
-### 经典场景
-| 场景 | Prompt |
-|------|--------|
-| 黄昏海滩 | sunset beach, romantic |
-| 樱花树下 | under cherry blossom tree |
-| 星空下 | under starry sky, romantic night |
-| 雨中 | in the rain, romantic rain |
-| 咖啡馆 | cozy cafe, intimate |
-| 摩天轮 | ferris wheel, romantic view |
-| 屋顶 | rooftop, city lights |
-| 花园 | flower garden, romantic |
-| 图书馆 | library, quiet romantic |
-| 雪景 | snowy scene, winter romance |
-
-### 场景Prompt模板
+### 愛情故事公式
 ```
-romantic scene, [场景],
-[时间：sunset/night/morning],
-soft warm lighting,
-dreamy atmosphere,
-intimate, tender,
-[季节/天气元素]
+相遇 → 相吸 → 障礙 → 分離 → 重聚
+
+核心：兩個人克服障礙在一起
+變體：無法在一起（悲劇）
 ```
 
----
-
-## 📊 浪漫互动
-
-### 两人互动
-| 互动 | Prompt |
-|------|--------|
-| 牵手 | holding hands, fingers intertwined |
-| 拥抱 | embracing, hugging, in arms |
-| 对视 | gazing into eyes, eye contact |
-| 靠近 | leaning close, faces close |
-| 亲吻 | kissing, kiss, lips touching |
-| 背靠 | back to back, leaning on each other |
-| 头靠肩 | head on shoulder, resting |
-| 额碰额 | forehead touching, intimate |
-| 搂腰 | arm around waist |
-| 捧脸 | hands cupping face |
-
-### 互动Prompt模板
+### 障礙類型
 ```
-romantic couple, [互动动作],
-[两人描述],
-intimate moment, loving,
-soft lighting, warm atmosphere,
-tender expression, emotional
+外部障礙：家庭反對、距離、身份
+內部障礙：恐懼承諾、過去創傷
+誤會障礙：錯誤信息、不溝通
+第三者障礙：情敵
 ```
 
----
+## 視覺技法
 
-## 🎭 浪漫表情
-
-### 表情类型
-| 表情 | Prompt |
-|------|--------|
-| 深情凝视 | loving gaze, tender look |
-| 害羞微笑 | shy smile, blushing |
-| 幸福微笑 | happy smile, blissful |
-| 温柔表情 | gentle expression, soft |
-| 心动表情 | lovestruck, entranced |
-| 眼含热泪 | teary-eyed, moved, emotional |
-| 期待表情 | anticipating, hopeful |
-| 满足表情 | content, satisfied, peaceful |
-
----
-
-## 📋 浪漫特效
-
-### 氛围特效
-| 效果 | Prompt |
-|------|--------|
-| 光斑 | bokeh, soft lights |
-| 光晕 | lens flare, glowing |
-| 花瓣飘落 | falling petals |
-| 萤火虫 | fireflies, glowing |
-| 星光 | twinkling stars |
-| 烟花 | fireworks |
-| 气泡 | bubbles, dreamy |
-| 雪花 | snowflakes falling |
-
-### 色彩特效
-| 效果 | Prompt |
-|------|--------|
-| 梦幻光晕 | dreamy glow |
-| 柔焦 | soft focus |
-| 暖色滤镜 | warm filter |
-| 日落色 | sunset colors |
-| 淡粉色调 | soft pink tint |
-
----
-
-## 🔧 浪漫Prompt模板
-
-### 浪漫人像
+### 光影
 ```
-romantic portrait, [角色描述],
-[表情], soft expression,
-warm lighting, dreamy,
-soft colors, [背景],
-emotional, tender
+- 柔光
+- 逆光剪影
+- 溫暖色調
+- 夕陽/黃金時段
+
+Prompt: soft romantic lighting, golden hour,
+        warm glow, dreamy atmosphere
 ```
 
-### 情侣场景
+### 構圖
 ```
-romantic couple scene,
-[两人描述], [互动],
-[场景], [时间],
-soft warm lighting,
-intimate atmosphere,
-loving, tender moment
+- 二人構圖（框住兩人）
+- 對視角度
+- 距離變化（遠→近）
+- 鏡像構圖
+
+Prompt: couple framing, intimate distance,
+        romantic composition
 ```
 
-### 求婚/告白
+### 色調
 ```
-confession scene / proposal,
-[角色], [场景],
-emotional moment,
-romantic lighting,
-heartfelt, nervous yet hopeful,
-[特效元素]
+- 溫暖色（粉、橙）
+- 高飽和
+- 柔焦
+- 春天/夏天感
 ```
 
----
+## 敘事技法
 
-## 📊 浪漫风格参考
+### 相遇（Meet-Cute）
+```
+有趣的初次相遇：
+- 意外碰撞
+- 誤會開始
+- 命運安排
+- 對立立場
 
-### 少女漫画风
-```
-shoujo manga style,
-sparkles, flowers,
-soft lighting, dreamy,
-romantic, beautiful,
-pink and soft colors
-```
-
-### 新海诚风
-```
-Makoto Shinkai style,
-beautiful lighting,
-emotional sky,
-detailed backgrounds,
-melancholic romance,
-lens flare, soft
+必須讓觀眾覺得「這兩個人屬於彼此」
 ```
 
-### 韩剧风
+### 化學反應
 ```
-K-drama style,
-soft focus, warm tones,
-cinematic romance,
-elegant, sophisticated,
-emotional moments
-```
-
-### 迪士尼风
-```
-Disney princess style,
-magical romance,
-fairy tale, dreamy,
-sparkling, enchanted,
-happy ending vibes
+眼神交流
+小動作（理頭髮、不自覺微笑）
+對話中的試探
+共同經歷
 ```
 
----
+### 分離與重聚
+```
+分離原因必須足夠重
+重聚必須主角主動
+重聚場景要有視覺記憶點
+```
 
-*Skill版本: 1.0*
-*创建时间: 2026-02-14*
+## 撒糖技法
+
+### 心動時刻
+```
+- 第一次牽手
+- 第一次對視
+- 意外的親近
+- 照顧對方
+- 說出心意（未完成）
+```
+
+### 撒糖鏡頭
+```
+特寫：手指交纏
+中景：依偎
+遠景：二人世界
+主觀：看著對方的眼神
+```
+
+## AI番劇愛情場景
+
+```json
+{
+  "romance_scene": {
+    "type": "心動時刻",
+    "setup": "雨中共撐一把傘",
+    "visual": {
+      "lighting": "陰天柔光",
+      "rain": "細雨",
+      "distance": "肩膀靠近"
+    },
+    "emotion": "心跳加速、害羞",
+    "prompt": "couple sharing umbrella in rain,
+               soft diffused light, gentle rain,
+               close shoulders, shy glances,
+               romantic atmosphere, anime style,
+               warm despite the rain"
+  }
+}
+```
+
+## 愛情子類型
+
+```
+甜寵：高糖分、無虐
+虐戀：障礙大、痛苦
+暗戀：單向、苦澀
+青梅竹馬：從小認識
+先婚後愛：契約開始
+破鏡重圓：分手後復合
+宿敵戀人：從對立到相愛
+```
+
+## 愛情清單
+
+```
+✅ 有效技法：
+- 建立足夠的鋪墊
+- 讓觀眾先愛上角色
+- 化學反應要可見
+- 障礙要合理
+
+❌ 避免：
+- 無緣無故的愛
+- 太多三角戀
+- 誤會拖太久
+- 結局太突然
+```
