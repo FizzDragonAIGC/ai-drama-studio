@@ -866,47 +866,71 @@ function renderShotCard(shot){
                 <span style="color:var(--dim);font-weight:normal;margin-left:auto">${shot.duration}</span>
             </h5>
             
-            <!-- 場景信息 -->
-            <div class="scene-card">
-                <div class="scene-header">🏛️ 場景</div>
-                <div class="scene-detail">
-                    <span><span class="label">地點：</span><span class="value">${shot.scene.location}</span></span>
-                    <span><span class="label">時間：</span><span class="value">${shot.scene.time}</span></span>
-                    <span><span class="label">色調：</span><span class="value">${shot.scene.colorTone}</span></span>
-                    <span><span class="label">燈光：</span><span class="value">${shot.scene.lighting}</span></span>
+            <!-- 1️⃣ 分鏡Agent：情節 -->
+            <div class="agent-output" style="background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.3);border-radius:8px;padding:12px;margin:8px 0">
+                <div style="font-size:10px;color:var(--primary);font-weight:600;margin-bottom:8px">1️⃣ 分鏡Agent | 情節</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px">
+                    <span><strong>類型：</strong>${shot.shotType === 'narrative' ? '敘事' : shot.shotType === 'dramatic' ? '戲劇' : '情感'}</span>
+                    <span><strong>時長：</strong>${shot.duration}</span>
+                    <span><strong>機位：</strong>${shot.camera.angle}</span>
+                </div>
+                <div style="font-size:12px;margin-top:8px;color:var(--dim)">
+                    <strong>敘事功能：</strong>${shot.narrativeFunction || '推進情節，建立場景'}
                 </div>
             </div>
             
-            <!-- 主體信息 -->
-            <div class="subject-card">
-                <div class="subject-header">
+            <!-- 2️⃣ 主體Agent：角色 -->
+            <div class="agent-output" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.3);border-radius:8px;padding:12px;margin:8px 0">
+                <div style="font-size:10px;color:var(--cyan);font-weight:600;margin-bottom:8px">2️⃣ 主體Agent | 角色</div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                     <span class="subject-type ${shot.subject.type}">${subjectType.icon} ${subjectType.label}</span>
-                    <span class="subject-name">${shot.subject.name}</span>
+                    <span style="font-weight:600">${shot.subject.name}</span>
                 </div>
-                
                 ${shot.subject.type !== 'none' ? `
-                    <div class="subject-detail">
-                        <strong>動作：</strong>${shot.subject.action}
+                    <div style="font-size:12px;color:var(--dim)">
+                        <p><strong>動作：</strong>${shot.subject.action}</p>
+                        <p><strong>表情：</strong>${shot.subject.expression}</p>
+                        <p><strong>運鏡：</strong>${shot.camera.movement}</p>
                     </div>
-                    <div class="subject-detail">
-                        <strong>表情：</strong>${shot.subject.expression}
-                    </div>
-                    <div class="subject-detail">
-                        <strong>機位：</strong>${shot.camera.angle} | ${shot.camera.movement}
-                    </div>
-                ` : ''}
-                
+                ` : '<p style="font-size:12px;color:var(--dim)">空鏡頭，無主體</p>'}
                 ${shot.subject.dialogue ? `
-                    <div class="dialogue-box">
-                        <div class="speaker">${shot.subject.name} | ${shot.subject.tone}</div>
-                        <div class="line">"${shot.subject.dialogue}"</div>
+                    <div style="background:var(--surface);padding:10px;border-radius:6px;margin-top:8px;border-left:3px solid var(--cyan)">
+                        <div style="font-size:10px;color:var(--cyan);margin-bottom:4px">💬 ${shot.subject.name} | ${shot.subject.tone}</div>
+                        <div style="font-style:italic">"${shot.subject.dialogue}"</div>
                     </div>
                 ` : ''}
             </div>
             
-            <!-- AI Prompt -->
+            <!-- 3️⃣ 場景Agent：美術 -->
+            <div class="agent-output" style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:8px;padding:12px;margin:8px 0">
+                <div style="font-size:10px;color:var(--purple);font-weight:600;margin-bottom:8px">3️⃣ 場景Agent | 美術</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+                    <span><strong>地點：</strong>${shot.scene.location}</span>
+                    <span><strong>時間：</strong>${shot.scene.time}</span>
+                    <span><strong>色調：</strong>${shot.scene.colorTone}</span>
+                    <span><strong>燈光：</strong>${shot.scene.lighting}</span>
+                </div>
+                <div style="font-size:12px;margin-top:8px;color:var(--dim)">
+                    <strong>氛圍：</strong>${shot.scene.atmosphere || '神秘緊張'}
+                </div>
+                <div style="font-size:12px;margin-top:4px;color:var(--dim)">
+                    <strong>道具：</strong>${shot.scene.props || '香爐、燭台、銀鏈'}
+                </div>
+            </div>
+            
+            <!-- 4️⃣ 音樂Agent：聲音 -->
+            <div class="agent-output" style="background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.3);border-radius:8px;padding:12px;margin:8px 0">
+                <div style="font-size:10px;color:var(--pink);font-weight:600;margin-bottom:8px">4️⃣ 音樂Agent | 聲音</div>
+                <div style="font-size:12px;color:var(--dim)">
+                    <p><strong>配樂：</strong>${shot.audio?.music || '懸疑氛圍，低沉弦樂'}</p>
+                    <p><strong>音效：</strong>${shot.audio?.sfx || '香燭燃燒聲'}</p>
+                    <p><strong>環境音：</strong>${shot.audio?.ambient || '遠處市集喧囂'}</p>
+                </div>
+            </div>
+            
+            <!-- 🖼️ 最終Prompt -->
             <div class="prompt-box">
-                <div class="prompt-label">🖼️ Midjourney Prompt</div>
+                <div class="prompt-label">🖼️ 綜合Prompt（場景+主體）</div>
                 ${shot.prompt.mj}
             </div>
         </div>
@@ -917,54 +941,70 @@ function generateStoryboard(){
     const shots = [];
     const shotTypes = ['narrative', 'narrative', 'dramatic', 'narrative', 'emotional'];
     
-    // 生成示例分鏡
+    // 生成示例分鏡（四層Agent完整數據）
     const sampleShots = [
         {
-            scene: {location:'茅草棚內', time:'夜', colorTone:'暖黃+粉紅', lighting:'燭光側光'},
+            scene: {location:'茅草棚內', time:'夜', colorTone:'暖黃+粉紅', lighting:'燭光側光', atmosphere:'神秘緊張', props:'香爐、燭台、草蓆'},
             subject: {type:'person', name:'小猴子', action:'蜷縮在房梁上，俯視下方', expression:'專注緊張，眼神銳利', dialogue:null, tone:null},
             camera: {angle:'俯拍', movement:'緩慢推進'},
+            audio: {music:'懸疑弦樂，低沉漸強', sfx:'木梁輕微吱呀聲', ambient:'遠處蟲鳴'},
+            narrativeFunction:'建立主角視角，製造懸念',
             shotType: 'dramatic'
         },
         {
-            scene: {location:'茅草棚內', time:'夜', colorTone:'暖黃+粉紅', lighting:'燭光+寶石光'},
+            scene: {location:'茅草棚內', time:'夜', colorTone:'暖黃+粉紅', lighting:'燭光+寶石光', atmosphere:'詭異神秘', props:'銀鏈、粉紅寶石、香煙'},
             subject: {type:'person', name:'卜夢師', action:'手持銀鏈，寶石懸空', expression:'神秘莫測', dialogue:'你的命運...已被看見...', tone:'低沉神秘'},
             camera: {angle:'中景', movement:'固定'},
+            audio: {music:'神秘吟唱，異域風情', sfx:'寶石嗡鳴聲', ambient:'香煙繚繞聲'},
+            narrativeFunction:'揭示神秘元素，建立氛圍',
             shotType: 'narrative'
         },
         {
-            scene: {location:'茅草棚內', time:'夜', colorTone:'粉紅為主', lighting:'寶石發光'},
+            scene: {location:'茅草棚內', time:'夜', colorTone:'粉紅為主', lighting:'寶石發光', atmosphere:'超自然', props:'粉紅寶石特寫'},
             subject: {type:'object', name:'粉紅寶石', action:'發出柔和光芒', expression:null, dialogue:null, tone:null},
             camera: {angle:'特寫', movement:'緩慢旋轉'},
+            audio: {music:'空靈女聲哼唱', sfx:'水晶振動聲', ambient:'靜音強調'},
+            narrativeFunction:'核心道具特寫，強化神秘感',
             shotType: 'emotional'
         },
         {
-            scene: {location:'蕃坊街道', time:'黃昏', colorTone:'金黃暖色', lighting:'夕陽側光'},
+            scene: {location:'蕃坊街道', time:'黃昏', colorTone:'金黃暖色', lighting:'夕陽側光', atmosphere:'繁華熱鬧', props:'各國貨物、攤位、旗幟'},
             subject: {type:'crowd', name:'蕃坊商販', action:'叫賣吆喝，人流穿梭', expression:'忙碌熱鬧', dialogue:null, tone:null},
             camera: {angle:'大全景', movement:'升降鏡頭'},
+            audio: {music:'異域風情配樂，熱鬧', sfx:'市集喧囂、叫賣聲', ambient:'駝鈴聲、馬蹄聲'},
+            narrativeFunction:'建立世界觀，展示唐代蕃坊',
             shotType: 'narrative'
         },
         {
-            scene: {location:'蕃坊街道', time:'黃昏', colorTone:'金黃暖色', lighting:'夕陽逆光'},
+            scene: {location:'蕃坊街道', time:'黃昏', colorTone:'金黃暖色', lighting:'夕陽逆光', atmosphere:'緊張追逐', props:'人群、攤位（被撞翻）'},
             subject: {type:'person', name:'小猴子', action:'穿梭人群，快速奔跑', expression:'緊張但自信', dialogue:null, tone:null},
             camera: {angle:'跟拍', movement:'手持跟隨'},
+            audio: {music:'節奏加快，打擊樂', sfx:'腳步聲、碰撞聲', ambient:'驚呼聲'},
+            narrativeFunction:'追逐戲，展示主角能力',
             shotType: 'dramatic'
         },
         {
-            scene: {location:'榕樹下', time:'夜', colorTone:'藍綠冷色', lighting:'月光'},
+            scene: {location:'榕樹下', time:'夜', colorTone:'藍綠冷色', lighting:'月光', atmosphere:'神秘引導', props:'老榕樹、竹杖、草蓆'},
             subject: {type:'person', name:'紅髮盲老人', action:'坐在樹下，若有所思', expression:'深邃智慧', dialogue:'在海的那一邊...有一座山...', tone:'蒼老神秘'},
             camera: {angle:'中景', movement:'固定'},
+            audio: {music:'古箏獨奏，悠遠', sfx:'樹葉沙沙聲', ambient:'蛙鳴、蟲聲'},
+            narrativeFunction:'導師角色登場，埋下伏筆',
             shotType: 'narrative'
         },
         {
-            scene: {location:'碼頭', time:'清晨', colorTone:'青藍', lighting:'晨霧散射'},
+            scene: {location:'碼頭', time:'清晨', colorTone:'青藍', lighting:'晨霧散射', atmosphere:'壯闘啟航', props:'大蕃舶、碼頭、貨物'},
             subject: {type:'none', name:'大蕃舶', action:'船隻靜泊', expression:null, dialogue:null, tone:null},
             camera: {angle:'大全景', movement:'緩慢橫移'},
+            audio: {music:'史詩弦樂，漸強', sfx:'海浪聲、海鷗聲', ambient:'港口作業聲'},
+            narrativeFunction:'空鏡轉場，展示冒險載體',
             shotType: 'narrative'
         },
         {
-            scene: {location:'船艙內', time:'夜', colorTone:'暗紅', lighting:'油燈'},
+            scene: {location:'船艙內', time:'夜', colorTone:'暗紅', lighting:'油燈', atmosphere:'壓抑不安', props:'油燈、航海圖、酒杯'},
             subject: {type:'person', name:'蕃長', action:'站立沉思，背對鏡頭', expression:'憂鬱深沉', dialogue:'這趟航行...不會太平...', tone:'低沉威嚴'},
             camera: {angle:'背影', movement:'緩慢推進'},
+            audio: {music:'低沉大提琴', sfx:'船體搖晃聲', ambient:'海浪拍打船身'},
+            narrativeFunction:'製造懸念，暗示危險',
             shotType: 'dramatic'
         }
     ];
