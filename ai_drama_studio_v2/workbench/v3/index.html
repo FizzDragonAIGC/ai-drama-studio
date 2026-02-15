@@ -368,28 +368,56 @@ function renderUploadMode(){
 }
 
 function renderPasteMode(){
+    setTimeout(() => {
+        const textarea = document.getElementById('novelText');
+        if(textarea){
+            textarea.addEventListener('input', updateWordCount);
+            updateWordCount();
+        }
+    }, 100);
+    
     return `
         <p style="color:var(--dim);margin-bottom:20px">直接貼入小說全文</p>
         
         <div class="form-group">
             <label class="form-label">小說標題</label>
-            <input type="text" class="form-input" id="novelTitle" placeholder="例：海上絲綢之路密碼" value="${state.novel.title}">
+            <input type="text" class="form-input" id="novelTitle" placeholder="例：海上絲綢之路密碼" value="${state.novel.title || ''}">
         </div>
         
         <div class="form-group">
             <label class="form-label">小說正文</label>
-            <textarea class="form-input" id="novelText" style="min-height:350px" placeholder="將小說全文貼入此處...">${state.novel.text}</textarea>
+            <textarea class="form-input" id="novelText" style="min-height:350px" placeholder="將小說全文貼入此處..." oninput="updateWordCount()">${state.novel.text || ''}</textarea>
         </div>
         
         <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0">
-            <span id="wordCount" style="color:var(--dim);font-size:13px">0 字</span>
+            <span id="wordCount" style="color:var(--dim);font-size:13px">${state.novel.text ? state.novel.text.length + ' 字' : '0 字'}</span>
         </div>
         
         <div class="btn-group">
-            <button class="btn" onclick="loadDemoNovel()">📚 載入示例</button>
+            <button class="btn" onclick="loadDemoNovelPaste()">📚 載入示例</button>
             <button class="btn btn-primary" onclick="analyzeNovelFromPaste()">開始分析 →</button>
         </div>
     `;
+}
+
+function updateWordCount(){
+    const textarea = document.getElementById('novelText');
+    const countSpan = document.getElementById('wordCount');
+    if(textarea && countSpan){
+        const count = textarea.value.length;
+        countSpan.textContent = count.toLocaleString() + ' 字';
+        countSpan.style.color = count > 1000 ? 'var(--success)' : 'var(--dim)';
+    }
+}
+
+function loadDemoNovelPaste(){
+    const titleInput = document.getElementById('novelTitle');
+    const textArea = document.getElementById('novelText');
+    
+    if(titleInput) titleInput.value = '海上絲綢之路密碼';
+    if(textArea) textArea.value = DEMO_NOVEL;
+    
+    updateWordCount();
 }
 
 function renderGenerateMode(){
@@ -532,11 +560,16 @@ function showUploadSuccess(filename, wordCount){
 }
 
 function analyzeNovelFromPaste(){
-    const title = document.getElementById('novelTitle').value.trim();
-    const text = document.getElementById('novelText').value.trim();
+    const titleEl = document.getElementById('novelTitle');
+    const textEl = document.getElementById('novelText');
     
-    if(!text){
-        alert('請輸入小說正文');
+    const title = titleEl ? titleEl.value.trim() : '';
+    const text = textEl ? textEl.value.trim() : '';
+    
+    console.log('analyzeNovelFromPaste:', {title, textLength: text.length});
+    
+    if(!text || text.length < 100){
+        alert('請輸入小說正文（至少100字）');
         return;
     }
     
@@ -551,10 +584,17 @@ function analyzeNovelFromPaste(){
 }
 
 function generateNovel(){
-    const genre = document.getElementById('storyGenre').value;
-    const idea = document.getElementById('storyIdea').value.trim();
-    const length = document.getElementById('storyLength').value;
-    const reference = document.getElementById('storyReference').value.trim();
+    const genreEl = document.getElementById('storyGenre');
+    const ideaEl = document.getElementById('storyIdea');
+    const lengthEl = document.getElementById('storyLength');
+    const refEl = document.getElementById('storyReference');
+    
+    const genre = genreEl ? genreEl.value : '歷史冒險';
+    const idea = ideaEl ? ideaEl.value.trim() : '';
+    const length = lengthEl ? lengthEl.value : '中篇';
+    const reference = refEl ? refEl.value.trim() : '';
+    
+    console.log('generateNovel:', {genre, idea, length, reference});
     
     if(!idea){
         alert('請輸入你的故事想法');
@@ -562,6 +602,11 @@ function generateNovel(){
     }
     
     const statusDiv = document.getElementById('generateStatus');
+    if(!statusDiv){
+        console.error('generateStatus not found');
+        return;
+    }
+    
     statusDiv.innerHTML = `
         <div class="loading">
             <div class="spinner"></div>
