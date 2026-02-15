@@ -40,9 +40,17 @@
 ## AI番剧工作台 (完成!)
 - **线上版**: https://stcws8.csb.app
 - **本地**: `ai_drama_studio_v2/workbench/index.html`
-- **规模**: 26 Agents × 241 Skills (目标500)
-- **三语**: 简体/繁體/English
+- **v3**: `ai_drama_studio_v2/workbench/v3/index.html`
+- **规模**: 30 Agents × 249 Skills (目标500)
 - **UI**: 黑红赛博朋克 + FizzDragon品牌
+
+### 核心定位（重要！）
+**AI番剧 ≠ 无脑短剧**
+- 3-15分钟/集，像动漫番剧
+- 有艺术追求，不是爽文套路
+- 每集完整叙事弧线
+- AI生成的动态漫画
+- 目标：有深度、有风格的内容
 
 ## 测试项目
 - **《海上絲綢之路密碼》**: 155,025字 → 10集/1000镜头/80分钟 ✅
