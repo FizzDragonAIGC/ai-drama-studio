@@ -715,6 +715,75 @@ function previewNovel(){
     alert('小說預覽：\n\n' + state.novel.text.slice(0, 500) + '...');
 }
 
+// ==================== 重新生成函數 ====================
+function regenerateConcept(){
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="content-card">
+            <div class="loading">
+                <div class="spinner"></div>
+                <span>重新生成高概念...</span>
+            </div>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        state.concept = generateConcept();
+        showStep(2);
+    }, 1500);
+}
+
+function regenerateStoryboard(){
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="content-card">
+            <div class="loading">
+                <div class="spinner"></div>
+                <span>重新生成分鏡...</span>
+            </div>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        state.storyboard = generateStoryboard();
+        showStep(7);
+    }, 2000);
+}
+
+function resplitChapters(){
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="content-card">
+            <div class="loading">
+                <div class="spinner"></div>
+                <span>重新拆分章節...</span>
+            </div>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        state.chapters = splitChapters();
+        showStep(3);
+    }, 1500);
+}
+
+function reextractCharacters(){
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="content-card">
+            <div class="loading">
+                <div class="spinner"></div>
+                <span>重新分析角色...</span>
+            </div>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        state.characters = extractCharacters();
+        showStep(4);
+    }, 1500);
+}
+
 function loadDemoNovel(){
     const titleInput = document.getElementById('novelTitle');
     const textArea = document.getElementById('novelText');
