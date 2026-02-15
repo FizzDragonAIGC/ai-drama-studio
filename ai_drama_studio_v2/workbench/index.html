@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FizzDragon AI Drama Studio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+SC:wght@400;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--red:#ff0033;--black:#0a0a0a;--card:#1a1a1a;--gray:#333;--text:#fff;--dim:#888;--green:#0f0}
+        body{font-family:'Noto Sans SC',sans-serif;background:var(--black);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+        
+        .header{padding:20px;border-bottom:1px solid var(--red);display:flex;justify-content:space-between;align-items:center;background:var(--card)}
+        .logo{font-family:'Orbitron',sans-serif;font-size:24px;color:var(--red);text-shadow:0 0 10px rgba(255,0,51,0.5)}
+        .lang-switch{display:flex;gap:5px}
+        .lang-btn{background:var(--gray);border:1px solid var(--gray);color:var(--text);padding:5px 10px;cursor:pointer;font-size:12px}
+        .lang-btn.active{border-color:var(--red);color:var(--red)}
+        
+        .main{flex:1;display:flex;overflow:hidden}
+        
+        .sidebar{width:200px;background:var(--card);border-right:1px solid var(--gray);padding:15px;overflow-y:auto}
+        .sidebar h3{font-size:12px;color:var(--red);margin-bottom:10px;font-family:'Orbitron'}
+        .agent-item{padding:8px;margin-bottom:5px;cursor:pointer;border-left:2px solid transparent;font-size:13px}
+        .agent-item:hover{background:rgba(255,0,51,0.1);border-left-color:var(--red)}
+        .agent-item.active{background:var(--red);border-left-color:#fff}
+        .agent-icon{margin-right:8px}
+        
+        .chat{flex:1;display:flex;flex-direction:column;min-width:0}
+        .messages{flex:1;overflow-y:auto;padding:20px}
+        .msg{margin-bottom:20px;animation:fadeIn .3s}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+        .msg-agent{display:flex;gap:12px}
+        .msg-avatar{width:40px;height:40px;background:var(--gray);border:2px solid var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
+        .msg-content{flex:1}
+        .msg-name{font-family:'Orbitron';color:var(--red);font-size:13px;margin-bottom:8px}
+        .msg-text{background:var(--card);padding:15px;border-left:3px solid var(--red);line-height:1.7}
+        .msg-text h3{color:var(--red);margin-bottom:10px}
+        .msg-user{display:flex;justify-content:flex-end}
+        .msg-user .msg-text{background:var(--red);border-left:none;border-right:3px solid #fff;max-width:70%}
+        
+        .options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}
+        .options.c1{grid-template-columns:1fr}
+        .options.c3{grid-template-columns:repeat(3,1fr)}
+        .opt-btn{background:var(--black);border:2px solid var(--gray);padding:15px;text-align:left;cursor:pointer;color:var(--text);transition:all .2s}
+        .opt-btn:hover{border-color:var(--red);transform:translateY(-2px)}
+        .opt-btn .icon{font-size:24px;margin-bottom:5px}
+        .opt-btn .title{font-weight:700;margin-bottom:3px}
+        .opt-btn .desc{font-size:11px;color:var(--dim)}
+        
+        .input-area{padding:15px;border-top:1px solid var(--gray);background:var(--card)}
+        .input-box{display:flex;gap:10px;border:2px solid var(--red);background:var(--black)}
+        .input-box textarea{flex:1;background:transparent;border:none;padding:12px;color:var(--text);font-size:14px;resize:none;outline:none}
+        .input-box button{background:var(--red);border:none;padding:12px 20px;color:#fff;font-family:'Orbitron';cursor:pointer}
+        
+        .stats{width:250px;background:var(--card);border-left:1px solid var(--gray);padding:15px;overflow-y:auto}
+        .stats h3{font-size:12px;color:var(--red);margin-bottom:10px;font-family:'Orbitron'}
+        .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
+        .stat-card{background:var(--black);padding:15px;text-align:center;border:1px solid var(--gray)}
+        .stat-val{font-size:24px;color:var(--red);font-family:'Orbitron'}
+        .stat-label{font-size:10px;color:var(--dim)}
+        
+        .q-input{display:flex;gap:10px;margin-top:15px;background:var(--black);border:1px solid var(--red);padding:10px}
+        .q-input input{flex:1;background:transparent;border:none;color:var(--text);outline:none}
+        .q-input button{background:var(--red);border:none;padding:8px 15px;color:#fff;cursor:pointer}
+        
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+        .modal.hide{display:none}
+        .modal-box{background:var(--card);border:2px solid var(--red);width:100%;max-width:600px;max-height:80vh;overflow:auto}
+        .modal-head{padding:15px;border-bottom:1px solid var(--gray);display:flex;justify-content:space-between;align-items:center}
+        .modal-head h2{font-family:'Orbitron';color:var(--red)}
+        .close-btn{background:none;border:none;color:var(--text);font-size:24px;cursor:pointer}
+        .modal-body{padding:15px}
+        .modal-body textarea{width:100%;height:250px;background:var(--black);border:1px solid var(--gray);padding:15px;color:var(--text);resize:vertical}
+        .modal-body textarea:focus{border-color:var(--red);outline:none}
+        .modal-foot{padding:15px;display:flex;gap:10px;justify-content:flex-end}
+        .btn{padding:10px 20px;cursor:pointer;font-family:'Orbitron';border:1px solid var(--gray);background:var(--black);color:var(--text)}
+        .btn:hover{border-color:var(--red)}
+        .btn-red{background:var(--red);border-color:var(--red)}
+        
+        .skill-tag{display:inline-block;background:var(--black);border:1px solid var(--gray);padding:4px 10px;margin:3px;font-size:11px}
+        .skill-tag.on{border-color:var(--red);color:var(--red)}
+        
+        @media(max-width:900px){.sidebar,.stats{display:none}}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">FIZZDRAGON</div>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLang('zh')">简体</button>
+            <button class="lang-btn" onclick="setLang('tw')">繁體</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+        </div>
+    </header>
+    
+    <div class="main">
+        <aside class="sidebar">
+            <h3>AGENTS (30)</h3>
+            <div id="agentList"></div>
+        </aside>
+        
+        <section class="chat">
+            <div class="messages" id="msgs"></div>
+            <div class="input-area">
+                <div class="input-box">
+                    <textarea id="userInput" rows="1" placeholder=""></textarea>
+                    <button onclick="sendMsg()" data-i18n="send">发送</button>
+                </div>
+            </div>
+        </section>
+        
+        <aside class="stats">
+            <h3>STATUS</h3>
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-val" id="sAgents">0</div><div class="stat-label">Agents</div></div>
+                <div class="stat-card"><div class="stat-val" id="sSkills">0</div><div class="stat-label">Skills</div></div>
+                <div class="stat-card"><div class="stat-val" id="sShots">0</div><div class="stat-label">Shots</div></div>
+                <div class="stat-card"><div class="stat-val" id="sPrompts">0</div><div class="stat-label">Prompts</div></div>
+            </div>
+            <h3 data-i18n="project">项目</h3>
+            <div id="projInfo" style="font-size:13px;color:var(--dim)">-</div>
+        </aside>
+    </div>
+    
+    <div class="modal hide" id="modal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2 data-i18n="import_script">导入剧本</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="scriptInput" data-i18n-placeholder="paste_script"></textarea>
+            </div>
+            <div class="modal-foot">
+                <button class="btn" onclick="loadDemo()" data-i18n="load_demo">加载示例</button>
+                <button class="btn btn-red" onclick="submitScript()" data-i18n="start">开始制作</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+const i18n = {
+    zh: {
+        send: "发送", project: "项目", import_script: "导入剧本", paste_script: "粘贴你的剧本...",
+        load_demo: "加载示例", start: "开始制作", welcome: "欢迎来到 FizzDragon AI番剧工作台",
+        welcome_desc: "30个专业Agent + 200个技能，把你的故事变成电影级番剧",
+        quick_mode: "快速模式", quick_desc: "已有剧本，快速生成",
+        novel_mode: "长篇改编", novel_desc: "10万字+小说改编",
+        idea_mode: "从想法开始", idea_desc: "只有idea，帮你发展",
+        import_btn: "导入剧本", import_desc: "粘贴内容开始",
+        analyzing: "剧本分析完成", next_step: "继续下一步", next_desc: "回答问题完善制作",
+        q_audience: "问题1：目标观众是谁？",
+        teen: "Z世代", teen_desc: "15-25岁",
+        worker: "打工人", worker_desc: "25-35岁",
+        all_age: "全年龄", all_desc: "老少皆宜",
+        niche: "垂直圈层", niche_desc: "特定粉丝群",
+        q_style: "问题2：视觉风格？",
+        q_duration: "问题3：每集多长？",
+        min3: "3分钟", shots45: "约45镜头",
+        min5: "5分钟", shots75: "约75镜头", 
+        min8: "8分钟", shots100: "约100镜头",
+        min10: "10分钟", shots150: "约150镜头",
+        designing: "设计中...", done: "完成！", export_all: "导出全部"
+    },
+    tw: {
+        send: "發送", project: "項目", import_script: "導入劇本", paste_script: "貼上你的劇本...",
+        load_demo: "載入範例", start: "開始製作", welcome: "歡迎來到 FizzDragon AI番劇工作台",
+        welcome_desc: "30個專業Agent + 200個技能，把你的故事變成電影級番劇",
+        quick_mode: "快速模式", quick_desc: "已有劇本，快速生成",
+        novel_mode: "長篇改編", novel_desc: "10萬字+小說改編",
+        idea_mode: "從想法開始", idea_desc: "只有idea，幫你發展",
+        import_btn: "導入劇本", import_desc: "貼上內容開始",
+        analyzing: "劇本分析完成", next_step: "繼續下一步", next_desc: "回答問題完善製作",
+        q_audience: "問題1：目標觀眾是誰？",
+        teen: "Z世代", teen_desc: "15-25歲",
+        worker: "打工人", worker_desc: "25-35歲",
+        all_age: "全年齡", all_desc: "老少皆宜",
+        niche: "垂直圈層", niche_desc: "特定粉絲群",
+        q_style: "問題2：視覺風格？",
+        q_duration: "問題3：每集多長？",
+        min3: "3分鐘", shots45: "約45鏡頭",
+        min5: "5分鐘", shots75: "約75鏡頭",
+        min8: "8分鐘", shots100: "約100鏡頭",
+        min10: "10分鐘", shots150: "約150鏡頭",
+        designing: "設計中...", done: "完成！", export_all: "導出全部"
+    },
+    en: {
+        send: "Send", project: "Project", import_script: "Import Script", paste_script: "Paste your script...",
+        load_demo: "Load Demo", start: "Start", welcome: "Welcome to FizzDragon AI Drama Studio",
+        welcome_desc: "30 Pro Agents + 200 Skills, turn your story into cinematic content",
+        quick_mode: "Quick Mode", quick_desc: "Have script, generate fast",
+        novel_mode: "Novel Adapt", novel_desc: "100k+ words novel",
+        idea_mode: "From Idea", idea_desc: "Just an idea, we develop",
+        import_btn: "Import Script", import_desc: "Paste content to start",
+        analyzing: "Script Analyzed", next_step: "Continue", next_desc: "Answer questions to refine",
+        q_audience: "Q1: Target Audience?",
+        teen: "Gen Z", teen_desc: "15-25 years",
+        worker: "Workers", worker_desc: "25-35 years",
+        all_age: "All Ages", all_desc: "Universal",
+        niche: "Niche", niche_desc: "Specific fans",
+        q_style: "Q2: Visual Style?",
+        q_duration: "Q3: Episode Length?",
+        min3: "3 min", shots45: "~45 shots",
+        min5: "5 min", shots75: "~75 shots",
+        min8: "8 min", shots100: "~100 shots",
+        min10: "10 min", shots150: "~150 shots",
+        designing: "Designing...", done: "Done!", export_all: "Export All"
+    }
+};
+
+let lang = 'zh';
+let step = 0;
+let project = { title:'', style:'', shots:0, prompts:0 };
+let activeAgents = new Set();
+
+const agents = [
+    {id:'director',icon:'🎬',name:{zh:'总导演',tw:'總導演',en:'Director'}},
+    {id:'concept',icon:'💡',name:{zh:'高概念',tw:'高概念',en:'Concept'}},
+    {id:'interview',icon:'🎤',name:{zh:'访谈',tw:'訪談',en:'Interview'}},
+    {id:'screenwriter',icon:'✍️',name:{zh:'编剧',tw:'編劇',en:'Writer'}},
+    {id:'adaptation',icon:'📚',name:{zh:'改编',tw:'改編',en:'Adaptation'}},
+    {id:'narrative',icon:'📖',name:{zh:'叙事',tw:'敘事',en:'Narrative'}},
+    {id:'storyboard',icon:'🎥',name:{zh:'分镜',tw:'分鏡',en:'Storyboard'}},
+    {id:'cinematography',icon:'📷',name:{zh:'摄影',tw:'攝影',en:'Camera'}},
+    {id:'character',icon:'👤',name:{zh:'角色',tw:'角色',en:'Character'}},
+    {id:'expression',icon:'😊',name:{zh:'表情',tw:'表情',en:'Expression'}},
+    {id:'acting',icon:'🎭',name:{zh:'演技',tw:'演技',en:'Acting'}},
+    {id:'vfx',icon:'💥',name:{zh:'特效',tw:'特效',en:'VFX'}},
+    {id:'prompt',icon:'🖼️',name:{zh:'Prompt',tw:'Prompt',en:'Prompt'}},
+    {id:'psychology',icon:'🧠',name:{zh:'心理',tw:'心理',en:'Psychology'}}
+];
+
+function T(key) { return i18n[lang][key] || key; }
+
+function setLang(l) {
+    lang = l;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.includes(l==='zh'?'简':l==='tw'?'繁':'EN')));
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = T(el.dataset.i18nPlaceholder); });
+}
+
+function renderAgents() {
+    document.getElementById('agentList').innerHTML = agents.map(a => 
+        `<div class="agent-item${activeAgents.has(a.id)?' active':''}" data-id="${a.id}">
+            <span class="agent-icon">${a.icon}</span>${a.name[lang]}
+        </div>`
+    ).join('');
+}
+
+function activate(id) {
+    activeAgents.add(id);
+    renderAgents();
+    document.getElementById('sAgents').textContent = activeAgents.size;
+}
+
+function addMsg(agent, html) {
+    const a = agents.find(x=>x.id===agent) || {icon:'🤖',name:{zh:agent,tw:agent,en:agent}};
+    document.getElementById('msgs').innerHTML += `
+        <div class="msg msg-agent">
+            <div class="msg-avatar">${a.icon}</div>
+            <div class="msg-content">
+                <div class="msg-name">${a.name[lang]} AGENT</div>
+                <div class="msg-text">${html}</div>
+            </div>
+        </div>`;
+    scrollDown();
+}
+
+function addUser(text) {
+    document.getElementById('msgs').innerHTML += `
+        <div class="msg msg-user"><div class="msg-text">${text}</div></div>`;
+    scrollDown();
+}
+
+function scrollDown() {
+    const m = document.getElementById('msgs');
+    m.scrollTop = m.scrollHeight;
+}
+
+function openModal() { document.getElementById('modal').classList.remove('hide'); }
+function closeModal() { document.getElementById('modal').classList.add('hide'); }
+
+function loadDemo() {
+    document.getElementById('scriptInput').value = `《赛博浪人》
+类型：赛博朋克 / 动作
+时长：每集8分钟
+
+第一集：Ghost in the Wire
+
+【开场】霓虹灯在雨中模糊成一片光海...
+零，曾是最顶尖的企业黑客，现在是被通缉的幽灵。
+
+【中段】地下酒吧
+Luna：又来找工作？
+零：我需要钱。有人要我的命。
+
+【转折】当零接触AI核心时——
+AI：你终于来了，零。我是你女儿的意识备份。
+
+【结尾】零带着AI核心逃出大厦。
+"小雪...爸爸来救你了。"`;
+}
+
+function submitScript() {
+    const s = document.getElementById('scriptInput').value.trim();
+    if (!s) return alert('请输入内容');
+    project.script = s;
+    closeModal();
+    addUser(T('import_btn'));
+    analyzeScript(s);
+}
+
+function analyzeScript(s) {
+    activate('screenwriter');
+    const titleMatch = s.match(/《(.+?)》/);
+    project.title = titleMatch ? titleMatch[1] : s.substring(0,20);
+    
+    addMsg('screenwriter', `
+        <h3>📝 ${T('analyzing')}</h3>
+        <p><strong style="color:var(--red)">《${project.title}》</strong></p>
+        <div class="options c1">
+            <button class="opt-btn" onclick="askAudience()">
+                <div class="title">▶️ ${T('next_step')}</div>
+                <div class="desc">${T('next_desc')}</div>
+            </button>
+        </div>
+    `);
+    step = 1;
+}
+
+function askAudience() {
+    activate('director');
+    addMsg('director', `
+        <h3>🎬 ${T('q_audience')}</h3>
+        <div class="options">
+            <button class="opt-btn" onclick="setAudience('teen')"><div class="icon">🔥</div><div class="title">${T('teen')}</div><div class="desc">${T('teen_desc')}</div></button>
+            <button class="opt-btn" onclick="setAudience('worker')"><div class="icon">💼</div><div class="title">${T('worker')}</div><div class="desc">${T('worker_desc')}</div></button>
+            <button class="opt-btn" onclick="setAudience('all')"><div class="icon">🌍</div><div class="title">${T('all_age')}</div><div class="desc">${T('all_desc')}</div></button>
+            <button class="opt-btn" onclick="setAudience('niche')"><div class="icon">🎯</div><div class="title">${T('niche')}</div><div class="desc">${T('niche_desc')}</div></button>
+        </div>
+    `);
+    step = 2;
+}
+
+function setAudience(a) {
+    project.audience = a;
+    addUser(T(a));
+    askStyle();
+}
+
+function askStyle() {
+    activate('genre');
+    addMsg('director', `
+        <h3>🎨 ${T('q_style')}</h3>
+        <div class="options c3">
+            <button class="opt-btn" onclick="setStyle('cyberpunk')"><div class="icon">🌃</div><div class="title">Cyberpunk</div></button>
+            <button class="opt-btn" onclick="setStyle('ghibli')"><div class="icon">🌸</div><div class="title">Ghibli</div></button>
+            <button class="opt-btn" onclick="setStyle('anime')"><div class="icon">✨</div><div class="title">Anime</div></button>
+            <button class="opt-btn" onclick="setStyle('realistic')"><div class="icon">📸</div><div class="title">Realistic</div></button>
+            <button class="opt-btn" onclick="setStyle('chinese')"><div class="icon">🏮</div><div class="title">Chinese</div></button>
+            <button class="opt-btn" onclick="setStyle('cartoon')"><div class="icon">🎨</div><div class="title">Cartoon</div></button>
+        </div>
+    `);
+    step = 3;
+}
+
+function setStyle(s) {
+    project.style = s;
+    addUser(s);
+    askDuration();
+}
+
+function askDuration() {
+    addMsg('director', `
+        <h3>⏱️ ${T('q_duration')}</h3>
+        <div class="options">
+            <button class="opt-btn" onclick="setDuration(3,45)"><div class="icon">⚡</div><div class="title">${T('min3')}</div><div class="desc">${T('shots45')}</div></button>
+            <button class="opt-btn" onclick="setDuration(5,75)"><div class="icon">📱</div><div class="title">${T('min5')}</div><div class="desc">${T('shots75')}</div></button>
+            <button class="opt-btn" onclick="setDuration(8,100)"><div class="icon">🎬</div><div class="title">${T('min8')}</div><div class="desc">${T('shots100')}</div></button>
+            <button class="opt-btn" onclick="setDuration(10,150)"><div class="icon">🎥</div><div class="title">${T('min10')}</div><div class="desc">${T('shots150')}</div></button>
+        </div>
+    `);
+    step = 4;
+}
+
+function setDuration(m, shots) {
+    project.duration = m;
+    project.shots = shots;
+    addUser(`${m} min (${shots} shots)`);
+    document.getElementById('sShots').textContent = shots;
+    startDesign();
+}
+
+function startDesign() {
+    activate('storyboard');
+    activate('cinematography');
+    activate('character');
+    
+    addMsg('storyboard', `
+        <h3>🎥 ${T('designing')}</h3>
+        <p>${T('designing')} <strong>${project.shots}</strong> shots...</p>
+        <div class="skill-tag on">visual_storytelling</div>
+        <div class="skill-tag on">cinematography</div>
+        <div class="skill-tag on">character_design</div>
+        <div class="options c1">
+            <button class="opt-btn" onclick="finishDesign()">
+                <div class="title">▶️ ${T('next_step')}</div>
+            </button>
+        </div>
+    `);
+    document.getElementById('sSkills').textContent = 12;
+    step = 5;
+}
+
+function finishDesign() {
+    activate('expression');
+    activate('acting');
+    activate('psychology');
+    
+    addMsg('acting', `
+        <h3>🎭 ${T('designing')}</h3>
+        <p>Adding emotions & acting...</p>
+        <div class="skill-tag on">facial_expressions</div>
+        <div class="skill-tag on">acting_performance</div>
+        <div class="skill-tag on">psychology</div>
+        <div class="options c1">
+            <button class="opt-btn" onclick="generatePrompts()">
+                <div class="title">🖼️ Generate Prompts</div>
+            </button>
+        </div>
+    `);
+    document.getElementById('sSkills').textContent = 18;
+    step = 6;
+}
+
+function generatePrompts() {
+    activate('prompt');
+    activate('vfx');
+    project.prompts = project.shots;
+    document.getElementById('sPrompts').textContent = project.prompts;
+    document.getElementById('sSkills').textContent = 24;
+    
+    addMsg('prompt', `
+        <h3>🖼️ ${T('done')}</h3>
+        <p>Generated <strong style="color:var(--red)">${project.prompts}</strong> prompts!</p>
+        <div style="background:var(--black);padding:10px;margin:10px 0;border-left:2px solid var(--red);font-family:monospace;font-size:12px;color:#0f0">
+            ${project.style} style, cinematic shot, ${project.title}, dramatic lighting, 8k, masterpiece --ar 16:9 --v 6
+        </div>
+        <div class="options c1">
+            <button class="opt-btn" onclick="alert('Export coming soon!')">
+                <div class="title">📥 ${T('export_all')}</div>
+            </button>
+        </div>
+    `);
+    
+    addMsg('director', `
+        <h3>🔥 ${T('done')}</h3>
+        <p><strong>《${project.title}》</strong></p>
+        <p>Style: ${project.style} | Shots: ${project.shots} | Prompts: ${project.prompts}</p>
+        <p style="margin-top:10px">Agents: ${activeAgents.size} | Skills: 24</p>
+    `);
+    step = 7;
+}
+
+function sendMsg() {
+    const inp = document.getElementById('userInput');
+    const t = inp.value.trim();
+    if (!t) return;
+    addUser(t);
+    inp.value = '';
+}
+
+function init() {
+    renderAgents();
+    setLang('zh');
+    activate('director');
+    
+    addMsg('director', `
+        <h3>🔥 ${T('welcome')}</h3>
+        <p>${T('welcome_desc')}</p>
+        <div class="options">
+            <button class="opt-btn" onclick="openModal()"><div class="icon">⚡</div><div class="title">${T('quick_mode')}</div><div class="desc">${T('quick_desc')}</div></button>
+            <button class="opt-btn" onclick="openModal()"><div class="icon">📚</div><div class="title">${T('novel_mode')}</div><div class="desc">${T('novel_desc')}</div></button>
+            <button class="opt-btn" onclick="openModal()"><div class="icon">💡</div><div class="title">${T('idea_mode')}</div><div class="desc">${T('idea_desc')}</div></button>
+            <button class="opt-btn" onclick="openModal()"><div class="icon">📝</div><div class="title">${T('import_btn')}</div><div class="desc">${T('import_desc')}</div></button>
+        </div>
+    `);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

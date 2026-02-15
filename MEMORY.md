@@ -24,15 +24,31 @@
 - 《边城》沈从文 - 完成全局设计
 - 路径：`ai_drama_studio_v2/projects/biancheng/`
 
+## 25-Agent系统
+- **核心理念**：AI番剧 = 漫画 + 电影 + AI
+- **架构**：7组25个Agent，108本书/资源
+- **Skills**：17/25已完成（68%）
+- **Prompt Generator**：8步对话式UI，多平台输出
+
 ## 重要决策
 - 人物小传要有心理深度（欲望/恐惧/冲突）
 - 分集要有钩子设计（让观众想看下一集）
-- Prompt要兼容多模型（MJ/SD/Runway/Kling）
+- Prompt要兼容多模型（MJ/SD/Flux/DALL-E）
+- Brave Search用`zh-hans`搜中文（不是`zh`）
+- 现代改编策略：经典IP + 打工人视角（如浪浪山）
+
+## AI番剧工作台 (完成!)
+- **线上版**: https://pv4qnn.csb.app
+- **本地**: `ai_drama_studio_v2/workbench/index.html`
+- **规模**: 30 Agents × 200 Skills
+- **三语**: 简体/繁體/English
+- **UI**: 黑红赛博朋克 + FizzDragon品牌
 
 ## 待办
-- [ ] 完成《边城》第1集详细分镜
-- [ ] 对接FizzDragon测试生成
-- [ ] 建立制作SOP
+- [ ] 导出功能（Excel/JSON）
+- [ ] 对接FizzDragon平台测试
+- [ ] 选定首个项目开始实际制作
+- [ ] 长篇改编流程完善（10万字小说）
 
 ---
-*最后更新：2026-02-14*
+*最后更新：2026-02-15*
