@@ -198,13 +198,26 @@
 // ==================== 系統配置 ====================
 const STEPS = [
     {id:1, name:'導入小說', desc:'上傳或貼入10萬字小說', icon:'📖'},
-    {id:2, name:'高概念', desc:'生成Logline和類型定位', icon:'💡'},
-    {id:3, name:'章節拆分', desc:'智能分析章節結構', icon:'📑'},
-    {id:4, name:'角色設計', desc:'主角+配角+群演', icon:'👥'},
-    {id:5, name:'服化道', desc:'服裝、化妝、道具', icon:'👔'},
-    {id:6, name:'章節劇本', desc:'逐章撰寫分場劇本', icon:'✍️'},
-    {id:7, name:'分鏡設計', desc:'場景+主體+Prompt', icon:'🎬'},
-    {id:8, name:'完成輸出', desc:'導出全部製作資料', icon:'🎉'}
+    {id:2, name:'創意訪談', desc:'8個問題了解你的願景', icon:'🎤'},
+    {id:3, name:'高概念', desc:'生成Logline和類型定位', icon:'💡'},
+    {id:4, name:'章節拆分', desc:'智能分析章節結構', icon:'📑'},
+    {id:5, name:'角色設計', desc:'主角+配角+群演', icon:'👥'},
+    {id:6, name:'服化道', desc:'服裝、化妝、道具', icon:'👔'},
+    {id:7, name:'章節劇本', desc:'逐章撰寫分場劇本', icon:'✍️'},
+    {id:8, name:'分鏡設計', desc:'場景+主體+Prompt', icon:'🎬'},
+    {id:9, name:'完成輸出', desc:'導出全部製作資料', icon:'🎉'}
+];
+
+// 訪談問題
+const INTERVIEW_QUESTIONS = [
+    {id:'why', skill:'interview_creative_vision', question:'這個故事的靈感來源是什麼？為什麼想講這個故事？', usedBy:['💡高概念','📚改編']},
+    {id:'emotion', skill:'interview_empathy', question:'你希望觀眾看完後，心裡留下什麼感受？', usedBy:['🎨美術','🎵音樂','🌈色彩']},
+    {id:'theme', skill:'interview_theme', question:'用一句話概括這個故事的主題？', usedBy:['📖敘事','✍️編劇']},
+    {id:'audience', skill:'interview_audience', question:'你的目標觀眾是誰？描述他們的特徵。', usedBy:['📱短劇','🎬類型']},
+    {id:'reference', skill:'interview_reference', question:'有參考作品嗎？希望風格接近哪些？', usedBy:['🎬總導演','🎨美術']},
+    {id:'style', skill:'interview_style', question:'視覺上偏好什麼風格？電影感/動漫/國風？', usedBy:['👤角色','🏛️場景','🖼️Prompt']},
+    {id:'conflict', skill:'interview_conflict', question:'故事的核心衝突是什麼？', usedBy:['✍️編劇','📖敘事']},
+    {id:'memorable', skill:'interview_diagnostic', question:'最想讓觀眾記住的是什麼？', usedBy:['🎬總導演']}
 ];
 
 // 主體類型
@@ -263,7 +276,8 @@ function renderSteps(){
 }
 
 function updateProgress(){
-    const pct = Math.round(((state.currentStep - 1) / (STEPS.length - 1)) * 100);
+    const total = STEPS.length;
+    const pct = Math.round(((state.currentStep - 1) / (total - 1)) * 100);
     document.getElementById('progressFill').style.width = pct + '%';
     document.getElementById('progressText').textContent = `${pct}% - ${STEPS[state.currentStep-1]?.name || ''}`;
 }
@@ -292,16 +306,115 @@ function showStep(step){
     
     switch(step){
         case 1: content.innerHTML = renderStep1(); break;
-        case 2: content.innerHTML = renderStep2(); break;
-        case 3: content.innerHTML = renderStep3(); break;
-        case 4: content.innerHTML = renderStep4(); break;
-        case 5: content.innerHTML = renderStep5(); break;
-        case 6: content.innerHTML = renderStep6(); break;
-        case 7: content.innerHTML = renderStep7(); break;
-        case 8: content.innerHTML = renderStep8(); break;
+        case 2: content.innerHTML = renderStepInterview(); break;
+        case 3: content.innerHTML = renderStep2(); break;  // 高概念
+        case 4: content.innerHTML = renderStep3(); break;  // 章節
+        case 5: content.innerHTML = renderStep4(); break;  // 角色
+        case 6: content.innerHTML = renderStep5(); break;  // 服化道
+        case 7: content.innerHTML = renderStep6(); break;  // 劇本
+        case 8: content.innerHTML = renderStep7(); break;  // 分鏡
+        case 9: content.innerHTML = renderStep8(); break;  // 輸出
     }
     
     updateOutputPanel();
+}
+
+// ==================== Step 2: 創意訪談 ====================
+let currentInterviewQ = 0;
+
+function renderStepInterview(){
+    if(!state.interview) state.interview = {};
+    currentInterviewQ = 0;
+    
+    return `
+        <div class="content-card">
+            <h3><span class="icon">🎤</span> 創意訪談</h3>
+            <p style="color:var(--dim);margin-bottom:20px">在開始製作前，訪談Agent想了解你的創作願景。你的回答將影響後續所有Agent的工作。</p>
+            
+            <div id="interviewArea">
+                ${renderInterviewQuestion(0)}
+            </div>
+        </div>
+    `;
+}
+
+function renderInterviewQuestion(index){
+    if(index >= INTERVIEW_QUESTIONS.length){
+        return renderInterviewSummary();
+    }
+    
+    const q = INTERVIEW_QUESTIONS[index];
+    const prevAnswer = state.interview[q.id] || '';
+    
+    return `
+        <div style="background:var(--surface2);border-radius:12px;padding:20px;margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                <span style="background:var(--primary);color:#fff;padding:4px 10px;border-radius:12px;font-size:11px">問題 ${index+1}/${INTERVIEW_QUESTIONS.length}</span>
+                <span style="font-size:11px;color:var(--cyan)">${q.skill.replace(/_/g,' ')}</span>
+            </div>
+            
+            <p style="font-size:16px;margin-bottom:16px;line-height:1.6">${q.question}</p>
+            
+            <div style="font-size:11px;color:var(--dim);margin-bottom:12px;padding:8px;background:var(--bg);border-radius:6px">
+                📤 你的回答將影響：${q.usedBy.join(' • ')}
+            </div>
+            
+            <textarea id="interviewAnswer" class="form-input" style="min-height:100px" placeholder="請自由回答，越詳細越好...">${prevAnswer}</textarea>
+            
+            <div class="btn-group" style="margin-top:16px">
+                ${index > 0 ? `<button class="btn" onclick="prevInterviewQ()">← 上一題</button>` : ''}
+                <button class="btn btn-primary" onclick="nextInterviewQ()">
+                    ${index < INTERVIEW_QUESTIONS.length - 1 ? '下一題 →' : '完成訪談 ✓'}
+                </button>
+            </div>
+        </div>
+        
+        <div style="display:flex;gap:4px;justify-content:center">
+            ${INTERVIEW_QUESTIONS.map((_, i) => `
+                <div style="width:${i===index?'24px':'12px'};height:6px;background:${i<index?'var(--success)':i===index?'var(--primary)':'var(--surface2)'};border-radius:3px;transition:all .3s"></div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderInterviewSummary(){
+    return `
+        <div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:20px;margin-bottom:16px">
+            <h4 style="color:var(--success);margin-bottom:16px">✅ 訪談完成！</h4>
+            
+            <div style="display:grid;gap:12px">
+                ${INTERVIEW_QUESTIONS.map(q => `
+                    <div style="background:var(--surface);padding:12px;border-radius:8px">
+                        <div style="font-size:11px;color:var(--dim);margin-bottom:4px">${q.question}</div>
+                        <div style="font-size:13px">${state.interview[q.id] || '（未回答）'}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn" onclick="currentInterviewQ=0;document.getElementById('interviewArea').innerHTML=renderInterviewQuestion(0)">✏️ 修改回答</button>
+            <button class="btn btn-primary" onclick="nextStep()">確認 → 高概念分析</button>
+        </div>
+    `;
+}
+
+function nextInterviewQ(){
+    const answer = document.getElementById('interviewAnswer').value.trim();
+    const q = INTERVIEW_QUESTIONS[currentInterviewQ];
+    
+    // 保存答案
+    state.interview[q.id] = answer;
+    
+    currentInterviewQ++;
+    document.getElementById('interviewArea').innerHTML = renderInterviewQuestion(currentInterviewQ);
+}
+
+function prevInterviewQ(){
+    if(currentInterviewQ > 0){
+        currentInterviewQ--;
+        document.getElementById('interviewArea').innerHTML = renderInterviewQuestion(currentInterviewQ);
+    }
 }
 
 // ==================== Step 1: 導入小說 ====================
@@ -715,73 +828,103 @@ function previewNovel(){
     alert('小說預覽：\n\n' + state.novel.text.slice(0, 500) + '...');
 }
 
-// ==================== 重新生成函數 ====================
-function regenerateConcept(){
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="content-card">
-            <div class="loading">
-                <div class="spinner"></div>
-                <span>重新生成高概念...</span>
+// ==================== 重新生成函數（帶詢問） ====================
+function showRegenerateDialog(type, title){
+    const dialog = document.createElement('div');
+    dialog.id = 'regenerateDialog';
+    dialog.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:1000';
+    dialog.innerHTML = `
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;width:90%;max-width:500px;padding:24px">
+            <h3 style="margin-bottom:16px">🔄 重新生成${title}</h3>
+            
+            <div style="margin-bottom:16px">
+                <label style="display:block;font-size:12px;color:var(--dim);margin-bottom:8px">為什麼想要修改？</label>
+                <select id="regenReason" class="form-input">
+                    <option value="">-- 選擇原因 --</option>
+                    <option value="不夠吸引人">不夠吸引人</option>
+                    <option value="風格不對">風格不對</option>
+                    <option value="內容有誤">內容有誤</option>
+                    <option value="想換個方向">想換個方向</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom:16px">
+                <label style="display:block;font-size:12px;color:var(--dim);margin-bottom:8px">你想怎麼改？（具體說明）</label>
+                <textarea id="regenInstruction" class="form-input" style="min-height:100px" placeholder="例如：&#10;- Logline要更有懸念感&#10;- 突出主角的成長主題&#10;- 參考《長安十二時辰》的風格"></textarea>
+            </div>
+            
+            <div style="display:flex;gap:10px;justify-content:flex-end">
+                <button class="btn" onclick="closeRegenerateDialog()">取消</button>
+                <button class="btn btn-primary" onclick="doRegenerate('${type}')">確認重新生成</button>
             </div>
         </div>
     `;
-    
-    setTimeout(() => {
-        state.concept = generateConcept();
-        showStep(2);
-    }, 1500);
+    document.body.appendChild(dialog);
 }
 
-function regenerateStoryboard(){
+function closeRegenerateDialog(){
+    const dialog = document.getElementById('regenerateDialog');
+    if(dialog) dialog.remove();
+}
+
+function doRegenerate(type){
+    const reason = document.getElementById('regenReason').value;
+    const instruction = document.getElementById('regenInstruction').value.trim();
+    
+    // 保存用戶反饋
+    if(!state.feedback) state.feedback = [];
+    state.feedback.push({type, reason, instruction, time: new Date()});
+    
+    closeRegenerateDialog();
+    
     const content = document.getElementById('contentArea');
     content.innerHTML = `
         <div class="content-card">
             <div class="loading">
                 <div class="spinner"></div>
-                <span>重新生成分鏡...</span>
+                <span>根據你的意見重新生成...</span>
             </div>
+            ${instruction ? `<p style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--dim)">📝 ${instruction}</p>` : ''}
         </div>
     `;
     
     setTimeout(() => {
-        state.storyboard = generateStoryboard();
-        showStep(7);
+        switch(type){
+            case 'concept':
+                state.concept = generateConcept();
+                showStep(2);
+                break;
+            case 'chapters':
+                state.chapters = splitChapters();
+                showStep(3);
+                break;
+            case 'characters':
+                state.characters = extractCharacters();
+                showStep(4);
+                break;
+            case 'storyboard':
+                state.storyboard = generateStoryboard();
+                showStep(7);
+                break;
+        }
     }, 2000);
 }
 
+function regenerateConcept(){
+    showRegenerateDialog('concept', '高概念');
+}
+
+function regenerateStoryboard(){
+    showRegenerateDialog('storyboard', '分鏡');
+}
+
 function resplitChapters(){
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="content-card">
-            <div class="loading">
-                <div class="spinner"></div>
-                <span>重新拆分章節...</span>
-            </div>
-        </div>
-    `;
-    
-    setTimeout(() => {
-        state.chapters = splitChapters();
-        showStep(3);
-    }, 1500);
+    showRegenerateDialog('chapters', '章節');
 }
 
 function reextractCharacters(){
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="content-card">
-            <div class="loading">
-                <div class="spinner"></div>
-                <span>重新分析角色...</span>
-            </div>
-        </div>
-    `;
-    
-    setTimeout(() => {
-        state.characters = extractCharacters();
-        showStep(4);
-    }, 1500);
+    showRegenerateDialog('characters', '角色');
 }
 
 function loadDemoNovel(){
@@ -879,21 +1022,28 @@ function renderStep2(){
 function generateConcept(){
     const text = state.novel.text;
     const title = state.novel.title;
+    const iv = state.interview || {};
     
-    // 簡單分析（實際應用中這裡會調用AI）
+    // 根據訪談回答生成概念
     let concept = {
         logline: '',
         genre: '歷史冒險',
-        theme: '成長與命運',
-        audience: '18-35歲',
+        theme: iv.theme || '成長與命運',
+        audience: iv.audience || '18-35歲',
         era: '唐代',
-        hooks: []
+        hooks: [],
+        interviewBased: true
     };
+    
+    // 使用訪談中的參考作品
+    const reference = iv.reference || '';
+    const style = iv.style || '';
+    const emotion = iv.emotion || '';
     
     if(title.includes('絲綢之路') || text.includes('唐') || text.includes('蕃坊')){
         concept.logline = '唐代廣州，一個13歲的街頭神偷意外捲入跨越南洋的尋寶冒險。在海上密室殺人案與千年輪迴詛咒的雙重謎團中，他必須解開粉紅寶石的秘密——否則所有人都將葬身大海。';
         concept.genre = '歷史冒險 / 懸疑';
-        concept.theme = '身份認同 × 命運抗爭';
+        concept.theme = iv.theme || '身份認同 × 命運抗爭';
         concept.era = '唐代（海上絲路）';
         concept.hooks = [
             '🌊 東方版《加勒比海盜》+ 海上密室殺人',
@@ -901,9 +1051,11 @@ function generateConcept(){
             '🏛️ 唐代異域風情：廣州蕃坊→南洋→婆羅浮屠',
             '👦 少年成長：從小偷到英雄的蛻變'
         ];
+        if(reference) concept.hooks.push(`🎬 參考風格：${reference}`);
     } else {
         concept.logline = `在${title}的世界中，主角將面對命運的考驗，經歷成長與蛻變。`;
         concept.hooks = ['獨特的世界觀', '深刻的角色成長', '扣人心弦的劇情'];
+        if(iv.why) concept.hooks.push(`💡 創作初衷：${iv.why.slice(0,50)}...`);
     }
     
     return concept;
