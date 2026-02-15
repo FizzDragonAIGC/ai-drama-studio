@@ -1055,7 +1055,8 @@ function showStep(step){
 }
 
 // ==================== API 配置 ====================
-const API_BASE = '/api';
+// 后端服务器地址 - 开发环境
+const API_BASE = 'http://34.58.33.115:3001/api';
 let apiMode = 'manual'; // 'api' | 'manual'
 
 async function callAgent(endpoint, data) {
