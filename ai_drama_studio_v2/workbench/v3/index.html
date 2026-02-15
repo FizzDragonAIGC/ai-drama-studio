@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FizzDragon AI Drama Studio v3</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0a0a0c;--surface:#111114;--surface2:#1a1a1f;
+            --border:#2a2a32;--text:#f0f0f2;--dim:#888890;
+            --primary:#ff6b35;--primary-dark:#e55a2b;
+            --success:#22c55e;--cyan:#06b6d4;--pink:#ec4899;--purple:#a855f7;
+            --warning:#eab308;--error:#ef4444;
+            --radius:10px;--radius-sm:6px;
+        }
+        body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+        
+        /* Layout */
+        .app{display:flex;flex-direction:column;min-height:100vh}
+        .header{padding:16px 24px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+        .logo{font-size:20px;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .header-info{display:flex;gap:16px;align-items:center}
+        .badge{padding:4px 12px;background:var(--surface2);border-radius:20px;font-size:11px;color:var(--dim)}
+        .badge.active{background:var(--primary);color:#fff}
+        
+        .main{flex:1;display:grid;grid-template-columns:300px 1fr 350px;gap:0}
+        
+        /* Left Panel - Progress */
+        .panel-left{background:var(--surface);border-right:1px solid var(--border);padding:20px;overflow-y:auto}
+        .panel-left h2{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+        
+        .step-list{list-style:none}
+        .step-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;transition:all .2s}
+        .step-item:hover{background:var(--surface2)}
+        .step-item.active{background:var(--primary);color:#fff}
+        .step-item.done{opacity:.7}
+        .step-num{width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+        .step-item.active .step-num{background:rgba(255,255,255,.2)}
+        .step-item.done .step-num{background:var(--success);color:#fff}
+        .step-item.done .step-num::after{content:'✓'}
+        .step-info{flex:1}
+        .step-title{font-size:13px;font-weight:500}
+        .step-desc{font-size:11px;color:var(--dim)}
+        .step-item.active .step-desc{color:rgba(255,255,255,.7)}
+        
+        /* Center - Content */
+        .panel-center{padding:24px;overflow-y:auto}
+        
+        .content-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+        .content-card h3{font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+        .content-card h3 .icon{font-size:20px}
+        
+        .form-group{margin-bottom:20px}
+        .form-label{display:block;font-size:12px;color:var(--dim);margin-bottom:8px}
+        .form-input{width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px}
+        .form-input:focus{outline:none;border-color:var(--primary)}
+        textarea.form-input{min-height:200px;resize:vertical;font-family:inherit}
+        
+        .btn{padding:12px 24px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}
+        .btn:hover{border-color:var(--primary);background:rgba(255,107,53,.1)}
+        .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+        .btn-primary:hover{background:var(--primary-dark)}
+        .btn-group{display:flex;gap:10px;margin-top:20px}
+        
+        /* Report Sections */
+        .report{background:var(--surface2);border-radius:var(--radius);padding:20px;margin:16px 0}
+        .report h4{font-size:13px;color:var(--primary);margin-bottom:12px}
+        .report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+        .stat-box{background:var(--bg);padding:16px;border-radius:var(--radius-sm);text-align:center}
+        .stat-val{font-size:24px;font-weight:700;color:var(--primary)}
+        .stat-label{font-size:11px;color:var(--dim);margin-top:4px}
+        
+        .item-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin:12px 0}
+        .item-card h5{font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+        .item-card p{font-size:13px;color:var(--dim);margin:4px 0}
+        .tag{display:inline-block;padding:2px 8px;background:var(--surface);border-radius:12px;font-size:10px;color:var(--cyan);margin:2px}
+        
+        /* Right Panel - Output */
+        .panel-right{background:var(--surface);border-left:1px solid var(--border);padding:20px;overflow-y:auto}
+        .panel-right h2{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+        
+        .output-section{margin-bottom:24px}
+        .output-file{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:8px;font-size:12px}
+        .output-file .icon{color:var(--cyan)}
+        .output-file .name{flex:1}
+        .output-file .size{color:var(--dim)}
+        
+        .export-btn{width:100%;padding:14px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);cursor:pointer;font-size:13px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+        .export-btn:hover{border-color:var(--success);color:var(--success)}
+        
+        /* Storyboard Table */
+        .storyboard-table{width:100%;border-collapse:collapse;font-size:12px}
+        .storyboard-table th,.storyboard-table td{padding:12px;text-align:left;border-bottom:1px solid var(--border)}
+        .storyboard-table th{background:var(--surface2);color:var(--dim);font-weight:500}
+        .storyboard-table tr:hover{background:var(--surface2)}
+        .shot-id{color:var(--primary);font-weight:600}
+        .shot-type{padding:2px 8px;border-radius:10px;font-size:10px}
+        .shot-type.narrative{background:rgba(34,197,94,.2);color:var(--success)}
+        .shot-type.dramatic{background:rgba(255,107,53,.2);color:var(--primary)}
+        .shot-type.emotional{background:rgba(236,72,153,.2);color:var(--pink)}
+        
+        /* Subject Card */
+        .subject-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin:8px 0}
+        .subject-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+        .subject-type{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500}
+        .subject-type.person{background:rgba(6,182,212,.2);color:var(--cyan)}
+        .subject-type.animal{background:rgba(168,85,247,.2);color:var(--purple)}
+        .subject-type.crowd{background:rgba(234,179,8,.2);color:var(--warning)}
+        .subject-name{font-weight:600}
+        .subject-detail{font-size:11px;color:var(--dim);margin:4px 0}
+        .subject-detail strong{color:var(--text)}
+        .dialogue-box{background:var(--surface);padding:10px;border-radius:var(--radius-sm);margin-top:8px;border-left:3px solid var(--cyan)}
+        .dialogue-box .speaker{font-size:10px;color:var(--cyan);margin-bottom:4px}
+        .dialogue-box .line{font-style:italic}
+        
+        /* Scene Card */
+        .scene-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin:8px 0}
+        .scene-header{font-weight:600;margin-bottom:8px}
+        .scene-detail{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px}
+        .scene-detail span{padding:6px 10px;background:var(--surface);border-radius:var(--radius-sm)}
+        .scene-detail .label{color:var(--dim)}
+        .scene-detail .value{color:var(--text)}
+        
+        /* Prompt Box */
+        .prompt-box{background:#1e1e24;border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin:8px 0;font-family:'Fira Code',monospace;font-size:11px;color:var(--cyan);word-break:break-all}
+        .prompt-label{font-size:10px;color:var(--dim);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+        
+        /* Tabs */
+        .tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px}
+        .tab{padding:12px 20px;font-size:13px;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+        .tab:hover{color:var(--text)}
+        .tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+        
+        /* Progress Bar */
+        .progress-wrap{margin-bottom:24px}
+        .progress-bar{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--pink));transition:width .5s}
+        .progress-text{font-size:11px;color:var(--dim);margin-top:8px;text-align:center}
+        
+        /* Loading */
+        .loading{display:flex;align-items:center;justify-content:center;gap:12px;padding:40px;color:var(--dim)}
+        .spinner{width:24px;height:24px;border:3px solid var(--surface2);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        
+        /* Responsive */
+        @media(max-width:1200px){.main{grid-template-columns:1fr}.panel-left,.panel-right{display:none}}
+    </style>
+</head>
+<body>
+<div class="app">
+    <header class="header">
+        <div class="logo">🐉 FizzDragon AI Drama Studio v3</div>
+        <div class="header-info">
+            <span class="badge" id="novelStats">等待導入</span>
+            <span class="badge active">249 Skills</span>
+            <span class="badge">30 Agents</span>
+        </div>
+    </header>
+    
+    <main class="main">
+        <!-- Left Panel: Steps -->
+        <aside class="panel-left">
+            <h2>📋 製作流程</h2>
+            <ul class="step-list" id="stepList"></ul>
+            
+            <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+                <h2>📊 當前進度</h2>
+                <div class="progress-wrap">
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+                    <div class="progress-text" id="progressText">0% - 準備開始</div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Center: Content -->
+        <section class="panel-center" id="contentArea">
+            <!-- Dynamic content will be inserted here -->
+        </section>
+        
+        <!-- Right Panel: Output -->
+        <aside class="panel-right">
+            <h2>📁 輸出文檔</h2>
+            <div id="outputFiles"></div>
+            
+            <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+                <h2>📤 導出</h2>
+                <button class="export-btn" onclick="exportJSON()">📄 導出JSON</button>
+                <button class="export-btn" onclick="exportCSV()">📊 導出CSV</button>
+                <button class="export-btn" onclick="exportPrompts()">🖼️ 導出Prompts</button>
+            </div>
+        </aside>
+    </main>
+</div>
+
+<script>
+// ==================== 系統配置 ====================
+const STEPS = [
+    {id:1, name:'導入小說', desc:'上傳或貼入10萬字小說', icon:'📖'},
+    {id:2, name:'高概念', desc:'生成Logline和類型定位', icon:'💡'},
+    {id:3, name:'章節拆分', desc:'智能分析章節結構', icon:'📑'},
+    {id:4, name:'角色設計', desc:'主角+配角+群演', icon:'👥'},
+    {id:5, name:'服化道', desc:'服裝、化妝、道具', icon:'👔'},
+    {id:6, name:'章節劇本', desc:'逐章撰寫分場劇本', icon:'✍️'},
+    {id:7, name:'分鏡設計', desc:'場景+主體+Prompt', icon:'🎬'},
+    {id:8, name:'完成輸出', desc:'導出全部製作資料', icon:'🎉'}
+];
+
+// 主體類型
+const SUBJECT_TYPES = {
+    person: {label:'人物', color:'cyan', icon:'👤'},
+    animal: {label:'動物', color:'purple', icon:'🐾'},
+    crowd: {label:'群演', color:'warning', icon:'👥'},
+    object: {label:'物體', color:'dim', icon:'📦'},
+    none: {label:'空鏡', color:'dim', icon:'🏞️'}
+};
+
+// 狀態
+let state = {
+    currentStep: 1,
+    novel: {
+        text: '',
+        title: '',
+        wordCount: 0
+    },
+    concept: {
+        logline: '',
+        genre: '',
+        theme: '',
+        audience: ''
+    },
+    chapters: [],
+    characters: {
+        main: [],      // 主角
+        supporting: [], // 配角
+        extras: []      // 群演
+    },
+    costumes: {},
+    scripts: [],
+    storyboard: []
+};
+
+// ==================== 初始化 ====================
+function init(){
+    renderSteps();
+    showStep(1);
+    updateProgress();
+}
+
+function renderSteps(){
+    const html = STEPS.map(s => `
+        <li class="step-item ${s.id === state.currentStep ? 'active' : ''} ${s.id < state.currentStep ? 'done' : ''}" 
+            onclick="goToStep(${s.id})">
+            <div class="step-num">${s.id < state.currentStep ? '' : s.id}</div>
+            <div class="step-info">
+                <div class="step-title">${s.icon} ${s.name}</div>
+                <div class="step-desc">${s.desc}</div>
+            </div>
+        </li>
+    `).join('');
+    document.getElementById('stepList').innerHTML = html;
+}
+
+function updateProgress(){
+    const pct = Math.round(((state.currentStep - 1) / (STEPS.length - 1)) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = `${pct}% - ${STEPS[state.currentStep-1]?.name || ''}`;
+}
+
+function goToStep(step){
+    if(step <= state.currentStep){
+        state.currentStep = step;
+        renderSteps();
+        showStep(step);
+        updateProgress();
+    }
+}
+
+function nextStep(){
+    if(state.currentStep < STEPS.length){
+        state.currentStep++;
+        renderSteps();
+        showStep(state.currentStep);
+        updateProgress();
+    }
+}
+
+// ==================== 步驟內容 ====================
+function showStep(step){
+    const content = document.getElementById('contentArea');
+    
+    switch(step){
+        case 1: content.innerHTML = renderStep1(); break;
+        case 2: content.innerHTML = renderStep2(); break;
+        case 3: content.innerHTML = renderStep3(); break;
+        case 4: content.innerHTML = renderStep4(); break;
+        case 5: content.innerHTML = renderStep5(); break;
+        case 6: content.innerHTML = renderStep6(); break;
+        case 7: content.innerHTML = renderStep7(); break;
+        case 8: content.innerHTML = renderStep8(); break;
+    }
+    
+    updateOutputPanel();
+}
+
+// ==================== Step 1: 導入小說 ====================
+function renderStep1(){
+    return `
+        <div class="content-card">
+            <h3><span class="icon">📖</span> 導入小說</h3>
+            <p style="color:var(--dim);margin-bottom:20px">支持10萬字以上的長篇小說，系統將自動分析結構。</p>
+            
+            <div class="form-group">
+                <label class="form-label">小說標題</label>
+                <input type="text" class="form-input" id="novelTitle" placeholder="例：海上絲綢之路密碼" value="${state.novel.title}">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">小說正文（直接貼入或上傳TXT）</label>
+                <textarea class="form-input" id="novelText" style="min-height:300px" placeholder="將小說全文貼入此處...">${state.novel.text}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <input type="file" id="fileInput" accept=".txt" style="display:none" onchange="handleFileUpload(event)">
+                <button class="btn" onclick="document.getElementById('fileInput').click()">📁 上傳TXT文件</button>
+                <button class="btn" onclick="loadDemoNovel()" style="margin-left:10px">📚 載入示例</button>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="analyzeNovel()">開始分析 →</button>
+            </div>
+        </div>
+    `;
+}
+
+function handleFileUpload(event){
+    const file = event.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = function(e){
+            document.getElementById('novelText').value = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+}
+
+function loadDemoNovel(){
+    document.getElementById('novelTitle').value = '海上絲綢之路密碼';
+    document.getElementById('novelText').value = DEMO_NOVEL;
+}
+
+function analyzeNovel(){
+    const title = document.getElementById('novelTitle').value.trim();
+    const text = document.getElementById('novelText').value.trim();
+    
+    if(!title || !text){
+        alert('請輸入標題和小說正文');
+        return;
+    }
+    
+    state.novel = {
+        title: title,
+        text: text,
+        wordCount: text.length
+    };
+    
+    document.getElementById('novelStats').textContent = `${title} | ${(text.length/10000).toFixed(1)}萬字`;
+    
+    nextStep();
+}
+
+// ==================== Step 2: 高概念 ====================
+function renderStep2(){
+    const concept = generateConcept();
+    state.concept = concept;
+    
+    return `
+        <div class="content-card">
+            <h3><span class="icon">💡</span> 高概念分析</h3>
+            <p style="color:var(--dim);margin-bottom:20px">基於小說內容自動生成故事定位。</p>
+            
+            <div class="report">
+                <h4>🎯 Logline（一句話概括）</h4>
+                <p style="font-size:16px;color:var(--primary);padding:16px;background:var(--bg);border-radius:8px;font-style:italic;line-height:1.8">
+                    "${concept.logline}"
+                </p>
+            </div>
+            
+            <div class="report">
+                <h4>📊 故事定位</h4>
+                <div class="report-grid">
+                    <div class="stat-box"><div class="stat-label">類型</div><div class="stat-val" style="font-size:14px">${concept.genre}</div></div>
+                    <div class="stat-box"><div class="stat-label">主題</div><div class="stat-val" style="font-size:14px">${concept.theme}</div></div>
+                    <div class="stat-box"><div class="stat-label">受眾</div><div class="stat-val" style="font-size:14px">${concept.audience}</div></div>
+                    <div class="stat-box"><div class="stat-label">時代</div><div class="stat-val" style="font-size:14px">${concept.era}</div></div>
+                </div>
+            </div>
+            
+            <div class="report">
+                <h4>🎣 核心賣點</h4>
+                <ul style="color:var(--dim);font-size:14px;padding-left:20px">
+                    ${concept.hooks.map(h => `<li style="margin:8px 0">${h}</li>`).join('')}
+                </ul>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn" onclick="regenerateConcept()">🔄 重新生成</button>
+                <button class="btn btn-primary" onclick="nextStep()">確認 → 章節拆分</button>
+            </div>
+        </div>
+    `;
+}
+
+function generateConcept(){
+    const text = state.novel.text;
+    const title = state.novel.title;
+    
+    // 簡單分析（實際應用中這裡會調用AI）
+    let concept = {
+        logline: '',
+        genre: '歷史冒險',
+        theme: '成長與命運',
+        audience: '18-35歲',
+        era: '唐代',
+        hooks: []
+    };
+    
+    if(title.includes('絲綢之路') || text.includes('唐') || text.includes('蕃坊')){
+        concept.logline = '唐代廣州，一個13歲的街頭神偷意外捲入跨越南洋的尋寶冒險。在海上密室殺人案與千年輪迴詛咒的雙重謎團中，他必須解開粉紅寶石的秘密——否則所有人都將葬身大海。';
+        concept.genre = '歷史冒險 / 懸疑';
+        concept.theme = '身份認同 × 命運抗爭';
+        concept.era = '唐代（海上絲路）';
+        concept.hooks = [
+            '🌊 東方版《加勒比海盜》+ 海上密室殺人',
+            '💎 神秘寶石連接千年輪迴詛咒',
+            '🏛️ 唐代異域風情：廣州蕃坊→南洋→婆羅浮屠',
+            '👦 少年成長：從小偷到英雄的蛻變'
+        ];
+    } else {
+        concept.logline = `在${title}的世界中，主角將面對命運的考驗，經歷成長與蛻變。`;
+        concept.hooks = ['獨特的世界觀', '深刻的角色成長', '扣人心弦的劇情'];
+    }
+    
+    return concept;
+}
+
+// ==================== Step 3: 章節拆分 ====================
+function renderStep3(){
+    if(state.chapters.length === 0){
+        state.chapters = splitChapters();
+    }
+    
+    return `
+        <div class="content-card">
+            <h3><span class="icon">📑</span> 章節結構分析</h3>
+            
+            <div class="report">
+                <h4>📊 整體數據</h4>
+                <div class="report-grid">
+                    <div class="stat-box"><div class="stat-val">${state.chapters.length}</div><div class="stat-label">總章節</div></div>
+                    <div class="stat-box"><div class="stat-val">${state.novel.wordCount}</div><div class="stat-label">總字數</div></div>
+                    <div class="stat-box"><div class="stat-val">${Math.round(state.novel.wordCount / state.chapters.length)}</div><div class="stat-label">平均字數/章</div></div>
+                    <div class="stat-box"><div class="stat-val">${state.chapters.length * 80}</div><div class="stat-label">預計總鏡頭</div></div>
+                </div>
+            </div>
+            
+            <div class="report">
+                <h4>📖 章節列表</h4>
+                ${state.chapters.map((ch, i) => `
+                    <div class="item-card">
+                        <h5>
+                            <span style="color:var(--primary)">第${i+1}章</span>
+                            ${ch.title}
+                        </h5>
+                        <p>${ch.summary}</p>
+                        <p>
+                            <span class="tag">📝 ${ch.wordCount}字</span>
+                            <span class="tag">🎬 約${ch.estimatedShots}鏡頭</span>
+                            <span class="tag">${ch.phase}</span>
+                        </p>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn" onclick="resplitChapters()">🔄 重新拆分</button>
+                <button class="btn btn-primary" onclick="nextStep()">確認 → 角色設計</button>
+            </div>
+        </div>
+    `;
+}
+
+function splitChapters(){
+    const text = state.novel.text;
+    const chapters = [];
+    
+    // 嘗試匹配章節標記
+    const patterns = [
+        /【(.+?)】/g,
+        /第[一二三四五六七八九十百千]+章\s*[:：]?\s*(.+)/g,
+        /Chapter\s*\d+\s*[:：]?\s*(.+)/gi
+    ];
+    
+    let matches = [];
+    for(const pattern of patterns){
+        const found = [...text.matchAll(pattern)];
+        if(found.length > matches.length){
+            matches = found;
+        }
+    }
+    
+    if(matches.length > 0){
+        for(let i = 0; i < matches.length; i++){
+            const start = matches[i].index;
+            const end = matches[i+1]?.index || text.length;
+            const content = text.slice(start, end);
+            
+            chapters.push({
+                id: i + 1,
+                title: matches[i][1] || `第${i+1}章`,
+                content: content,
+                wordCount: content.length,
+                estimatedShots: Math.round(content.length / 200),
+                phase: getChapterPhase(i, matches.length),
+                summary: generateChapterSummary(content)
+            });
+        }
+    } else {
+        // 按字數均分
+        const chunkSize = 15000;
+        for(let i = 0; i < text.length; i += chunkSize){
+            const content = text.slice(i, i + chunkSize);
+            chapters.push({
+                id: chapters.length + 1,
+                title: `第${chapters.length + 1}章`,
+                content: content,
+                wordCount: content.length,
+                estimatedShots: Math.round(content.length / 200),
+                phase: getChapterPhase(chapters.length, Math.ceil(text.length / chunkSize)),
+                summary: generateChapterSummary(content)
+            });
+        }
+    }
+    
+    return chapters;
+}
+
+function getChapterPhase(i, total){
+    if(i === 0) return '🎬 開篇';
+    if(i === total - 1) return '🎭 結局';
+    if(i < total * 0.25) return '📖 鋪墊';
+    if(i < total * 0.5) return '⚡ 發展';
+    if(i < total * 0.75) return '🔥 高潮';
+    return '🌅 收束';
+}
+
+function generateChapterSummary(content){
+    // 簡單提取前100字作為摘要
+    return content.slice(0, 100).replace(/\s+/g, ' ') + '...';
+}
+
+// ==================== Step 4: 角色設計 ====================
+function renderStep4(){
+    if(state.characters.main.length === 0){
+        state.characters = extractCharacters();
+    }
+    
+    return `
+        <div class="content-card">
+            <h3><span class="icon">👥</span> 角色設計</h3>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="showCharacterTab('main')">主角 (${state.characters.main.length})</div>
+                <div class="tab" onclick="showCharacterTab('supporting')">配角 (${state.characters.supporting.length})</div>
+                <div class="tab" onclick="showCharacterTab('extras')">群演 (${state.characters.extras.length})</div>
+            </div>
+            
+            <div id="characterContent">
+                ${renderCharacterList('main')}
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn" onclick="reextractCharacters()">🔄 重新分析</button>
+                <button class="btn btn-primary" onclick="nextStep()">確認 → 服化道</button>
+            </div>
+        </div>
+    `;
+}
+
+function showCharacterTab(type){
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('characterContent').innerHTML = renderCharacterList(type);
+}
+
+function renderCharacterList(type){
+    const chars = state.characters[type] || [];
+    
+    if(chars.length === 0){
+        return '<p style="color:var(--dim);padding:20px">暫無角色</p>';
+    }
+    
+    return chars.map(c => `
+        <div class="item-card">
+            <h5>
+                <span class="subject-type ${type === 'extras' ? 'crowd' : 'person'}">${type === 'main' ? '主角' : type === 'supporting' ? '配角' : '群演'}</span>
+                ${c.name}
+            </h5>
+            <p><strong>身份：</strong>${c.role}</p>
+            <p><strong>外貌：</strong>${c.appearance}</p>
+            <p><strong>性格：</strong>${c.personality}</p>
+            ${c.motivation ? `<p><strong>動機：</strong>${c.motivation}</p>` : ''}
+            <div class="prompt-box">
+                <div class="prompt-label">🖼️ AI Prompt</div>
+                ${c.prompt}
+            </div>
+        </div>
+    `).join('');
+}
+
+function extractCharacters(){
+    const text = state.novel.text;
+    
+    // 這裡應該是AI分析，現在用示例數據
+    return {
+        main: [
+            {
+                name: '小猴子',
+                role: '主角 / 少年神偷',
+                appearance: '13歲，瘦小靈活，機警的眼神，皮膚略黑',
+                personality: '機智狡黠，外冷內熱，渴望被認同',
+                motivation: '尋找身世真相，證明自己的價值',
+                prompt: '13 year old Chinese boy, thin and agile, alert eyes, tanned skin, ragged clothes, Tang dynasty street thief, anime style, detailed character design --ar 2:3'
+            },
+            {
+                name: '小菩薩蠻',
+                role: '女主角 / 神秘少女',
+                appearance: '15歲，清麗脫俗，如菩薩般寧靜，白衣素淨',
+                personality: '溫柔神秘，似乎知道很多秘密',
+                motivation: '守護寶石，完成輪迴的使命',
+                prompt: '15 year old Southeast Asian girl, serene like bodhisattva, white dress, prayer beads, mysterious aura, Tang dynasty style, anime --ar 2:3'
+            }
+        ],
+        supporting: [
+            {
+                name: '蕃長',
+                role: '大食商人 / 船隊領袖',
+                appearance: '45歲，高大魁梧，絡腮鬍，深沉的眼神',
+                personality: '威嚴中帶憂鬱，背負秘密',
+                prompt: 'Middle Eastern merchant captain, 45yo, tall muscular, thick beard, turbaned, gold accessories, Tang dynasty, dignified --ar 2:3'
+            },
+            {
+                name: '卜夢師',
+                role: '占卜師 / 神秘人物',
+                appearance: '年齡不詳，蒙面，淡褐色眼眸',
+                personality: '言語如謎，亦正亦邪',
+                prompt: 'Mysterious fortune teller, veiled face, amber eyes, purple robes, silver chains, incense smoke, Tang dynasty mystic --ar 2:3'
+            },
+            {
+                name: '紅髮盲老人',
+                role: '港口說書人 / 引路人',
+                appearance: '70歲，枯瘦，紅髮（異族血統），雙目失明',
+                personality: '智慧深邃，每個故事都有深意',
+                prompt: 'Old blind storyteller, 70yo, thin, red hair, milky blind eyes, bamboo cane, grey robes, Tang dynasty port --ar 2:3'
+            }
+        ],
+        extras: [
+            {
+                name: '蕃坊商販',
+                role: '背景群演',
+                appearance: '各國商人混雜，服飾多樣，叫賣吆喝',
+                prompt: 'Crowded Tang dynasty port marketplace, diverse merchants from Arabia Persia India, colorful goods, bustling atmosphere --ar 16:9'
+            },
+            {
+                name: '船員水手',
+                role: '背景群演',
+                appearance: '赤膊或短打，皮膚黝黑，搬運貨物',
+                prompt: 'Tang dynasty ship crew, muscular sailors, carrying cargo, wooden ship deck, sea background --ar 16:9'
+            },
+            {
+                name: '海盜團',
+                role: '背景群演 / 反派',
+                appearance: '面目猙獰，持刀持劍，黑帆船',
+                prompt: 'Fierce sea pirates, Tang dynasty era, wielding swords, black sailed ship, menacing expressions --ar 16:9'
+            }
+        ]
+    };
+}
+
+// ==================== Step 5: 服化道 ====================
+function renderStep5(){
+    return `
+        <div class="content-card">
+            <h3><span class="icon">👔</span> 服化道設計</h3>
+            
+            <div class="report">
+                <h4>🎨 整體美術風格</h4>
+                <div class="item-card">
+                    <p><strong>視覺基調：</strong>東方奇幻 × 唐代異域風情</p>
+                    <p><strong>色彩方案：</strong>金褐暖色（繁華）+ 藍綠冷色（神秘）+ 紅黑強調（危機）</p>
+                    <p><strong>參考：</strong>敦煌壁畫 + 《長安十二時辰》</p>
+                </div>
+            </div>
+            
+            <div class="report">
+                <h4>👔 主要角色服裝</h4>
+                ${state.characters.main.concat(state.characters.supporting.slice(0,2)).map(c => `
+                    <div class="item-card">
+                        <h5>${c.name}</h5>
+                        <p><strong>基礎服裝：</strong>${getCostumeDesc(c.name)}</p>
+                        <p><strong>變裝場景：</strong>${getCostumeVariants(c.name)}</p>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="report">
+                <h4>🏺 關鍵道具</h4>
+                <div class="item-card">
+                    <h5>💎 粉紅寶石</h5>
+                    <p>核心道具，散發淡淡粉光，可引發幻象</p>
+                </div>
+                <div class="item-card">
+                    <h5>🔗 銀鏈</h5>
+                    <p>卜夢師的占卜工具，懸掛寶石</p>
+                </div>
+                <div class="item-card">
+                    <h5>🚢 大蕃舶</h5>
+                    <p>唐代大型商船，可載數百人，三層甲板</p>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="nextStep()">確認 → 章節劇本</button>
+            </div>
+        </div>
+    `;
+}
+
+function getCostumeDesc(name){
+    const costumes = {
+        '小猴子': '破舊灰褐色短打，腰繫布帶，赤足或草鞋',
+        '小菩薩蠻': '白色南洋風格長裙，頭戴銀飾，腕戴佛珠',
+        '蕃長': '大食風格長袍，頭纏布巾，佩戴金飾',
+        '卜夢師': '深紫色蒙面長袍，銀質飾品'
+    };
+    return costumes[name] || '待設計';
+}
+
+function getCostumeVariants(name){
+    const variants = {
+        '小猴子': '上船後換水手短打 / 潛入時換深色夜行衣',
+        '小菩薩蠻': '儀式時換金絲織紋禮服',
+        '蕃長': '作戰時加披肩甲',
+        '卜夢師': '無變化，始終神秘'
+    };
+    return variants[name] || '無';
+}
+
+// ==================== Step 6: 章節劇本 ====================
+function renderStep6(){
+    return `
+        <div class="content-card">
+            <h3><span class="icon">✍️</span> 章節劇本生成</h3>
+            
+            <div class="tabs">
+                ${state.chapters.slice(0,5).map((ch, i) => `
+                    <div class="tab ${i===0?'active':''}" onclick="showChapterScript(${i})">${ch.title}</div>
+                `).join('')}
+            </div>
+            
+            <div id="scriptContent">
+                ${renderChapterScript(0)}
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="nextStep()">確認 → 分鏡設計</button>
+            </div>
+        </div>
+    `;
+}
+
+function showChapterScript(index){
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('scriptContent').innerHTML = renderChapterScript(index);
+}
+
+function renderChapterScript(index){
+    const ch = state.chapters[index];
+    const scenes = generateSceneBreakdown(ch);
+    
+    return `
+        <div class="report">
+            <h4>第${index+1}章：${ch.title}</h4>
+            <p style="color:var(--dim);margin-bottom:16px">預計場景：${scenes.length}場 | 預計鏡頭：${ch.estimatedShots}個</p>
+            
+            ${scenes.map((sc, i) => `
+                <div class="item-card">
+                    <h5>場景 ${i+1}：${sc.location}</h5>
+                    <p><span class="tag">${sc.time}</span> <span class="tag">${sc.weather}</span></p>
+                    <p style="margin-top:8px"><strong>內容：</strong>${sc.description}</p>
+                    <p><strong>角色：</strong>${sc.characters.join('、')}</p>
+                    <p><strong>情緒：</strong>${sc.emotion}</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function generateSceneBreakdown(chapter){
+    // 簡化版場景拆分
+    return [
+        {location:'茅草棚內', time:'夜', weather:'香煙繚繞', description:'占卜儀式進行中，小猴子伺機偷取寶石', characters:['小猴子','卜夢師','波斯貴婦'], emotion:'神秘緊張'},
+        {location:'蕃坊街道', time:'黃昏', weather:'晴', description:'小猴子逃離現場，穿梭於熙攘人群', characters:['小猴子','蕃坊商販'], emotion:'緊張刺激'},
+        {location:'榕樹下', time:'夜', weather:'微風', description:'紅髮盲老人講述海上傳說', characters:['小猴子','紅髮盲老人'], emotion:'神秘引導'}
+    ];
+}
+
+// ==================== Step 7: 分鏡設計（核心） ====================
+function renderStep7(){
+    if(state.storyboard.length === 0){
+        state.storyboard = generateStoryboard();
+    }
+    
+    return `
+        <div class="content-card">
+            <h3><span class="icon">🎬</span> 分鏡設計</h3>
+            <p style="color:var(--dim);margin-bottom:20px">每個鏡頭包含：<strong>場景信息</strong> + <strong>主體信息</strong> + <strong>AI Prompt</strong></p>
+            
+            <div class="report">
+                <div class="report-grid">
+                    <div class="stat-box"><div class="stat-val">${state.storyboard.length}</div><div class="stat-label">總鏡頭</div></div>
+                    <div class="stat-box"><div class="stat-val">${state.storyboard.filter(s=>s.subject.type==='person').length}</div><div class="stat-label">人物鏡頭</div></div>
+                    <div class="stat-box"><div class="stat-val">${state.storyboard.filter(s=>s.subject.type==='crowd').length}</div><div class="stat-label">群演鏡頭</div></div>
+                    <div class="stat-box"><div class="stat-val">${state.storyboard.filter(s=>s.subject.type==='none').length}</div><div class="stat-label">空鏡頭</div></div>
+                </div>
+            </div>
+            
+            <div style="max-height:600px;overflow-y:auto">
+                ${state.storyboard.slice(0,10).map(shot => renderShotCard(shot)).join('')}
+                
+                ${state.storyboard.length > 10 ? `
+                    <p style="text-align:center;padding:20px;color:var(--dim)">
+                        ... 共 ${state.storyboard.length} 個鏡頭，完整內容請導出查看
+                    </p>
+                ` : ''}
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn" onclick="regenerateStoryboard()">🔄 重新生成</button>
+                <button class="btn btn-primary" onclick="nextStep()">確認 → 完成輸出</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderShotCard(shot){
+    const subjectType = SUBJECT_TYPES[shot.subject.type];
+    
+    return `
+        <div class="item-card" style="border-left:3px solid var(--primary)">
+            <h5>
+                <span class="shot-id">#${shot.id}</span>
+                <span class="shot-type ${shot.shotType}">${shot.shotType === 'narrative' ? '📖敘事' : shot.shotType === 'dramatic' ? '🎯戲劇' : '🎨情感'}</span>
+                <span style="color:var(--dim);font-weight:normal;margin-left:auto">${shot.duration}</span>
+            </h5>
+            
+            <!-- 場景信息 -->
+            <div class="scene-card">
+                <div class="scene-header">🏛️ 場景</div>
+                <div class="scene-detail">
+                    <span><span class="label">地點：</span><span class="value">${shot.scene.location}</span></span>
+                    <span><span class="label">時間：</span><span class="value">${shot.scene.time}</span></span>
+                    <span><span class="label">色調：</span><span class="value">${shot.scene.colorTone}</span></span>
+                    <span><span class="label">燈光：</span><span class="value">${shot.scene.lighting}</span></span>
+                </div>
+            </div>
+            
+            <!-- 主體信息 -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <span class="subject-type ${shot.subject.type}">${subjectType.icon} ${subjectType.label}</span>
+                    <span class="subject-name">${shot.subject.name}</span>
+                </div>
+                
+                ${shot.subject.type !== 'none' ? `
+                    <div class="subject-detail">
+                        <strong>動作：</strong>${shot.subject.action}
+                    </div>
+                    <div class="subject-detail">
+                        <strong>表情：</strong>${shot.subject.expression}
+                    </div>
+                    <div class="subject-detail">
+                        <strong>機位：</strong>${shot.camera.angle} | ${shot.camera.movement}
+                    </div>
+                ` : ''}
+                
+                ${shot.subject.dialogue ? `
+                    <div class="dialogue-box">
+                        <div class="speaker">${shot.subject.name} | ${shot.subject.tone}</div>
+                        <div class="line">"${shot.subject.dialogue}"</div>
+                    </div>
+                ` : ''}
+            </div>
+            
+            <!-- AI Prompt -->
+            <div class="prompt-box">
+                <div class="prompt-label">🖼️ Midjourney Prompt</div>
+                ${shot.prompt.mj}
+            </div>
+        </div>
+    `;
+}
+
+function generateStoryboard(){
+    const shots = [];
+    const shotTypes = ['narrative', 'narrative', 'dramatic', 'narrative', 'emotional'];
+    
+    // 生成示例分鏡
+    const sampleShots = [
+        {
+            scene: {location:'茅草棚內', time:'夜', colorTone:'暖黃+粉紅', lighting:'燭光側光'},
+            subject: {type:'person', name:'小猴子', action:'蜷縮在房梁上，俯視下方', expression:'專注緊張，眼神銳利', dialogue:null, tone:null},
+            camera: {angle:'俯拍', movement:'緩慢推進'},
+            shotType: 'dramatic'
+        },
+        {
+            scene: {location:'茅草棚內', time:'夜', colorTone:'暖黃+粉紅', lighting:'燭光+寶石光'},
+            subject: {type:'person', name:'卜夢師', action:'手持銀鏈，寶石懸空', expression:'神秘莫測', dialogue:'你的命運...已被看見...', tone:'低沉神秘'},
+            camera: {angle:'中景', movement:'固定'},
+            shotType: 'narrative'
+        },
+        {
+            scene: {location:'茅草棚內', time:'夜', colorTone:'粉紅為主', lighting:'寶石發光'},
+            subject: {type:'object', name:'粉紅寶石', action:'發出柔和光芒', expression:null, dialogue:null, tone:null},
+            camera: {angle:'特寫', movement:'緩慢旋轉'},
+            shotType: 'emotional'
+        },
+        {
+            scene: {location:'蕃坊街道', time:'黃昏', colorTone:'金黃暖色', lighting:'夕陽側光'},
+            subject: {type:'crowd', name:'蕃坊商販', action:'叫賣吆喝，人流穿梭', expression:'忙碌熱鬧', dialogue:null, tone:null},
+            camera: {angle:'大全景', movement:'升降鏡頭'},
+            shotType: 'narrative'
+        },
+        {
+            scene: {location:'蕃坊街道', time:'黃昏', colorTone:'金黃暖色', lighting:'夕陽逆光'},
+            subject: {type:'person', name:'小猴子', action:'穿梭人群，快速奔跑', expression:'緊張但自信', dialogue:null, tone:null},
+            camera: {angle:'跟拍', movement:'手持跟隨'},
+            shotType: 'dramatic'
+        },
+        {
+            scene: {location:'榕樹下', time:'夜', colorTone:'藍綠冷色', lighting:'月光'},
+            subject: {type:'person', name:'紅髮盲老人', action:'坐在樹下，若有所思', expression:'深邃智慧', dialogue:'在海的那一邊...有一座山...', tone:'蒼老神秘'},
+            camera: {angle:'中景', movement:'固定'},
+            shotType: 'narrative'
+        },
+        {
+            scene: {location:'碼頭', time:'清晨', colorTone:'青藍', lighting:'晨霧散射'},
+            subject: {type:'none', name:'大蕃舶', action:'船隻靜泊', expression:null, dialogue:null, tone:null},
+            camera: {angle:'大全景', movement:'緩慢橫移'},
+            shotType: 'narrative'
+        },
+        {
+            scene: {location:'船艙內', time:'夜', colorTone:'暗紅', lighting:'油燈'},
+            subject: {type:'person', name:'蕃長', action:'站立沉思，背對鏡頭', expression:'憂鬱深沉', dialogue:'這趟航行...不會太平...', tone:'低沉威嚴'},
+            camera: {angle:'背影', movement:'緩慢推進'},
+            shotType: 'dramatic'
+        }
+    ];
+    
+    // 生成更多鏡頭
+    for(let i = 0; i < 30; i++){
+        const template = sampleShots[i % sampleShots.length];
+        const shot = JSON.parse(JSON.stringify(template));
+        shot.id = String(i + 1).padStart(3, '0');
+        shot.duration = (2 + Math.random() * 4).toFixed(1) + 's';
+        shot.prompt = {
+            mj: generateMJPrompt(shot)
+        };
+        shots.push(shot);
+    }
+    
+    return shots;
+}
+
+function generateMJPrompt(shot){
+    let prompt = '';
+    
+    // 場景部分
+    prompt += `${shot.scene.location}, ${shot.scene.time}, ${shot.scene.colorTone} color palette, ${shot.scene.lighting}, `;
+    
+    // 主體部分
+    if(shot.subject.type === 'person'){
+        prompt += `${shot.subject.name} ${shot.subject.action}, ${shot.subject.expression}, `;
+    } else if(shot.subject.type === 'crowd'){
+        prompt += `${shot.subject.name} ${shot.subject.action}, `;
+    } else if(shot.subject.type === 'object'){
+        prompt += `${shot.subject.name} ${shot.subject.action}, `;
+    }
+    
+    // 攝影部分
+    prompt += `${shot.camera.angle}, ${shot.camera.movement}, `;
+    
+    // 風格
+    prompt += 'Tang dynasty era, cinematic, anime style, 8K --ar 16:9 --v 6';
+    
+    return prompt;
+}
+
+// ==================== Step 8: 完成輸出 ====================
+function renderStep8(){
+    const totalShots = state.storyboard.length;
+    const totalChapters = state.chapters.length;
+    const totalChars = state.characters.main.length + state.characters.supporting.length;
+    
+    return `
+        <div class="content-card">
+            <h3><span class="icon">🎉</span> 製作完成！</h3>
+            
+            <div class="report">
+                <h4>📊 項目總覽</h4>
+                <div class="report-grid">
+                    <div class="stat-box"><div class="stat-val">${state.novel.wordCount}</div><div class="stat-label">原著字數</div></div>
+                    <div class="stat-box"><div class="stat-val">${totalChapters}</div><div class="stat-label">章節數</div></div>
+                    <div class="stat-box"><div class="stat-val">${totalChars}</div><div class="stat-label">角色數</div></div>
+                    <div class="stat-box"><div class="stat-val">${totalShots}</div><div class="stat-label">總鏡頭</div></div>
+                </div>
+            </div>
+            
+            <div class="report">
+                <h4>📁 輸出文檔清單</h4>
+                <div class="item-card">
+                    <p>📄 <strong>concept.json</strong> - 高概念定位</p>
+                    <p>📄 <strong>chapters.json</strong> - 章節結構</p>
+                    <p>📄 <strong>characters.json</strong> - 角色設計（含Prompt）</p>
+                    <p>📄 <strong>costumes.json</strong> - 服化道設計</p>
+                    <p>📄 <strong>storyboard.json</strong> - 完整分鏡表</p>
+                    <p>📄 <strong>prompts_mj.txt</strong> - Midjourney Prompts</p>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn" onclick="exportJSON()">📄 導出JSON</button>
+                <button class="btn" onclick="exportCSV()">📊 導出CSV</button>
+                <button class="btn" onclick="exportPrompts()">🖼️ 導出Prompts</button>
+                <button class="btn btn-primary" onclick="location.reload()">開始新項目</button>
+            </div>
+        </div>
+    `;
+}
+
+// ==================== 導出功能 ====================
+function exportJSON(){
+    const data = {
+        project: state.novel.title,
+        concept: state.concept,
+        chapters: state.chapters.map(c => ({id:c.id, title:c.title, wordCount:c.wordCount})),
+        characters: state.characters,
+        storyboard: state.storyboard
+    };
+    
+    download(JSON.stringify(data, null, 2), `${state.novel.title}_完整數據.json`, 'application/json');
+}
+
+function exportCSV(){
+    let csv = '鏡頭ID,類型,時長,場景,時間,色調,燈光,主體類型,主體名稱,動作,表情,台詞,機位,Prompt\n';
+    
+    state.storyboard.forEach(s => {
+        csv += `${s.id},${s.shotType},${s.duration},"${s.scene.location}",${s.scene.time},"${s.scene.colorTone}","${s.scene.lighting}",${s.subject.type},"${s.subject.name}","${s.subject.action || ''}","${s.subject.expression || ''}","${s.subject.dialogue || ''}","${s.camera.angle}","${s.prompt.mj}"\n`;
+    });
+    
+    download(csv, `${state.novel.title}_分鏡表.csv`, 'text/csv');
+}
+
+function exportPrompts(){
+    let txt = `# ${state.novel.title} - AI Prompts\n\n`;
+    
+    txt += '## 角色Prompts\n\n';
+    [...state.characters.main, ...state.characters.supporting].forEach(c => {
+        txt += `### ${c.name}\n${c.prompt}\n\n`;
+    });
+    
+    txt += '## 分鏡Prompts\n\n';
+    state.storyboard.forEach(s => {
+        txt += `### Shot #${s.id}\n${s.prompt.mj}\n\n`;
+    });
+    
+    download(txt, `${state.novel.title}_Prompts.txt`, 'text/plain');
+}
+
+function download(content, filename, type){
+    const blob = new Blob([content], {type: type + ';charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+function updateOutputPanel(){
+    const files = [];
+    
+    if(state.concept.logline) files.push({name:'concept.json', size:'2KB'});
+    if(state.chapters.length) files.push({name:'chapters.json', size:`${state.chapters.length}章`});
+    if(state.characters.main.length) files.push({name:'characters.json', size:`${state.characters.main.length + state.characters.supporting.length}角色`});
+    if(state.storyboard.length) files.push({name:'storyboard.json', size:`${state.storyboard.length}鏡頭`});
+    
+    document.getElementById('outputFiles').innerHTML = files.map(f => `
+        <div class="output-file">
+            <span class="icon">📄</span>
+            <span class="name">${f.name}</span>
+            <span class="size">${f.size}</span>
+        </div>
+    `).join('') || '<p style="color:var(--dim);font-size:12px">尚未生成</p>';
+}
+
+// ==================== 示例數據 ====================
+const DEMO_NOVEL = `《海上絲綢之路密碼》
+
+類型：歷史冒險 / 懸疑 / 東方奇幻
+時代：唐代
+地點：廣州蕃坊 → 南洋航線 → 婆羅浮屠
+
+【楔子】
+茅草棚內，香煙繚繞。占夢師手持銀鏈，粉紅色的光從波斯貴婦的胸口透出。
+小猴子藏在房梁上，等待時機。他是蕃坊最靈活的小偷。
+當他的手指觸碰那顆粉紅寶石時，詭異的幻象閃過腦海——鮮血、火焰、還有一個少女的臉...
+
+【第一章 廣州蕃坊】
+怀圣寺的光塔高聳，金頂在夕陽下閃耀。這是大唐最繁華的港口，各國商人雲集於此。
+紅髮盲老人在榕樹下講述海上傳說，孩子們圍坐聆聽。「在海的那一邊，有一座山，山上有座塔，塔裡藏著千年的秘密...」
+小猴子穿梭在熙攘的人群中，他的目標是那個波斯商人的錢袋。但今天的收穫，遠比錢袋重要——那顆會發光的粉紅寶石。
+
+【第二章 夜海啟航】
+大蕃舶如巨獸，停泊在碼頭。這艘船將駛向南洋，載著香料、絲綢，還有無數人的命運。
+蕃長站在船頭，絡腮鬍在海風中飄動。「這趟航行...不會太平。」
+小猴子追尋小菩薩蠻的身影，他必須登上這艘船。那顆寶石似乎在召喚他，告訴他真相在遠方...
+
+【第三章 黑帆賊船】
+月光下的大海，遠處出現黑色帆影。
+「海盜！」瞭望手的驚叫聲劃破夜空。
+「是食人魔的船！」水手們驚恐萬分。傳說這支海盜從不留活口，只因他們的首領喜歡收集人頭...
+
+【第四章 密室殺人】
+天亮時，艙房裡發現了第一具屍體。死者是船上的大食商人，喉嚨被割開，眼睛卻看著某個方向——寶石消失的方向。
+「兇手就在我們之中。」蕃長沉聲說道。
+小猴子握緊懷中的寶石，它又開始發光了...
+
+【第五章 輪迴之謎】
+當小菩薩蠻開口說話時，所有人都震驚了。她說的不是唐言，而是一種古老的語言，一種千年前就已消亡的語言。
+「一切都將重演...」她的眼神空洞而深邃，「就像千年前一樣...」
+卜夢師的銀鏈開始搖晃：「輪迴的鎖鏈，已經開始斷裂...」`;
+
+// ==================== 初始化 ====================
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
