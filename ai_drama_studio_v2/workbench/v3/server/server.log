@@ -7,3 +7,14 @@
 ║   API Key: ✗ 未配置                         ║
 ╚═══════════════════════════════════════════════╝
   
+Loaded .env file
+🎬 AI番劇 Agent Server v3 (OpenClaw Proxy)
+   Port: 3001
+   📊 30 Agents | 296 Skills
+Loaded .env file
+🎬 AI番劇 Agent Server v3 (OpenClaw Proxy)
+   Port: 3001
+   📊 30 Agents | 296 Skills
+[🎤 訪談師] Processing with 14 skills...
+[🎤 訪談師] Loaded skill files for deep analysis
+Calling Claude via CLI...

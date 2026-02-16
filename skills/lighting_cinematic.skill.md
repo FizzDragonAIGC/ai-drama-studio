@@ -1,192 +1,205 @@
-# 💡 电影光线设计 Skill
-> 来源：《Painting with Light》John Alton / ASC电影摄影
+# 电影级光影设计 Skill
+
+> 基于即梦AI、好莱坞电影、Roger Deakins等大师级光影美学
+
+## 核心理念
+**光影不只是照明，而是叙事工具和情感表达**
 
 ---
 
-## 📐 基础布光法
+## 🎬 七大电影级光影类型
 
-### 三点布光
+### 1. 侧逆光（Rim Light / Back Light）
+**效果**：神秘、圣洁、轮廓分明
+
+**应用场景**：
+- 角色登场/揭示
+- 神圣/神秘时刻
+- 剪影效果
+
+**提示词模板**：
 ```
-         主光 (Key)
-           ↘
-    ┌───────●───────┐
-    │               │
-辅光│      😊       │轮廓光
-(Fill)             (Back/Rim)
-    │               │
-    └───────────────┘
+侧逆光勾勒[主体]轮廓，金色光晕环绕发丝边缘，
+面部保持深沉阴影，仅眼睛反射一点高光，
+背景[光源]过曝形成光芒四射效果，
+营造神秘圣洁的仪式感氛围
 ```
 
-| 光源 | 作用 | 强度比例 |
-|------|------|----------|
-| 主光 | 主要照明，定义形态 | 100% |
-| 辅光 | 填补阴影，控制对比 | 25-50% |
-| 轮廓光 | 分离主体和背景 | 75-100% |
+**参数建议**：
+- 主光位置：主体侧后方45°-90°
+- 光比：1:8 或更高（强对比）
+- 补光：仅眼神光，面部保持暗
 
 ---
 
-## 🎯 光线类型
+### 2. 伦勃朗光（Rembrandt Lighting）
+**效果**：戏剧性、古典、心理深度
 
-### 按硬度分类
-| 类型 | 特点 | 情绪 | Prompt |
-|------|------|------|--------|
-| 硬光 | 边缘锐利 | 戏剧、紧张 | hard light, sharp shadows |
-| 柔光 | 边缘柔和 | 温柔、梦幻 | soft light, diffused |
+**特征**：脸颊形成三角形光斑
 
-### 按方向分类
-| 方向 | 效果 | Prompt |
-|------|------|--------|
-| 正面光 | 平坦、美化 | front lighting, flat lighting |
-| 侧面光 | 立体、戏剧 | side lighting, dramatic |
-| 顶光 | 神秘、恐怖 | top lighting, overhead |
-| 底光 | 诡异、恐怖 | under lighting, horror |
-| 背光 | 剪影、神圣 | backlight, silhouette, rim light |
-| 伦勃朗光 | 经典肖像 | Rembrandt lighting |
+**应用场景**：
+- 内心独白
+- 决策时刻
+- 人物肖像
 
-### 按色温分类
-| 色温 | 感觉 | Prompt |
-|------|------|--------|
-| 暖色 (3000K) | 温馨、怀旧 | warm lighting, golden, amber |
-| 中性 (5500K) | 自然、真实 | neutral lighting, daylight |
-| 冷色 (7000K+) | 冷酷、科技 | cool lighting, blue tint |
-
----
-
-## 📊 情绪光线
-
-### 光线-情绪对照表
-| 情绪 | 光线设计 | Prompt |
-|------|----------|--------|
-| 希望 | 温暖、明亮、向上 | hopeful lighting, golden rays, sunlight |
-| 绝望 | 阴暗、低对比 | dark mood, low light, gloomy |
-| 紧张 | 高对比、硬光 | tense lighting, high contrast, harsh shadows |
-| 浪漫 | 柔和、暖色、柔焦 | romantic lighting, soft warm glow |
-| 恐怖 | 底光、冷色、闪烁 | horror lighting, eerie, flickering |
-| 神秘 | 剪影、烟雾、背光 | mysterious, silhouette, hazy |
-| 神圣 | 顶光、光柱、金色 | divine light, god rays, heavenly |
-| 邪恶 | 红色、底光、深影 | evil lighting, red glow, deep shadows |
-
----
-
-## 🎭 场景光线
-
-### 室内场景
-| 场景 | 光线设计 | Prompt |
-|------|----------|--------|
-| 办公室 | 均匀、冷白 | office lighting, fluorescent |
-| 卧室 | 温暖、柔和 | bedroom, warm ambient, cozy |
-| 酒吧 | 暗调、彩色 | bar lighting, neon, moody |
-| 教堂 | 光柱、彩窗 | church lighting, stained glass, god rays |
-| 地下室 | 单灯、暗角 | basement, single light source, dark corners |
-| 厨房 | 实用、明亮 | kitchen lighting, bright, practical |
-
-### 室外场景
-| 场景 | 光线设计 | Prompt |
-|------|----------|--------|
-| 日出 | 金色、水平光 | sunrise, golden hour, warm |
-| 正午 | 顶光、强烈 | midday sun, harsh overhead |
-| 黄昏 | 橙红、长影 | sunset, golden hour, orange sky |
-| 蓝调时刻 | 蓝紫、柔和 | blue hour, twilight |
-| 月光 | 蓝色、柔和 | moonlight, blue tint, night |
-| 阴天 | 均匀、柔光 | overcast, soft diffused light |
-| 雨天 | 灰暗、反射 | rainy, grey, wet reflections |
-| 雪天 | 明亮、冷白 | snow, bright, cold white |
-
----
-
-## 📋 特殊光效
-
-### 自然光效
-| 效果 | 描述 | Prompt |
-|------|------|--------|
-| 丁达尔效应 | 光柱穿透 | god rays, light beams, volumetric |
-| 逆光 | 轮廓发光 | backlit, rim light, halo |
-| 斑驳光影 | 树叶漏光 | dappled light, light through leaves |
-| 窗光 | 单向柔光 | window light, natural |
-| 反射光 | 间接照明 | bounced light, reflected |
-
-### 人工光效
-| 效果 | 描述 | Prompt |
-|------|------|--------|
-| 霓虹 | 彩色光污染 | neon lights, colorful, cyberpunk |
-| 闪光 | 短暂强光 | flash, strobe, burst |
-| 蜡烛 | 温暖闪烁 | candlelight, flickering, warm |
-| 火光 | 橙色动态 | firelight, flames, warm glow |
-| 屏幕光 | 冷蓝色 | screen glow, monitor light, blue |
-| 车灯 | 强光穿透 | headlights, car lights |
-| 闪电 | 瞬间照亮 | lightning flash, electrical |
-
----
-
-## 🔧 光线Prompt模板
-
-### 基础格式
+**提示词模板**：
 ```
-[光线类型] lighting,
-[方向], [硬度],
-[色温/颜色], [特效],
-[情绪], cinematic
-```
-
-### 戏剧光线
-```
-dramatic lighting, high contrast,
-[主光方向] light, deep shadows,
-[色调], cinematic,
-[情绪描述]
-```
-
-### 自然光线
-```
-natural lighting, [时间] light,
-[天气], [光线质量],
-[色温], realistic,
-[环境]
-```
-
-### 特效光线
-```
-[特效类型] (god rays/neon/etc),
-volumetric lighting, atmospheric,
-[颜色], [密度],
-[情绪], [风格]
+伦勃朗式布光，[主体]面部形成经典三角光斑，
+一侧脸颊沐浴在温暖的[色温]光线中，
+另一侧沉入深邃阴影，仅眼眶下方保留三角形高光，
+戏剧性明暗对比强化角色的内心挣扎与复杂性
 ```
 
 ---
 
-## 📊 调色参考
+### 3. 丁达尔效应（God Rays / Volumetric Light）
+**效果**：神圣、希望、史诗感
 
-### 电影调色风格
-| 风格 | 特点 | Prompt |
-|------|------|--------|
-| 青橙调 | 青色阴影+橙色肤色 | teal and orange, blockbuster |
-| 漂白 | 低饱和+高对比 | bleach bypass, desaturated |
-| 黑色电影 | 高对比黑白 | film noir, high contrast BW |
-| 怀旧 | 褪色、温暖 | vintage, faded, nostalgic |
-| 科幻 | 冷蓝+高对比 | sci-fi, blue tint, futuristic |
-| 恐怖 | 绿色调+阴暗 | horror, greenish, dark |
-| 梦幻 | 柔光+过曝 | dreamy, soft focus, ethereal |
+**应用场景**：
+- 希望降临
+- 真相揭示
+- 史诗时刻
 
----
+**提示词模板**：
+```
+丁达尔效应光束从[高窗/云层/树叶]间穿透而下，
+可见光柱中漂浮的尘埃微粒，
+光束精准照亮[主体/物体]，周围保持相对黑暗，
+体积光营造神圣降临的仪式感，
+仿佛命运之手在指引方向
+```
 
-## 🎬 导演光线风格
-
-### 罗杰·迪金斯
-- 自然主义
-- 单光源
-- Prompt: Roger Deakins style, naturalistic, single source
-
-### 戈登·威利斯
-- 低调、阴影
-- 教父风格
-- Prompt: Gordon Willis style, low-key, deep shadows
-
-### 维托里奥·斯托拉罗
-- 色彩表达
-- 情感光线
-- Prompt: Storaro style, expressive colors, emotional lighting
+**技术要点**：
+- 需要空气中有介质（雾、尘、烟）
+- 光源需要有遮挡物形成明确边界
+- 背景保持暗以突出光束
 
 ---
 
-*Skill版本: 1.0*
-*创建时间: 2026-02-14*
+### 4. 硬光vs柔光对比
+**硬光**：边缘锐利、戏剧性强
+**柔光**：边缘柔和、自然温暖
+
+| 类型 | 光源 | 效果 | 适用 |
+|------|------|------|------|
+| 硬光 | 直射阳光、聚光灯 | 锐利阴影、高对比 | 紧张、冲突、审判 |
+| 柔光 | 阴天、反射光 | 柔和过渡、温暖 | 亲密、回忆、治愈 |
+
+---
+
+### 5. 冷暖对比（Color Temperature Contrast）
+**效果**：情感张力、空间分割
+
+**经典组合**：
+- 🔵 冷蓝（月光/霓虹）vs 🟠 暖橙（灯光/火焰）
+- 🟢 青绿（科技/外星）vs 🔴 红色（危险/激情）
+
+**提示词模板**：
+```
+冷暖色温强烈对比，[主体]左侧沐浴在冷蓝色[光源A]中，
+右侧被暖橙色[光源B]包裹，
+两种色温在面部中央交汇形成微妙过渡，
+视觉上分割内心的矛盾与挣扎，
+冷色代表[理性/外界]，暖色象征[情感/内心]
+```
+
+---
+
+### 6. 低调光（Low Key Lighting）
+**效果**：压抑、悬疑、黑色电影感
+
+**特点**：大面积暗部，小面积高光
+
+**应用场景**：
+- 黑色电影
+- 悬疑惊悚
+- 反派登场
+
+**提示词模板**：
+```
+低调光布局，画面90%沉入深邃黑暗，
+仅[局部]被一束精准光线照亮，
+强烈明暗对比营造压迫窒息感，
+阴影中隐约可见[模糊轮廓]，
+黑色电影质感，危险潜伏于暗处
+```
+
+---
+
+### 7. 高调光（High Key Lighting）
+**效果**：明亮、纯净、梦幻
+
+**特点**：均匀照明，阴影极少
+
+**应用场景**：
+- 梦境/回忆
+- 天堂/纯净
+- 广告/时尚
+
+**提示词模板**：
+```
+高调光均匀照明，画面整体明亮通透，
+阴影柔和几乎不可见，
+[主体]沐浴在纯净的白色光芒中，
+营造梦幻、圣洁、超脱现实的氛围
+```
+
+---
+
+## 🎨 光影情绪对照表
+
+| 情绪 | 光影类型 | 色温 | 对比度 | 示例 |
+|------|----------|------|--------|------|
+| 希望 | 丁达尔/侧逆光 | 暖金 | 中高 | 《肖申克》越狱后的雨中 |
+| 绝望 | 低调光 | 冷蓝 | 极高 | 《七宗罪》地下室 |
+| 浪漫 | 柔光/伦勃朗 | 暖橙 | 低 | 《泰坦尼克》船头 |
+| 紧张 | 硬光/底光 | 中性 | 高 | 《沉默的羔羊》审讯 |
+| 神秘 | 侧逆光/剪影 | 冷蓝 | 极高 | 《银翼杀手》霓虹 |
+| 史诗 | 丁达尔+大逆光 | 金色 | 高 | 《角斗士》竞技场 |
+
+---
+
+## 📷 Roger Deakins 光影哲学
+
+### 核心原则
+1. **动机优先** - 每个光源都要有存在的理由
+2. **自然主义** - 尽量使用场景内光源
+3. **简约克制** - 用最少的光达到最好的效果
+4. **服务叙事** - 光影是讲故事的工具
+
+### Deakins经典光影案例
+- 《肖申克的救赎》：高窗丁达尔光 = 希望
+- 《银翼杀手2049》：霓虹冷暖对比 = 疏离
+- 《1917》：自然光+火光 = 战争残酷
+- 《老无所依》：硬光直射 = 无情命运
+
+---
+
+## 🔧 AI绘图光影提示词模板
+
+### 通用结构
+```
+[光影类型] + [光源位置] + [色温] + [对比度] + [氛围词]
+```
+
+### 完整示例
+```
+电影级布光，伦勃朗式侧光从画面右上方45度角照射，
+主体面部形成经典三角光斑，暖色调（3200K），
+光比1:4，阴影区保留细节但不失神秘感，
+眼神光点缀瞳孔增加生命力，
+背景压暗处理突出主体，
+整体营造古典油画般的戏剧性质感，
+参考《教父》开场光影风格
+```
+
+---
+
+## ✅ 检查清单
+
+- [ ] 光源有明确动机（窗户/灯/火焰等）
+- [ ] 光比符合情绪需求
+- [ ] 色温与情感一致
+- [ ] 阴影区有层次不死黑
+- [ ] 高光区有细节不过曝
+- [ ] 光影服务于叙事目的

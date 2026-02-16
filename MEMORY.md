@@ -41,8 +41,12 @@
 - **线上版**: https://stcws8.csb.app
 - **本地**: `ai_drama_studio_v2/workbench/index.html`
 - **v3**: `ai_drama_studio_v2/workbench/v3/index.html`
-- **规模**: 30 Agents × 249 Skills (目标500)
+- **规模**: 30 Agents × 278 Skills
 - **UI**: 黑红赛博朋克 + FizzDragon品牌
+- **Provider**: 多家支持 (Claude/DeepSeek/Gemini/OpenRouter)
+- **开发策略**: DeepSeek测试 (94%便宜), Claude生产
+- **10步流程**: 访谈→概念→章节→角色→设计→画风→小说→叙事→分镜→完成
+- **55种画风**: 8大类 (电影/人物/视觉/AI特效/地域/导演/2D/3D)
 
 ### 核心定位（重要！）
 **AI番剧 ≠ 无脑短剧**
@@ -64,11 +68,30 @@
 - **OAuth方案**: 需要`@anthropic-ai/claude-code` SDK（标准SDK不支持OAuth token）
 
 ## 待办
-- [ ] 完成Claude OAuth整合（使用claude-code SDK）
+- [ ] Moodboard多画风组合功能
 - [ ] 导出功能（Excel/JSON）
 - [ ] 对接FizzDragon平台测试
 - [ ] 选定首个项目开始实际制作
-- [ ] 长篇改编流程完善（10万字小说）
+- [ ] 清理死代码 (7个SKILLS数组, 14处重复JSON清理)
+- [ ] 配置TOGETHER_API_KEY (Moodboard图片生成)
+- [ ] 100集批次生成测试
+
+## 技术细节
+
+### Agent输出格式区分
+- **JSON输出**: concept, narrative, chapters, character, artdirector, scene, costume, storyboard, color, artstyle, prompt, platform, vfx, lighting, pose, expression
+- **自然语言**: screenwriter, script, dialogue, acting, interview
+- **关键函数**: `needsJsonOutput()` in proxy-server.js
+
+### 长内容批次生成
+- **触发**: 集数 > 50
+- **批次大小**: 25集/批
+- **函数**: `runChapterAgentBatch()`, `toggleBatchPause()`, `resumeBatchGeneration()`
+
+### 配置参数
+- **maxSkills**: 5 (确保书籍方法论载入)
+- **contentLimit**: 4000
+- **DeepSeek max_tokens**: 8192
 
 ---
-*最后更新：2026-02-15*
+*最后更新：2026-02-16*

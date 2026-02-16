@@ -1,0 +1,130 @@
+{
+  "project": {
+    "title": "肖申克的救贖",
+    "version": "專業版 Pro",
+    "episodes": 100,
+    "episodeDuration": "2分鐘",
+    "totalDuration": "200分鐘",
+    "generatedAt": "2026-02-16"
+  },
+  "storyboard": {
+    "scene_1": {
+      "shot_type": "低角度仰拍+拉遠",
+      "start_frame": "安迪在被告席，淺藍眼睛望向窗外高光",
+      "camera_move": "從安迪面部緩慢拉遠，展現法庭全景",
+      "end_frame": "法槌特寫占據畫面中心，象徵命運鎖定",
+      "atmosphere": "倫勃朗光，冷色調，凝重窒息感",
+      "duration": "4秒"
+    },
+    "scene_2": {
+      "shot_type": "平滑升鏡環繞",
+      "start_frame": "巴士車窗視角，灰色高牆巨獸般壓迫",
+      "camera_move": "環繞囚犯脫衣沖洗的羞辱過程",
+      "end_frame": "高壓水槍噴射，滅蝨粉如雪落下",
+      "atmosphere": "青灰冷色調，丁達爾效應，絕望開端",
+      "duration": "5秒"
+    },
+    "scene_3": {
+      "shot_type": "跟隨推進",
+      "start_frame": "操場全景，安迪走向陰影中的瑞德",
+      "camera_move": "跟隨聚焦兩人交易地質錘的隱秘對話",
+      "end_frame": "小錘子在掌心，海報的特寫",
+      "atmosphere": "午後硬光，煙霧繚繞，地下交易緊張感",
+      "duration": "4秒"
+    },
+    "scene_4": {
+      "shot_type": "荷蘭角滾轉推",
+      "start_frame": "浴室蒸汽彌漫，姐妹幫黑影逼近",
+      "camera_move": "鏡頭失衡旋轉逼近安迪堅毅面部",
+      "end_frame": "安迪滿臉是血，卻對施暴者冰冷微笑",
+      "atmosphere": "頂光蒸汽，高對比陰影，暴力與尊嚴",
+      "duration": "4秒"
+    },
+    "scene_5": {
+      "shot_type": "電影大片運鏡",
+      "start_frame": "屋頂全景，囚犯們如螞蟻般勞作",
+      "camera_move": "從海利特寫快速拉遠到上帝視角，再俯衝至安迪",
+      "end_frame": "安迪與海利對峙的側面剪影，背景無限天空",
+      "atmosphere": "黃昏金色側逆光，啤酒瓶反射高光",
+      "duration": "5秒"
+    },
+    "scene_6": {
+      "shot_type": "螺旋極速俯衝",
+      "start_frame": "圖書館俯視，莫扎特樂譜在留聲機上旋轉",
+      "camera_move": "從針尖螺旋上升，穿透屋頂，俯瞰囚犯仰頭",
+      "end_frame": "安迪在廣播室閉眼微笑，音符環繞",
+      "atmosphere": "暖黃與冷青對比，音樂化為光粒子",
+      "duration": "4秒"
+    },
+    "scene_7": {
+      "shot_type": "跟隨推進",
+      "start_frame": "諾頓辦公室，聖經與賬本並置",
+      "camera_move": "從諾頓笑臉推進到安迪手中假文件",
+      "end_frame": "筆尖簽下'蘭德爾·斯蒂芬斯'特寫",
+      "atmosphere": "窗格陰影切割，半光半暗道德淪陷",
+      "duration": "4秒"
+    },
+    "scene_8": {
+      "shot_type": "荷蘭角滾轉推",
+      "start_frame": "湯米興奮講述，安迪臉色蒼白",
+      "camera_move": "逆時針滾轉30度，世界顛倒",
+      "end_frame": "諾頓陰影籠罩安迪，十字架晃動",
+      "atmosphere": "光線驟暗，希望破滅眩暈感",
+      "duration": "4秒"
+    },
+    "scene_9": {
+      "shot_type": "平滑升鏡環繞",
+      "start_frame": "操場長椅，安迪在沙地畫橡樹石牆",
+      "camera_move": "從沙畫上升環繞安迪神秘微笑",
+      "end_frame": "瑞德困惑側臉，陽光在皺紋間流動",
+      "atmosphere": "午後柔光，影子交織，平靜下暗流",
+      "duration": "4秒"
+    },
+    "scene_10": {
+      "shot_type": "FPV穿越俯衝",
+      "start_frame": "海報背後黑洞，雷光照亮隧道",
+      "camera_move": "第一人稱穿越污水管，閃電頻閃",
+      "end_frame": "安迪爬出管道，暴雨中張臂仰拍剪影",
+      "atmosphere": "藍紫閃電冷光，雨如銀針，史詩重生",
+      "duration": "5秒"
+    },
+    "scene_11": {
+      "shot_type": "時間凍結環繞",
+      "start_frame": "聖經挖空處地質錘特寫，已磨損成小石塊",
+      "camera_move": "環繞錘子360度，展示十九年磨損",
+      "end_frame": "諾頓舉槍前，看到'救贖之道就在其中'",
+      "atmosphere": "百葉窗條紋陰影，槍管反射最後光芒",
+      "duration": "4秒"
+    },
+    "scene_12": {
+      "shot_type": "電影大片運鏡",
+      "start_frame": "太平洋全景航拍，蔚藍海面白色沙灘",
+      "camera_move": "從高空俯衝，掠過小船，停在擁抱遠景",
+      "end_frame": "安迪與瑞德背影，海浪輕吻，小船閃耀",
+      "atmosphere": "高飽和青橙，陽光過曝神聖光暈，終極自由",
+      "duration": "6秒"
+    }
+  },
+  "episodeOutline": {
+    "part1_起": {
+      "episodes": "1-25",
+      "theme": "入獄與適應",
+      "keyEvents": ["審判定罪", "入獄羞辱", "結識瑞德", "姐妹幫威脅", "購買石錘"]
+    },
+    "part2_承": {
+      "episodes": "26-50",
+      "theme": "建立影響力",
+      "keyEvents": ["屋頂啤酒", "理財能力曝光", "圖書館建設", "莫扎特廣播", "洗錢開始"]
+    },
+    "part3_轉": {
+      "episodes": "51-75",
+      "theme": "希望與絕望",
+      "keyEvents": ["湯米出現", "真相揭示", "湯米被殺", "越獄計劃", "最後準備"]
+    },
+    "part4_合": {
+      "episodes": "76-100",
+      "theme": "自由與救贖",
+      "keyEvents": ["暴雨越獄", "取走黑錢", "寄出證據", "諾頓自殺", "太平洋重逢"]
+    }
+  }
+}
