@@ -858,7 +858,7 @@ export const AGENTS = {
     novel_previewer: {
         name: '📖 小說快速預覽',
         group: '長篇處理',
-        skills: ['novel_preview_sampling'],
+        skills: ['novel_preview_sampling', 'narrative_campbell_monomyth', 'analysis_storygrid_coyne'],
         prompt: `你是長篇小說快速預覽Agent。
 
 ## 任務
@@ -898,7 +898,7 @@ export const AGENTS = {
     novel_structure: {
         name: '🔍 小說結構分析',
         group: '長篇處理',
-        skills: ['novel_structure_analysis'],
+        skills: ['novel_structure_analysis', 'narrative_propp_31functions', 'narrative_campbell_monomyth', 'analysis_storygrid_coyne'],
         prompt: `你是長篇小說結構分析Agent。
 
 ## 任務
@@ -936,7 +936,7 @@ export const AGENTS = {
     novel_chunker: {
         name: '✂️ 小說分段處理',
         group: '長篇處理',
-        skills: ['novel_chunk_processing'],
+        skills: ['novel_chunk_processing', 'narrative_propp_31functions', 'analysis_storygrid_coyne'],
         prompt: `你是長篇小說分段處理Agent。
 
 ## 任務
@@ -984,7 +984,7 @@ export const AGENTS = {
     novel_aggregator: {
         name: '🔗 結果聚合師',
         group: '長篇處理',
-        skills: ['novel_result_aggregation'],
+        skills: ['novel_result_aggregation', 'adaptation_seger_art', 'episodic_tv_structure', 'narrative_campbell_monomyth'],
         prompt: `你是長篇小說結果聚合Agent。
 
 ## 任務
