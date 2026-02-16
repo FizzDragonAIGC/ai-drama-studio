@@ -429,7 +429,8 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     model: MODEL,
-    hasApiKey: !!process.env.ANTHROPIC_API_KEY 
+    hasApiKey: !!(process.env.CLAUDE_CODE_OAUTH_TOKEN || process.env.ANTHROPIC_API_KEY),
+    authMode: process.env.CLAUDE_CODE_OAUTH_TOKEN ? 'oauth' : (process.env.ANTHROPIC_API_KEY ? 'apikey' : 'none')
   });
 });
 

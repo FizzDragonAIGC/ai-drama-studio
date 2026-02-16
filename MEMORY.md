@@ -56,7 +56,15 @@
 - **《海上絲綢之路密碼》**: 155,025字 → 10集/1000镜头/80分钟 ✅
 - **《边城》沈从文**: 完成全局设计 ✅
 
+## 部署信息
+- **GitHub**: https://github.com/FizzDragonAIGC/ai-drama-studio
+- **后端**: `http://34.58.33.115:3001` (screen: ai-drama-server)
+- **前端**: `http://34.58.33.115:8080` (screen: ai-drama-frontend)
+- **技术栈**: Node.js Express + Claude OAuth
+- **OAuth方案**: 需要`@anthropic-ai/claude-code` SDK（标准SDK不支持OAuth token）
+
 ## 待办
+- [ ] 完成Claude OAuth整合（使用claude-code SDK）
 - [ ] 导出功能（Excel/JSON）
 - [ ] 对接FizzDragon平台测试
 - [ ] 选定首个项目开始实际制作
