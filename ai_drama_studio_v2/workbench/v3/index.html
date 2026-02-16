@@ -1078,7 +1078,8 @@ async function checkApiHealth() {
     try {
         const res = await fetch(`${API_BASE}/health`);
         const data = await res.json();
-        return data.status === 'ok' && data.hasApiKey;
+        // 支持 hasApiKey 或 hasToken
+        return data.status === 'ok' && (data.hasApiKey || data.hasToken);
     } catch {
         return false;
     }
