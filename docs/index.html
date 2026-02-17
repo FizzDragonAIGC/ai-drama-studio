@@ -1244,7 +1244,7 @@ function showStep(step){
 
 // ==================== API 配置 ====================
 // 后端服务器地址 - 开发环境
-const API_BASE = 'http://34.58.33.115:3001/api';
+const API_BASE = '/api';
 let apiMode = 'auto'; // 全自動模式，不支持手動
 let currentProvider = 'deepseek'; // 當前Provider
 
@@ -1400,7 +1400,7 @@ async function callAgent(endpoint, data, maxRetries = 2) {
 async function checkApiHealth() {
     try {
         // health endpoint在根路径，不在/api下
-        const res = await fetch('http://34.58.33.115:3001/api/health');
+        const res = await fetch('/api/health');
         const data = await res.json();
         // 支持多种模式：hasApiKey, hasToken, gatewayConnected
         return data.status === 'ok' && (data.hasApiKey || data.hasToken || data.gatewayConnected);
@@ -2211,7 +2211,7 @@ function renderStep1(){
 function selectVersion(ver){
     currentVersion = ver;
     // 更新服務器配置
-    fetch('http://34.58.33.115:3001/api/config', {
+    fetch('/api/config', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({maxSkills: VERSIONS[ver].maxSkills, contentLimit: VERSIONS[ver].contentLimit})
