@@ -1,0 +1,27 @@
+[
+  {
+    "test": "lite_30ep_5min",
+    "success": true,
+    "totalTime": "0.1"
+  },
+  {
+    "test": "lite_100ep_2min",
+    "success": true,
+    "totalTime": "0.1"
+  },
+  {
+    "test": "standard_5ep_10min",
+    "success": true,
+    "totalTime": "0.1"
+  },
+  {
+    "test": "standard_24ep_8min",
+    "success": true,
+    "totalTime": "0.0"
+  },
+  {
+    "test": "pro_40ep_10min",
+    "success": true,
+    "totalTime": "0.0"
+  }
+]

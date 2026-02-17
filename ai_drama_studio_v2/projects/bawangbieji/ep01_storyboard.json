@@ -1,0 +1,290 @@
+{
+  "episode": 1,
+  "title": "梨园惊梦",
+  "duration_minutes": 4,
+  "total_shots": 40,
+  "time_period": "1977年/1924年民国初年",
+  "color_palette": "冷灰怀旧(1977) + 暖黄青灰薄雾(1924)",
+  "shots": [
+    {
+      "shot_id": "E001_S001",
+      "画面描述": "1977年，北京某老旧京剧院外景。冬日清晨，天空阴沉如铅，枯枝在寒风中颤抖。剧院门楣上的金漆牌匾已然斑驳，「京剧院」三字隐约可辨。一层薄霜覆盖在青石台阶上，两道黑色人影缓缓出现在画面远端，逆光行来。空气中弥漫着尘封的寂寥与历史的厚重，整个画面笼罩在灰蓝色的冷调中，仿佛时间在此凝固。门廊下的红漆柱子褪色发白，暗示着一个时代的终结与另一段故事的开启。",
+      "视频描述": "固定机位大全景，时长6秒，缓慢节奏，无配乐纯环境音（风声、枯叶），为开场建立庄严肃穆的基调",
+      "Image_Prompt": "Abandoned Beijing opera theater exterior, winter morning 1977, overcast sky, frost-covered stone steps, two silhouettes approaching from distance, faded gold signboard, peeling red pillars, bare tree branches, muted blue-gray color palette, cinematic wide shot, atmospheric fog, melancholic mood, 35mm film grain, soft diffused lighting --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static wide establishing shot of abandoned opera theater in 1977 Beijing winter, two figures slowly walking towards camera from distance, bare branches swaying in cold wind, frost visible on steps, faded signage, muted desaturated colors, 6 seconds, ambient wind sound"
+    },
+    {
+      "shot_id": "E001_S002",
+      "画面描述": "两个中年男人的背影，一高一矮，步伐沉稳却带着岁月的疲惫。高者身着深灰色呢子大衣，背脊依然挺直如松；矮者裹着黑色棉袄，步态略显蹒跚。他们并肩走向剧院大门，脚步声在空旷的青石路面上回响。晨雾在他们身后缭绕，阳光试图穿透云层却只留下惨白的光晕。两人之间保持着微妙的距离——既熟悉又疏离，二十一年的岁月在这无言的并行中无声诉说。",
+      "视频描述": "跟拍中景，时长4秒，平稳移动，脚步声同期声，镜头随人物向前缓慢推进",
+      "Image_Prompt": "Two middle-aged men walking from behind, one tall in gray wool coat, one shorter in black padded jacket, walking towards old theater entrance, stone pathway, morning mist behind them, pale winter light, subtle distance between them, melancholic atmosphere, cinematic medium shot, shallow depth of field, 1970s China aesthetic --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Follow shot from behind, two men walking in sync towards theater door, footsteps echoing on stone, morning mist swirling, pale diffused light, 4 seconds, steady camera movement forward"
+    },
+    {
+      "shot_id": "E001_S003",
+      "画面描述": "剧院看门人从阴影中探出半张脸，满是皱纹的面孔上写满警惕与麻木。昏暗的门房内只有一盏煤油灯发出微弱的黄光，映照出墙上褪色的革命标语。他的声音沙哑而冷漠：「干什么的？」这简短的询问打破了清晨的寂静，也打开了记忆的闸门。门房狭小逼仄，角落堆着发黄的报纸和积灰的杂物，一切都透露着被遗忘的气息。",
+      "视频描述": "固定特写，时长3秒，人物从画面左侧阴影中探出，光线从右侧打入形成伦勃朗光效",
+      "Image_Prompt": "Close-up of elderly Chinese gatekeeper face emerging from shadow, wrinkled weathered face, suspicious expression, dim oil lamp lighting from right side creating Rembrandt lighting, faded revolutionary slogans on wall behind, cramped gatehouse interior, dusty yellowed newspapers in corner, 1970s China, dramatic chiaroscuro --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static close-up, gatekeeper's face slowly appearing from left shadow, dramatic side lighting, suspicion in eyes, speaks with raspy voice, 3 seconds"
+    },
+    {
+      "shot_id": "E001_S004",
+      "画面描述": "段小楼（大花脸）的正面中景。岁月在他曾经英武的面庞上刻下深深的沟壑，但那双眼睛依然保持着当年霸王的神采——只是更加沧桑。他微微抬起下巴，声音低沉却依然有力：「京剧院来走台的。」灰色大衣的领子竖起，挡住了些许寒风，也挡住了他内心的波澜。背景虚化成一片灰白，只有他的面部在焦点之中，仿佛整个世界都在等待他的开口。",
+      "视频描述": "固定中景正面，时长3秒，浅景深突出人物面部，说话时微微扬起下巴，展现角色的倔强",
+      "Image_Prompt": "Medium shot portrait of Duan Xiaolou aged 50s, weathered handsome face with deep wrinkles, proud dignified expression, gray wool coat collar raised, eyes still showing former glory, blurred gray background, shallow depth of field, soft diffused winter light, 1970s China, cinematic portrait --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static medium shot, man slightly raising chin, speaking with low dignified voice 'Here to rehearse at the opera house', subtle pride in posture, 3 seconds"
+    },
+    {
+      "shot_id": "E001_S005",
+      "画面描述": "看门人的反应镜头。他的眼睛微微眯起，上下打量着眼前的两人，似乎在记忆的迷雾中搜索什么。嘴角牵动，露出一丝难以捉摸的表情——是认出了什么，还是仅仅是例行公事的审视？「您二位有二十多年没在一块唱了吧？」这句话像一把钥匙，即将打开尘封的往事。煤油灯的火苗轻轻摇曳，在他脸上投下晃动的阴影。",
+      "视频描述": "固定特写，时长4秒，灯火摇曳造成明暗变化，人物眼神从审视转为若有所悟",
+      "Image_Prompt": "Close-up of gatekeeper squinting eyes examining visitors, flickering oil lamp casting dancing shadows on face, expression shifting from suspicion to recognition, weathered Chinese elderly face, dim warm lamp light contrasting cool shadows, intimate dramatic lighting --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static close-up, gatekeeper's expression changing subtly, lamp flame flickering causing shadow play on face, eyes narrowing then widening slightly with recognition, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S006",
+      "画面描述": "段小楼侧面剪影，逆光勾勒出他刚毅的轮廓。他的目光投向画外——那是程蝶衣的方向。嘴唇微动，声音里带着一丝不易察觉的苦涩：「二十一年。」简短的三个字，却承载着难以言说的重量。背景是剧院斑驳的墙面，一缕阳光恰好打在他肩头，像是命运的聚光灯，又像是回忆的追光。这一刻，时间仿佛倒流，他又成了那个戏台上的霸王。",
+      "视频描述": "固定侧面中景，时长3秒，逆光剪影效果，人物说话后短暂停顿，留下情感空间",
+      "Image_Prompt": "Side profile silhouette of Duan Xiaolou against backlight, strong jaw line visible, looking off-camera, shaft of light on shoulder, weathered theater wall background, dramatic rim lighting, melancholic contemplative mood, 1970s China aesthetic, cinematic composition --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static side profile, man saying 'Twenty-one years' with subtle bitterness, backlit silhouette effect, brief pause after speaking, 3 seconds"
+    },
+    {
+      "shot_id": "E001_S007",
+      "画面描述": "程蝶衣（刀马旦）首次正面亮相。他的面容依然清秀，岁月似乎对他格外宽容，只在眼角留下浅浅的细纹。但那双曾经顾盼生辉的眼睛里，如今盛满了说不尽的哀愁。黑色棉袄朴素无华，却掩不住他骨子里的风华。他轻轻侧过头，声音如同叹息：「二十二年。」一年之差，是他对这段感情更精确的计算，也是他比师兄更深的执念。薄薄的雾气在他呼吸间凝结成白色的轻烟。",
+      "视频描述": "固定正面中景，时长4秒，浅景深，呼出的白气在冷空气中清晰可见，声音轻柔如诉",
+      "Image_Prompt": "Medium portrait of Cheng Dieyi aged 50s, delicate refined features, deep sorrowful eyes, wearing simple black padded jacket, slight tilt of head, visible breath vapor in cold air, soft diffused lighting, melancholic beauty, shallow depth of field, 1970s Beijing winter --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static medium shot, man with delicate features gently tilting head, whispering 'Twenty-two years', visible breath in cold air, profound sadness in eyes, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S008",
+      "画面描述": "两人并肩的双人中景，一高一矮，一刚一柔，形成鲜明对比。他们同时向剧院内部走去，背影渐行渐远。狭长的走廊如同时光隧道，两侧墙壁上残留着褪色的剧照和发黄的海报。他们的脚步声在空旷的走廊中回响，像是历史的回声。镜头缓缓后拉，将他们的身影逐渐吞没在黑暗之中，只剩下远处舞台方向透来的一束微光。",
+      "视频描述": "跟拍后拉，时长5秒，从中景拉至全景，二人身影逐渐变小消失在走廊深处，过渡至回忆段落",
+      "Image_Prompt": "Two men walking into dark theater corridor, contrasting heights, faded photographs and yellowed posters on walls, long tunnel-like hallway, distant stage light at end, backs to camera, walking into darkness, nostalgic melancholic atmosphere, cinematic composition --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Dolly out following two figures from behind, walking down long dark corridor, footsteps echoing, gradually pulling back as figures shrink into darkness, faint light at corridor end, 5 seconds transition shot"
+    },
+    {
+      "shot_id": "E001_S009",
+      "画面描述": "【时空转换】画面渐变为暖黄色调，1924年北平庙会全景。热闹的庙会人头攒动，各色旗幡飘扬，糖葫芦、杂耍、卖艺人的吆喝声交织成市井交响曲。阳光透过薄雾洒落，给一切镀上一层金色的光晕。街道两旁是木质店铺和红色灯笼，人们穿着民国初年的服饰——长衫马褂、蓝布棉袄。这是一个充满希望与苦难并存的年代，也是小豆子命运即将转折的起点。",
+      "视频描述": "叠化转场+固定全景，时长6秒，前2秒叠化完成，后4秒展示庙会全貌，环境音嘈杂热闹",
+      "Image_Prompt": "1924 Beijing temple fair wide establishing shot, bustling crowd, colorful banners flying, candied hawthorn vendors, street performers, warm golden sunlight filtering through morning mist, wooden shops with red lanterns, people in Republic era clothing, long robes and padded jackets, lively chaotic atmosphere, warm amber color grading --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Cross-dissolve transition from gray 1977 to warm 1924, wide shot of bustling temple fair, crowds moving, vendors calling, flags waving, warm golden lighting, ambient market noise, 6 seconds"
+    },
+    {
+      "shot_id": "E001_S010",
+      "画面描述": "人群中穿行的一双手，纤细却粗糙，紧紧牵着一只小手。镜头沿着手臂上移，露出艳红（蒋雯丽饰）的侧脸——浓妆艳抹下是掩不住的憔悴与决绝。她是窑姐，在这个吃人的世道里挣扎求生，今天她要做一个改变儿子命运的决定。人群在她身后虚化成流动的光斑，只有她和孩子的身影清晰锐利，如同命运河流中的两片浮萍。",
+      "视频描述": "手持跟拍+上移，时长4秒，从牵手特写上移至人物侧脸中景，镜头略有晃动增加纪实感",
+      "Image_Prompt": "Close-up of two hands holding, one woman's rough yet delicate hand gripping small child's hand, camera tilting up to reveal side profile of Yanhong with heavy makeup showing exhaustion and determination, prostitute mother in crowd, blurred crowd behind as bokeh lights, warm amber tones, 1924 Beijing --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Handheld tracking shot, starting on clasped hands then tilting up to woman's face profile, slight camera shake for documentary feel, crowd blurred in background, warm lighting, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S011",
+      "画面描述": "小豆子（幼年程蝶衣）正面特写。约六七岁的男孩，五官清秀得近乎女相，大眼睛里盛满了茫然与恐惧。他的嘴唇微微颤抖，似乎想说什么却又不敢出声。脸颊上有一道浅浅的污迹，粗布衣衫洗得发白。阳光在他睫毛上投下细碎的阴影，像是命运的预兆。这张脸日后将倾倒众生，但此刻，他只是一个不知前路的可怜孩子。",
+      "视频描述": "固定特写，时长3秒，自然光从侧上方打入，孩子眼中有泪光但未落下，情绪隐忍",
+      "Image_Prompt": "Close-up portrait of young Douzi age 6-7, androgynous delicate features, large frightened eyes glistening with unshed tears, trembling lips, smudge on cheek, faded cotton clothes, soft golden side lighting, shallow depth of field, innocent vulnerable expression, 1924 Beijing --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static close-up of young boy's face, eyes welling with tears but not falling, lips trembling slightly, natural golden side light, vulnerable innocent expression, 3 seconds"
+    },
+    {
+      "shot_id": "E001_S012",
+      "画面描述": "艳红牵着小豆子停在关家戏班门前。斑驳的木门上贴着红色招贴，写着「收徒」二字。门内传来练功的吆喝声和皮鞭声，小豆子下意识往后退了一步，却被母亲的手牢牢握住。艳红的背影僵直，肩膀微微颤抖，她深吸一口气，似乎在积攒送走儿子的勇气。门框上方的檐角飞出一只麻雀，扑棱着翅膀消失在灰蓝的天空中。",
+      "视频描述": "固定中景，时长4秒，人物背影面对大门，画外传来练功声，小豆子后退被拉住的动作",
+      "Image_Prompt": "Mother and young boy from behind standing before weathered wooden opera school gate, red recruitment poster on door, gate slightly ajar, mother's tense shoulders, boy stepping back, warm but muted lighting, sparrow flying from roof eaves, 1924 Beijing traditional architecture --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static medium shot from behind, mother and son facing gate, boy stepping back hesitantly, mother's grip tightening, sound of training commands from inside, sparrow flying off, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S013",
+      "画面描述": "戏班内院全景。十几个半大孩子在院中练功，有的下腰，有的踢腿，有的倒立。师傅手持戒尺来回走动，不时呵斥纠正。院子中央是一棵老槐树，树下放着水缸和练功器具。青砖地面被无数双脚磨得光滑发亮，墙角堆着破旧的戏服道具。阳光斜斜地照进院子，将孩子们的影子拉得老长，像是一幅定格的民间画卷。",
+      "视频描述": "俯拍全景，时长5秒，缓慢向下摇移，展示整个练功场景，环境音丰富（呼喝声、击打声）",
+      "Image_Prompt": "High angle wide shot of opera school courtyard, dozen children practicing various poses - backbends splits handstands, master walking with discipline rod, old locust tree in center, water vat and training equipment, worn smooth brick floor, old costumes piled in corner, golden afternoon light casting long shadows, 1924 Beijing traditional courtyard --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Overhead crane shot slowly descending, revealing training courtyard full of children practicing, master walking among them, afternoon shadows stretching, ambient training sounds and commands, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S014",
+      "画面描述": "关师傅的威严正面特写。五十多岁，面如古铜，眉毛浓重如刀刻，眼神锐利如鹰隼。他身着暗蓝色长衫，手中的戒尺轻轻敲打着掌心。嘴角紧抿，透出不怒自威的气场。这是一个将毕生奉献给戏曲的老艺人，他相信「要想人前显贵，必得人后受罪」。背景是模糊的练功孩童，衬托出他的主宰地位。",
+      "视频描述": "固定特写+微推，时长3秒，人物目光从画外移至镜头，形成与观众对视的压迫感",
+      "Image_Prompt": "Close-up portrait of Master Guan aged 50s, bronze weathered face, thick stern eyebrows, hawk-like piercing eyes, dark blue traditional robe, discipline rod tapping palm, thin stern lips, commanding authoritative presence, blurred children training in background, warm afternoon light --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static close-up with subtle push in, master's gaze shifting from off-screen to camera, rod tapping palm, intimidating presence, 3 seconds"
+    },
+    {
+      "shot_id": "E001_S015",
+      "画面描述": "艳红跪在关师傅面前，小豆子瑟缩地站在她身后。她从怀里掏出一个布包，里面是几块碎银子——也许是她仅有的积蓄。她的声音带着央求：「师傅，求您收下这孩子吧，他长得俊，嗓子也好...」关师傅的目光从银子移到小豆子身上，似乎在评估什么。小豆子低着头，双手紧紧攥着衣角，指节因用力而发白。",
+      "视频描述": "固定中景略俯，时长4秒，展示三人关系，银子特写插入1秒，增强叙事细节",
+      "Image_Prompt": "Medium shot slightly high angle, mother kneeling before stern master, child cowering behind, cloth bundle with silver pieces being offered, pleading expression on mother's face, master's evaluating gaze, child gripping clothes nervously, traditional courtyard setting, warm diffused light --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static medium shot, mother kneeling offering money, master looking evaluating, child hiding behind nervously gripping clothes, 4 seconds with brief insert of silver pieces"
+    },
+    {
+      "shot_id": "E001_S016",
+      "画面描述": "关师傅伸出手，粗糙的手指捏住小豆子的下巴，将他的脸左右转动查看。小豆子的眼睛惊恐地睁大，像一只落入陷阱的小鹿。师傅的目光专注而冷峻，像在鉴赏一件可能的艺术品。「张嘴。」一声命令，小豆子颤抖着张开嘴，露出整齐的牙齿。「唱两句。」小豆子的嗓音清亮如泉水，即使在恐惧中也掩不住天赋的灵气。",
+      "视频描述": "正反打特写，时长5秒，师傅手部动作+孩子表情反应交替，声音设计突出孩子嗓音",
+      "Image_Prompt": "Close-up of rough weathered hand gripping child's chin, turning face side to side, child's wide frightened doe-like eyes, master's scrutinizing gaze in background, traditional courtyard setting, warm natural lighting, tension and evaluation moment --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Shot reverse shot close-ups, master's hand examining child's face, child opening mouth on command, clear young voice singing briefly, alternating between examiner and examined, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S017",
+      "画面描述": "关师傅的目光落在小豆子的手上。镜头跟随他的视线，推向小豆子的左手——六根手指清晰可见，那第六根手指畸形地生长在小指旁边。关师傅的眉头皱起，嘴角撇下。「这手...」他的声音冷了下来，「六指，不祥之兆，登不了台。」小豆子条件反射地把手藏到身后，眼中的泪水终于夺眶而出。艳红的脸色一瞬间变得苍白。",
+      "视频描述": "推镜特写，时长4秒，从全手推至六指细节，配合关师傅画外音判定，情绪转折点",
+      "Image_Prompt": "Extreme close-up of child's left hand with six fingers, the extra sixth finger clearly visible next to pinky, child quickly hiding hand behind back, tears streaming down face, master's disapproving voice off-screen, dramatic lighting emphasizing the deformity, emotional turning point --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Push in to extreme close-up of six-fingered hand, child jerking hand away to hide behind back, tears falling, master's condemning voice off-screen, dramatic music sting, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S018",
+      "画面描述": "艳红的面部特写。她的瞳孔骤然收缩，嘴唇颤抖，眼中闪过一丝疯狂的决绝。这一刻，母爱与生存本能在她心中激烈交战。她的呼吸急促起来，胸口剧烈起伏。浓妆掩盖不住她脸上流露出的复杂情绪——绝望、愤怒、心痛，以及一种令人胆寒的狠心。她知道必须做什么，即使那将在她的灵魂上留下永远的伤疤。",
+      "视频描述": "固定特写，时长3秒，极浅景深，眼神变化细腻，呼吸声同期收录，不配乐增强真实感",
+      "Image_Prompt": "Extreme close-up of mother Yanhong face, pupils contracting, trembling lips, wild desperate determination in eyes, heavy makeup unable to hide complex emotions - despair anger heartbreak and terrible resolve, rapid breathing, shallow depth of field, dramatic natural lighting --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static extreme close-up, mother's expression shifting through despair to terrible resolve, heavy breathing audible, no music, raw emotional moment, 3 seconds"
+    },
+    {
+      "shot_id": "E001_S019",
+      "画面描述": "艳红猛地起身，目光扫过院中——她看到了角落里的菜刀。阳光在刀刃上反射出一道寒光，那光芒像是命运的召唤。她的脚步坚定地走向那把刀，背影决绝如赴死。院中的孩子们察觉到异样纷纷停下动作，连关师傅也愣住了。空气仿佛凝固，只有艳红的脚步声一下一下敲击着每个人的心。小豆子茫然地看着母亲的背影，不知道等待他的是什么。",
+      "视频描述": "跟拍中景转特写，时长5秒，从人物起身跟拍至菜刀处，刀刃反光特写插入1秒",
+      "Image_Prompt": "Mother rising abruptly, gaze fixed on cleaver in corner, glint of sunlight on blade, her determined back walking towards it, children in courtyard frozen watching, master stunned, young Douzi looking confused at mother's back, tense atmosphere, warm but ominous lighting --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Tracking shot following mother rising and walking determinedly toward cleaver, children stopping to watch, sunlight glinting on blade insert, building tension, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S020",
+      "画面描述": "艳红一把抓住小豆子的畸形左手，力道大得让孩子发出一声惊叫。她将手按在旁边的木墩上，菜刀高高举起。阳光在这一刻被云遮住，整个画面暗了下来。小豆子惊恐的眼睛和艳红含泪却坚定的眼神形成强烈对比。「娘！」一声撕心裂肺的呼喊，随即是刀落下的沉闷声响。鲜血溅在艳红的脸上、衣襟上，她却连眼睛都没眨一下。",
+      "视频描述": "快速剪辑蒙太奇，时长4秒：抓手/举刀/孩子眼睛/刀落/血溅，声音设计强化冲击力",
+      "Image_Prompt": "Dramatic montage sequence - mother grabbing child's deformed hand, forcing it on wooden block, cleaver raised high, cloud covering sun darkening scene, terrified child's eyes contrasted with mother's tearful determined eyes, blood splatter on mother's face and clothes, intense dramatic lighting --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Rapid montage cuts: grab hand, hand on block, cleaver raised, child's terrified eyes, mother's steely eyes, cleaver falling, blood splatter - muffled impact sound, child's scream, 4 seconds intense"
+    },
+    {
+      "shot_id": "E001_S021",
+      "画面描述": "木墩特写。断指躺在木屑和血泊中，像一截被遗弃的树枝。血液缓缓渗入木头的纹理，染红了周围的木屑。这个画面残酷而直接，却又带着某种诡异的平静。它是牺牲的象征，是为了艺术、为了生存而不得不付出的代价。阳光重新透出云层，在血迹上投下斑驳的光影，像是命运的嘲弄。",
+      "视频描述": "固定特写，时长2秒，静态画面，只有血液缓慢流动，强调残酷现实",
+      "Image_Prompt": "Extreme close-up of severed sixth finger lying on wooden chopping block amid blood and wood chips, blood slowly seeping into wood grain, stark cruel image, shaft of sunlight breaking through clouds creating dappled light on the grim scene, symbolic sacrifice --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static extreme close-up, severed finger on bloody block, blood slowly spreading, sunlight returning through clouds, haunting stillness, 2 seconds"
+    },
+    {
+      "shot_id": "E001_S022",
+      "画面描述": "小豆子痛苦地蜷缩在地上，用右手紧紧捂住流血的左手。他的脸因剧痛而扭曲，泪水和汗水混在一起。嘴张开却发不出声音，只有无声的抽泣让他的肩膀不停颤抖。艳红跪在他身边，用衣角匆匆包扎伤口，她的动作快而准，显然这不是她第一次处理伤口。她的泪水滴落在孩子的手上，与血液混在一起。",
+      "视频描述": "手持特写，时长4秒，镜头略有晃动增加紧张感，孩子抽泣声和母亲急促呼吸声混合",
+      "Image_Prompt": "Young Douzi curled on ground clutching bleeding left hand with right, face contorted in pain, tears and sweat mixing, silent sobbing shoulders shaking, mother kneeling beside wrapping wound with cloth, her tears falling on child's hand mixing with blood, handheld unstable framing --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Handheld close-up with slight shake, child curled in pain, mother quickly bandaging wound, mixed sounds of sobbing and rapid breathing, raw emotional moment, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S023",
+      "画面描述": "艳红扶起小豆子，将他推向关师傅。她的声音嘶哑而坚决：「师傅，您再看看，现在是五指了。」她的脸上带着一种近乎疯狂的笑容，那是绝望到极点后的解脱。关师傅的表情复杂，他看了看艳红，又看了看浑身发抖的孩子，最终缓缓点了点头。那一刻，小豆子的命运被永远改写，他将从此属于这个吃人的戏班。",
+      "视频描述": "固定中景三人构图，时长4秒，母亲推孩子动作+师傅点头，配乐渐入预示命运转折",
+      "Image_Prompt": "Medium shot three-person composition, mother pushing trembling child toward master, mother's crazed smile of desperate relief, master's complex expression looking between them, child shaking with freshly bandaged hand, courtyard background, dramatic afternoon light, fateful moment --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static medium shot, mother pushing child forward with desperate smile, master slowly nodding acceptance, music beginning to swell, fate being sealed, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S024",
+      "画面描述": "签字画押的特写。一份黄纸契约铺在桌上，上面写满了密密麻麻的繁体字。艳红颤抖的手按上红色印泥，然后重重地按在契约末尾。鲜红的指印像一个烙印，宣告着小豆子从此卖身戏班，生死由命。墨汁未干的字迹和血一样红的印泥形成触目惊心的对比，这是一个母亲用自己的方式为孩子铺设的残酷出路。",
+      "视频描述": "俯拍特写，时长3秒，手指蘸印泥按下的完整动作，纸张质感和印泥颜色要真实细腻",
+      "Image_Prompt": "Overhead close-up of yellow paper contract with dense traditional Chinese characters, trembling hand pressing into red seal paste then firmly onto contract bottom, bright red fingerprint like a brand, fresh ink and blood-red seal contrasting starkly, selling child into servitude, dramatic lighting on document --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Overhead static close-up, hand dipping in red paste and pressing firmly on contract, crisp paper texture, vivid red seal impression, sealing fate, 3 seconds"
+    },
+    {
+      "shot_id": "E001_S025",
+      "画面描述": "戏班大门缓缓关闭的镜头。小豆子站在门内，艳红站在门外。母子隔着越来越窄的门缝对望，小豆子伸出包扎的手想要抓住母亲，却只抓到了空气。艳红的脸上泪流满面，但她的脚步却没有停留，转身消失在人群中。沉重的木门发出「轰」的一声，彻底隔绝了两个世界。这一别，或许就是永远。",
+      "视频描述": "跟拍+固定，时长5秒，门缝视角POV逐渐收窄，最后门关闭的沉重音效作为段落结尾",
+      "Image_Prompt": "Opera school gate slowly closing, young Douzi inside reaching out with bandaged hand, mother Yanhong outside with tears streaming turning to disappear into crowd, narrowing gap between them, heavy wooden doors, child's desperate reaching gesture, mother's retreating back, emotional separation scene --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "POV through narrowing door gap, child reaching out, mother turning away into crowd, door closing with heavy thud, final separation, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S026",
+      "画面描述": "戏班练功房内景。凌晨时分，天刚蒙蒙亮，孩子们已经开始一天的训练。他们在冰冷的砖地上练习下腰、劈叉，有人因疼痛小声抽泣，却不敢大声哭出来。小豆子缩在角落，用毯子裹住自己瑟瑟发抖，包扎的左手还在隐隐作痛。他的眼睛红肿，显然一夜未眠。清晨的第一缕阳光透过窗棂，照在他苍白的脸上。",
+      "视频描述": "固定全景+推至小豆子特写，时长5秒，环境音（练功声、抽泣声、呼喝声）营造压抑氛围",
+      "Image_Prompt": "Dawn light in opera school training room, children already practicing on cold brick floor - backbends splits, some quietly sobbing in pain, young Douzi huddled in corner wrapped in blanket shivering, bandaged left hand, red swollen eyes from sleepless night, first sunlight through latticed window on his pale face --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Wide shot pushing slowly to close-up on Douzi, dawn training scene, muffled crying and practice sounds, child huddled alone in corner, cold blue-gray morning light, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S027",
+      "画面描述": "小石头（幼年段小楼）的首次亮相。一个虎头虎脑的男孩，比其他孩子都高出半个头，正在院中练习拳脚。他的动作有力而准确，显然已经是戏班里的佼佼者。他的眼神明亮而坚定，嘴角带着一丝桀骜的微笑。汗珠从额头滚落，他随手一抹，继续练习。他是天生的霸王坯子，未来将与小豆子命运交织。",
+      "视频描述": "固定中景，时长4秒，人物练功动作展示其力量与天赋，阳光打在身上增加英气",
+      "Image_Prompt": "Medium shot of young Shitou first appearance, sturdy tiger-headed boy taller than others, practicing martial arts in courtyard, powerful precise movements, bright determined eyes with slight defiant smile, sweat rolling down forehead wiped away casually, natural leader presence, warm sunlight highlighting his form --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static medium shot, young boy practicing martial movements with power and precision, wiping sweat confidently, sunlight gleaming on him, natural born performer, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S028",
+      "画面描述": "小石头注意到角落里的小豆子，他的目光软下来。他停下练功，走向这个新来的瘦弱孩子。其他孩子窃窃私语，指指点点，显然对这个「窑姐生的六指」充满敌意。小石头蹲下身，与小豆子平视：「别怕，我是大师兄，以后我罩着你。」简单的话语，却像一缕阳光照进小豆子黑暗的世界。",
+      "视频描述": "跟拍+正反打，时长5秒，从小石头注意到小豆子，到走近蹲下对话，建立两人关系",
+      "Image_Prompt": "Young Shitou noticing Douzi in corner, softening expression, walking over while other children whisper and point hostilely, Shitou crouching to eye level with frightened Douzi, protective gesture, shaft of warm light between them, contrast of confident protector and vulnerable newcomer --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Tracking shot following Shitou noticing and approaching Douzi, shot reverse shot of them at eye level, other children whispering in background, protective moment, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S029",
+      "画面描述": "小豆子抬起头，泪眼朦胧中看到了小石头。这是他来到戏班后第一个对他友善的人。他的嘴唇颤抖着，想说谢谢却发不出声音。受伤的左手不自觉地握紧了毯子角。阳光在小石头身后形成光晕，让他看起来像一个救世主。这一刻，一段将持续一生的羁绊悄然形成。",
+      "视频描述": "小豆子POV特写，时长3秒，主观镜头看向小石头，略仰角增加保护者形象，泪眼模糊效果",
+      "Image_Prompt": "POV from Douzi looking up at Shitou, tear-blurred vision, Shitou backlit with warm halo like savior figure, trembling lips unable to speak, bandaged hand gripping blanket, low angle emphasizing protector role, emotional first bond moment --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Subjective POV close-up looking up at Shitou, slight blur suggesting tears, warm backlight halo effect, emotional connection forming, 3 seconds"
+    },
+    {
+      "shot_id": "E001_S030",
+      "画面描述": "戏班饭堂，一群孩子围坐吃饭。粗陋的木桌上摆着几碗稀粥和咸菜，连肉星都看不到。小豆子端着碗坐在角落，却被几个年长的孩子围住。「六指怪」「窑姐养的」，刻薄的话语像刀子一样刺向他。一个孩子伸手打翻了他的粥碗，稀粥洒了一地。小豆子低着头，不敢反抗，泪水滴进空碗里。",
+      "视频描述": "手持跟拍，时长5秒，从饭堂全景移至小豆子被欺负的场景，增加临场感和压迫感",
+      "Image_Prompt": "Opera school dining hall, children gathered around crude wooden tables with meager porridge and pickled vegetables, Douzi sitting alone in corner being surrounded by bullies, one knocking over his bowl, porridge spilling, tears dropping into empty bowl, harsh crude lighting, bullying atmosphere --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Handheld tracking shot, dining scene to bullying moment, bowl being knocked over, porridge spilling, child's silent tears, oppressive atmosphere, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S031",
+      "画面描述": "小石头出现在人群中，他一把推开欺负小豆子的孩子。「谁再敢动他试试！」他的声音不大，却带着不容置疑的威严。其他孩子退后，知道大师兄不好惹。小石头弯腰捡起地上的碗，把自己碗里的粥分了一半给小豆子。「吃吧，别饿着。」简单的举动，却让小豆子感到了久违的温暖。",
+      "视频描述": "固定中景，时长4秒，小石头推人、分粥的连续动作，其他孩子退散，两人构图强调羁绊",
+      "Image_Prompt": "Shitou pushing through crowd, shoving bullies aside, picking up fallen bowl, dividing his porridge with Douzi, other children backing away, protective stance, two boys framed together in warm shaft of light, bond forming moment, dining hall setting --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static medium shot, Shitou pushing bullies, picking up bowl, sharing food with Douzi, others retreating, protective gesture, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S032",
+      "画面描述": "深夜的宿舍，孩子们横七竖八地睡在大通铺上。月光透过破旧的窗纸，洒下斑驳的银辉。小豆子辗转难眠，望着窗外的月亮出神。他想起了母亲，想起了被切掉的手指，想起了从前在窑子里的日子。一行清泪从眼角滑落，消失在粗糙的枕头里。远处传来更夫打更的声音，梆子声声，敲打着这漫漫长夜。",
+      "视频描述": "固定中景+推至特写，时长5秒，从群睡场景推至小豆子脸部，月光流动增加诗意",
+      "Image_Prompt": "Dormitory at night, children sleeping scattered on large platform bed, moonlight through worn paper window casting dappled silver light, young Douzi awake staring at moon, tears sliding down cheek onto rough pillow, distant sound of night watchman's clapper, melancholic peaceful night scene --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static wide shot pushing slowly to close-up on Douzi's face, moonlight moving across sleeping children, tear rolling down cheek, distant clapper sounds, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S033",
+      "画面描述": "清晨练功场景。关师傅站在院中央，手持戒尺，目光如炬。「人，得自个儿成全自个儿！」他的声音在院中回荡，「要想人前显贵，必得人后受罪！」孩子们在他的监督下拼命练习，有人因动作不标准被戒尺抽打，发出痛苦的叫喊。小豆子咬紧牙关练着下腰，汗水浸透了衣背，受伤的手隐隐作痛。",
+      "视频描述": "俯拍全景+师傅特写穿插，时长6秒，师傅台词是关键信息点，戒尺声和训斥声作为节奏",
+      "Image_Prompt": "Morning training scene, Master Guan standing center of courtyard with discipline rod, stern commanding presence, children practicing desperately around him, some being struck and crying out, Douzi gritting teeth practicing backbend, sweat soaking through clothes, bandaged hand trembling, harsh discipline atmosphere --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Overhead wide shot intercutting with master close-up, his voice echoing 'One must achieve for oneself', rod striking, children's cries, Douzi struggling, 6 seconds"
+    },
+    {
+      "shot_id": "E001_S034",
+      "画面描述": "练功中的小豆子特写。他的小脸涨得通红，汗珠挂满额头，嘴唇紧紧抿成一条线。他在练习「耗腿」——一条腿架在高处一动不动。大腿肌肉剧烈颤抖，像是随时会崩溃。但他的眼神里有一种执拗，那是不服输、不认命的倔强。关师傅走过他身边，看了一眼，嘴角微微上扬，似乎看到了这孩子的潜力。",
+      "视频描述": "固定侧面中景，时长4秒，展示练功动作和人物表情，师傅路过时短暂停顿形成张力",
+      "Image_Prompt": "Close-up of Douzi in leg stretching position, face flushed red, sweat-covered forehead, lips pressed tight, thigh muscles trembling violently, stubborn determined expression, Master Guan walking past glancing with slight approving smirk, harsh training moment showing potential --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static side medium shot, Douzi holding painful leg position, face contorted with effort, master walking past with brief pause and subtle approval, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S035",
+      "画面描述": "小癞子的出场。一个瘦弱的男孩，脸上长满疥疮，是戏班里最受欺负的孩子之一。他的练功动作总是不到位，因此常常挨打。此刻他正跪在院中被罚，双手举着装满水的木盆，胳膊抖得厉害。几滴水洒出来，关师傅的戒尺立刻落下，打得他惨叫一声。小豆子从旁边经过，与他对视一眼，看到了同病相怜的悲哀。",
+      "视频描述": "固定中景+特写剪辑，时长4秒，展示惩罚场景和两个孩子的眼神交流，建立小癞子角色",
+      "Image_Prompt": "Thin sickly boy Xialaizi with scabies on face kneeling in courtyard being punished, holding water-filled wooden basin overhead with trembling arms, water spilling, master's rod striking, yelp of pain, Douzi passing by exchanging glance of shared suffering, harsh punishment scene --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Medium shot to close-up cutting, boy being punished with water basin, rod striking, Douzi passing exchanging knowing look, fellow sufferers moment, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S036",
+      "画面描述": "吊嗓练习场景。孩子们排成一排，跟着师傅的板眼唱戏词。「我本是女娇娥，又不是男儿郎...」稚嫩的嗓音参差不齐。轮到小豆子时，他张嘴唱出：「我本是男儿郎，又不是女娇娥。」他把词唱反了。关师傅皱眉，戒尺落在他手心：「唱错了！」小豆子委屈地低下头，明明这才是对的，为什么他要承认自己是女儿身？",
+      "视频描述": "固定全景+特写穿插，时长5秒，群唱场景到小豆子唱错被罚，核心情节点的首次呈现",
+      "Image_Prompt": "Voice training scene, children lined up singing opera lyrics in unison, young Douzi singing wrong lyrics - reversing male female identity, master frowning, rod striking his palm, child looking down confused and wronged, key identity conflict moment, practice room setting --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Wide shot of children singing to close-up of Douzi singing wrong version, master striking his palm, confused hurt expression, first appearance of key lyrical mistake, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S037",
+      "画面描述": "傍晚的戏班后院。小豆子和小癞子蹲在墙角窃窃私语。夕阳将天边染成血红色，映照在两个瘦弱的身影上。「我想逃跑，」小癞子的声音颤抖，「这日子过不下去了。」小豆子看着自己包扎的左手，想起了母亲的狠心，眼中闪过一丝挣扎。远处传来师傅的呵斥声，两个孩子惊恐地缩了缩身子。逃跑的念头，在心中悄悄生根。",
+      "视频描述": "固定双人中景，时长4秒，夕阳逆光剪影效果，窃窃私语的对话声要压低，渲染秘密感",
+      "Image_Prompt": "Two small figures crouching in corner of courtyard at dusk, blood-red sunset sky, silhouette effect, whispering secretly about escape, Douzi looking at bandaged hand, fear and desperation on faces, master's distant shouts making them flinch, seeds of escape being planted --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Static medium two-shot, sunset backlighting creating silhouettes, hushed whispered conversation, flinching at distant shouts, conspiratorial atmosphere, 4 seconds"
+    },
+    {
+      "shot_id": "E001_S038",
+      "画面描述": "深夜，两个孩子翻墙逃跑。月黑风高，只有稀疏的星光。小癞子先爬上墙头，回身拉着小豆子。两人的动作紧张而笨拙，生怕发出声响。小豆子受伤的手抓住墙沿时疼痛钻心，但他咬牙忍住，不敢叫出声。成功翻过墙头的那一刻，他们同时回望了一眼这个牢笼般的戏班，然后头也不回地消失在夜色中。",
+      "视频描述": "手持跟拍，时长5秒，从墙内爬墙到翻出墙外，镜头随人物移动，紧张呼吸声和环境音",
+      "Image_Prompt": "Moonless night, two children climbing over opera school wall to escape, Xialaizi on wall reaching down for Douzi, tense clumsy movements, Douzi wincing as injured hand grips wall, both glancing back at prison-like school before disappearing into darkness, stars barely visible --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Handheld tracking shot, children climbing over wall, tense breathing, one helping other, pause to look back, then running into night, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S039",
+      "画面描述": "北平夜晚的街道，两个瘦小的身影在奔跑。老旧的街灯洒下昏黄的光，映照出两张惊恐又兴奋的小脸。他们的木屐踏在青石板上发出清脆的响声，惊起几只流浪狗。自由的空气让他们贪婪地呼吸，却也让他们意识到前路茫茫。没有钱，没有去处，这个巨大的城市对两个孤儿来说，既是解脱也是另一个牢笼。",
+      "视频描述": "跟拍中景，时长5秒，两人奔跑穿过街道，路灯光影交替，脚步声和喘息声为主",
+      "Image_Prompt": "Nighttime Beijing street, two small figures running, old-fashioned street lamps casting dim yellow pools of light, frightened yet exhilarated young faces, wooden clogs clattering on stone pavement, stray dogs startled, freedom mixed with uncertainty, labyrinthine dark streets --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Tracking medium shot following children running through streets, alternating lamp light and shadow, clog footsteps echoing, panting breaths, 5 seconds"
+    },
+    {
+      "shot_id": "E001_S040",
+      "画面描述": "戏园子门前。喧闹的锣鼓声传来，霓虹灯招牌闪烁着「名角献艺」的字样。两个逃跑的孩子站在门口，被眼前的热闹景象吸引。透过门缝，他们看到台上正在演出《霸王别姬》——虞姬身着华丽戏服，在台上翩翩起舞。璀璨的灯光，如雷的掌声，这一切让小豆子看得呆了。他的眼中映出戏台上的流光溢彩，那是他从未见过的世界。这一幕，将永远改变他的命运。",
+      "视频描述": "正反打剪辑，时长6秒，从孩子面部到戏台主观镜头，锣鼓声和唱腔渐强，作为本集结尾的高潮与钩子",
+      "Image_Prompt": "Opera theater entrance at night, neon sign flashing 'Star Performance', two escaped children standing transfixed, peeking through door gap at magnificent stage performance of Farewell My Concubine, Concubine Yu in gorgeous costume dancing, brilliant lights, roaring applause, wonder reflected in Douzi's eyes, life-changing moment --ar 16:9 --sref 1863909815",
+      "Video_Prompt": "Shot reverse shot, children's wonder-struck faces to POV of magnificent stage performance, drums and opera singing crescendo, lights blazing, cliffhanger ending for episode 1, 6 seconds"
+    }
+  ]
+}

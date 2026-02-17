@@ -1,0 +1,46 @@
+{
+  "config": {
+    "name": "lite_30ep_5min",
+    "mode": "lite",
+    "episodes": 30,
+    "duration": 5
+  },
+  "agents": {
+    "interview": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.1"
+    },
+    "concept": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "chapters": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "characters": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "artdirector": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "screenwriter": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "storyboard": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    }
+  },
+  "totalTime": "0.1"
+}

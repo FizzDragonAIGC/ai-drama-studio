@@ -26,7 +26,7 @@ const PROVIDERS = {
     baseUrl: 'https://api.deepseek.com/v1',
     models: {
       fast: 'deepseek-chat',
-      standard: 'deepseek-chat',
+      standard: 'deepseek-reasoner',
       best: 'deepseek-reasoner'
     },
     pricing: { input: 0.014/1000000, output: 0.14/1000000 }  // 超便宜!
@@ -45,7 +45,7 @@ const PROVIDERS = {
     name: 'OpenRouter',
     baseUrl: 'https://openrouter.ai/api/v1',
     models: {
-      fast: 'deepseek/deepseek-chat',
+      fast: 'deepseek/deepseek-reasoner',
       standard: 'anthropic/claude-3.5-sonnet',
       best: 'anthropic/claude-3-opus'
     },
@@ -86,7 +86,7 @@ function loadSkill(skillId) {
 
 // 动态配置 - maxSkills=5确保书籍方法论被加载
 // 新增turbo模式：maxSkills=2, contentLimit=2000 更快
-let runtimeConfig = { maxSkills: 5, contentLimit: 4000 };
+let runtimeConfig = { maxSkills: 3, contentLimit: 3000 };
 
 // 模式預設
 const MODE_PRESETS = {
@@ -251,7 +251,7 @@ async function callAnthropicDirect(systemPrompt, userMessage, model = 'claude-so
     },
     body: JSON.stringify({
       model,
-      max_tokens: 8192,
+      max_tokens: 4096,
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }]
     })
@@ -318,12 +318,12 @@ async function callOpenAICompatible(systemPrompt, userMessage, agentId = '') {
   }
   
   const needsLongOutput = agentId === 'storyboard' || agentId === 'narrative';
-  const model = needsLongOutput ? provider.models.standard : provider.models.fast;
+  // storyboard和narrative用reasoner (已修复空content问题)
+  const useReasoner = false; // DISABLED: needsLongOutput && currentProvider === 'deepseek';
+  const model = useReasoner ? 'deepseek-reasoner' : (needsLongOutput ? provider.models.standard : provider.models.fast);
   
-  // DeepSeek max_tokens限制8192
-  const maxTokens = currentProvider === 'deepseek' 
-    ? Math.min(needsLongOutput ? 8000 : 4096, 8192)
-    : (needsLongOutput ? 16000 : 4096);
+  // deepseek-reasoner支持64K输出
+  const maxTokens = useReasoner ? 64000 : (needsLongOutput ? 8192 : 4096);
   
   console.log(`Calling ${provider.name} (${agentId || 'unknown'}) model: ${model}, max_tokens: ${maxTokens}`);
   
@@ -352,7 +352,9 @@ async function callOpenAICompatible(systemPrompt, userMessage, agentId = '') {
     }
     
     const data = await response.json();
-    const text = data.choices?.[0]?.message?.content || '';
+    // DeepSeek-reasoner可能在reasoning_content中返回内容，content为空
+    const message = data.choices?.[0]?.message;
+    const text = message?.content || message?.reasoning_content || '';
     const inputTokens = data.usage?.prompt_tokens || 0;
     const outputTokens = data.usage?.completion_tokens || 0;
     
@@ -487,7 +489,8 @@ async function callClaudeInternal(systemPrompt, userMessage, agentId = '') {
 // 单个Agent API路由
 app.post('/api/agent/:agentId', async (req, res) => {
   const { agentId } = req.params;
-  const { content, context } = req.body;
+  const { content, context, novel, title, userInput } = req.body;
+  const actualContent = content || novel || userInput || "";
   
   const agent = AGENTS[agentId];
   if (!agent) {
@@ -497,7 +500,7 @@ app.post('/api/agent/:agentId', async (req, res) => {
     });
   }
   
-  if (!content) {
+  if (!actualContent) {
     return res.status(400).json({ error: '缺少内容' });
   }
   
@@ -520,7 +523,7 @@ ${skillsContent}
 
     // 根据版本配置限制内容长度
     const limit = runtimeConfig.contentLimit || 2000;
-    const truncatedContent = content.length > limit ? content.substring(0, limit) + '\n...(已截断)' : content;
+    const truncatedContent = actualContent.length > limit ? actualContent.substring(0, limit) + '\n...(已截断)' : actualContent;
     
     const userMessage = context 
       ? `背景：${JSON.stringify(context)}\n\n内容：\n${truncatedContent}`
@@ -896,9 +899,9 @@ app.post('/api/stream', async (req, res) => {
     ? process.env.DEEPSEEK_API_KEY
     : process.env.ANTHROPIC_API_KEY;
   const baseUrl = provider?.baseUrl || 'https://api.deepseek.com/v1';
-  const model = provider?.models?.standard || 'deepseek-chat';
+  const model = provider?.models?.best || 'deepseek-chat';
   
-  console.log(`[Stream] Starting stream with ${provider?.name}`);
+  console.log(`[Stream] Starting stream with ${provider?.name}, model: ${model}`);
   
   try {
     const response = await fetch(`${baseUrl}/chat/completions`, {
@@ -909,7 +912,7 @@ app.post('/api/stream', async (req, res) => {
       },
       body: JSON.stringify({
         model: model,
-        max_tokens: 8000,
+        max_tokens: 64000,
         stream: true,
         messages: [
           { role: 'system', content: systemPrompt || '你是一位專業的小說作家。' },
@@ -1294,6 +1297,371 @@ app.post('/api/novel/preview', async (req, res) => {
 });
 
 console.log('✅ 長篇小說處理API 已啟用');
+
+// ========== 项目API（V3架构） ==========
+import { 
+    createPipeline, 
+    getPipeline, 
+    generateScripts, 
+    updateScript,
+    generateEpisodeStoryboard,
+    generateAllStoryboards,
+    getEpisodeStoryboard,
+    getAllStoryboards,
+    exportPipeline, 
+    listPipelines 
+} from './pipeline.js';
+
+// Agent调用辅助函数
+async function callAgentHelper(agentId, data) {
+    const agent = AGENTS[agentId];
+    if (!agent) throw new Error(`Unknown agent: ${agentId}`);
+    
+    const skillsContent = loadAgentSkills(agent.skills);
+    const systemPrompt = `${agent.prompt}\n\n---\n## 专业方法论参考：\n${skillsContent}\n---`;
+    
+    // 支持多种数据格式 (V3 content / V4 sourceText)
+    const content = data.content || data.sourceText || '';
+    const title = data.title || '';
+    const episode = data.episode || null;
+    const script = data.script || null;
+    
+    // 构建用户消息
+    let userMessage = '';
+    
+    if (title) {
+        userMessage += `# 项目：${title}\n\n`;
+    }
+    
+    if (episode) {
+        userMessage += `## 当前任务：第${episode}集\n`;
+        if (data.minutesPerEpisode) {
+            userMessage += `时长：${data.minutesPerEpisode}分钟\n`;
+        }
+        if (data.shotsPerMinute) {
+            userMessage += `每分钟镜头数：${data.shotsPerMinute}\n`;
+        }
+        userMessage += '\n';
+    }
+    
+    if (script) {
+        userMessage += `## 本集剧本：\n${typeof script === 'string' ? script : JSON.stringify(script, null, 2)}\n\n`;
+    }
+    
+    if (data.context && Object.keys(data.context).length > 0) {
+        userMessage += `## 已有设定：\n${JSON.stringify(data.context, null, 2)}\n\n`;
+    }
+    
+    if (content) {
+        userMessage += `## 原始内容：\n${content}\n`;
+    }
+    
+    if (data.totalEpisodes) {
+        userMessage += `\n## 要求：生成${data.totalEpisodes}集的完整剧本大纲\n`;
+    }
+    
+    if (data.outputFields) {
+        userMessage += `\n## 输出字段要求：\n${data.outputFields.join(', ')}\n`;
+    }
+    
+    console.log(`[${agentId}] 调用Agent，内容长度: ${userMessage.length}字符`);
+    
+    return await callClaude(systemPrompt, userMessage, agentId);
+}
+
+// Step 1: 创建项目
+app.post('/api/project/create', (req, res) => {
+    const { title, episodes, durationPerEpisode, content, artStyle } = req.body;
+    
+    if (!title) return res.status(400).json({ error: '缺少项目标题' });
+    
+    const project = createPipeline({
+        title,
+        episodes: episodes || 10,
+        durationPerEpisode: durationPerEpisode || 10,
+        shotsPerMinute: 10,
+        content,
+        artStyle: artStyle || 'anime style'
+    });
+    
+    console.log(`[Project] 创建: ${project.id} - ${title} (${episodes}集)`);
+    res.json({ 
+        projectId: project.id,
+        title: project.config.title,
+        episodes: project.config.episodes,
+        durationPerEpisode: project.config.durationPerEpisode
+    });
+});
+
+// Step 2: 生成所有剧本
+app.post('/api/project/:projectId/scripts/generate', async (req, res) => {
+    const { projectId } = req.params;
+    const project = getPipeline(projectId);
+    
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    
+    // 异步生成
+    res.json({ status: 'generating', projectId });
+    
+    generateScripts(projectId, callAgentHelper).catch(err => {
+        console.error(`[Project ${projectId}] 剧本生成失败:`, err);
+    });
+});
+
+// 获取剧本
+app.get('/api/project/:projectId/scripts', (req, res) => {
+    const project = getPipeline(req.params.projectId);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    
+    res.json({
+        status: project.status,
+        scriptsReady: project.progress.scriptsGenerated,
+        scripts: project.scripts
+    });
+});
+
+// 修改单集剧本
+app.put('/api/project/:projectId/scripts/:episode', (req, res) => {
+    const { projectId, episode } = req.params;
+    const updated = updateScript(projectId, parseInt(episode), req.body);
+    
+    if (!updated) return res.status(404).json({ error: 'Script not found' });
+    res.json({ status: 'updated', script: updated });
+});
+
+// Step 3: 生成指定集的分镜
+app.post('/api/project/:projectId/storyboard/:episode/generate', async (req, res) => {
+    const { projectId, episode } = req.params;
+    const project = getPipeline(projectId);
+    
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    if (!project.progress.scriptsGenerated) {
+        return res.status(400).json({ error: '请先生成剧本' });
+    }
+    
+    const ep = parseInt(episode);
+    const shotsExpected = project.config.durationPerEpisode * project.config.shotsPerMinute;
+    
+    // 异步生成
+    res.json({ 
+        status: 'generating', 
+        episode: ep,
+        shotsExpected
+    });
+    
+    generateEpisodeStoryboard(projectId, ep, callAgentHelper).catch(err => {
+        console.error(`[Project ${projectId}] 第${ep}集分镜生成失败:`, err);
+    });
+});
+
+// 自动生成所有分镜（批量模式）
+app.post('/api/project/:projectId/storyboard/generate-all', async (req, res) => {
+    const { projectId } = req.params;
+    const project = getPipeline(projectId);
+    
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    if (!project.progress.scriptsGenerated) {
+        return res.status(400).json({ error: '请先生成剧本' });
+    }
+    
+    // 立即返回，后台执行
+    const totalEpisodes = project.scripts.length;
+    const shotsPerEp = project.config.durationPerEpisode * project.config.shotsPerMinute;
+    
+    res.json({ 
+        status: 'started',
+        totalEpisodes,
+        shotsPerEpisode: shotsPerEp,
+        estimatedTotalShots: totalEpisodes * shotsPerEp,
+        message: `开始自动生成${totalEpisodes}集分镜，预计${totalEpisodes * shotsPerEp}镜头`
+    });
+    
+    generateAllStoryboards(projectId, callAgentHelper, (progress) => {
+        console.log(`[Project ${projectId}] 进度: ${progress.completed}/${progress.total}集, ${progress.totalShots}镜头`);
+    }).catch(err => {
+        console.error(`[Project ${projectId}] 批量生成失败:`, err);
+    });
+});
+
+// 获取指定集的分镜
+app.get('/api/project/:projectId/storyboard/:episode', (req, res) => {
+    const { projectId, episode } = req.params;
+    const project = getPipeline(projectId);
+    
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    
+    const ep = parseInt(episode);
+    const shots = getEpisodeStoryboard(projectId, ep);
+    const isGenerating = project.progress.generatingEpisode === ep;
+    const isCompleted = project.progress.completedEpisodes.includes(ep);
+    
+    res.json({
+        episode: ep,
+        status: isGenerating ? 'generating' : (isCompleted ? 'completed' : 'pending'),
+        shotsCount: shots.length,
+        shots
+    });
+});
+
+// 获取项目状态
+app.get('/api/project/:projectId', (req, res) => {
+    const project = getPipeline(req.params.projectId);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    
+    res.json({
+        id: project.id,
+        status: project.status,
+        title: project.config.title,
+        config: project.config,
+        progress: {
+            scriptsReady: project.progress.scriptsGenerated,
+            generatingEpisode: project.progress.generatingEpisode,
+            completedEpisodes: project.progress.completedEpisodes,
+            totalShots: project.progress.totalShots
+        },
+        timing: project.timing,
+        errors: project.errors.slice(-5)
+    });
+});
+
+// 获取所有分镜（导出用）
+app.get('/api/project/:projectId/storyboard', (req, res) => {
+    const project = getPipeline(req.params.projectId);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    
+    const format = req.query.format || 'json';
+    const result = exportPipeline(req.params.projectId, format);
+    
+    if (format === 'csv') {
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="${project.config.title}_storyboard.csv"`);
+    }
+    
+    res.send(result);
+});
+
+// 列出所有项目
+app.get('/api/projects', (req, res) => {
+    res.json(listPipelines());
+});
+
+console.log('✅ 项目API (V3架构) 已启用');
+
+// ========== 完整Pipeline API (V4) ==========
+import { FullPipeline, PIPELINE_MODES, ENHANCED_STORYBOARD_PROMPT } from './pipeline-full.js';
+
+const fullPipelines = new Map();
+
+// 获取所有模式配置
+app.get('/api/pipeline/modes', (req, res) => {
+    const modes = Object.entries(PIPELINE_MODES).map(([id, config]) => ({
+        id,
+        name: config.name,
+        description: config.description,
+        phases: config.phases.length,
+        fields: config.fieldsPerShot.length,
+        shotsPerMinute: config.shotsPerMinute
+    }));
+    res.json(modes);
+});
+
+// 创建完整Pipeline项目
+app.post('/api/pipeline/create', (req, res) => {
+    const { title, sourceText, totalEpisodes, minutesPerEpisode, mode } = req.body;
+    
+    if (!title || !sourceText) {
+        return res.status(400).json({ error: '需要 title 和 sourceText' });
+    }
+    
+    const pipeline = new FullPipeline({
+        title,
+        sourceText,
+        totalEpisodes: totalEpisodes || 24,
+        minutesPerEpisode: minutesPerEpisode || 4,
+        mode: mode || 'standard'
+    });
+    
+    fullPipelines.set(pipeline.id, pipeline);
+    
+    res.json({
+        id: pipeline.id,
+        title: pipeline.title,
+        mode: pipeline.mode,
+        modeName: pipeline.modeConfig.name,
+        totalEpisodes: pipeline.totalEpisodes,
+        phases: pipeline.modeConfig.phases.length,
+        fields: pipeline.modeConfig.fieldsPerShot
+    });
+});
+
+// 运行Pipeline（全部集数）
+app.post('/api/pipeline/:id/run', async (req, res) => {
+    const pipeline = fullPipelines.get(req.params.id);
+    if (!pipeline) return res.status(404).json({ error: 'Pipeline not found' });
+    
+    res.json({ status: 'started', id: pipeline.id, mode: pipeline.mode });
+    
+    pipeline.run(callAgentHelper, (progress) => {
+        console.log(`[Pipeline ${pipeline.id}] ${progress.type}: ${JSON.stringify(progress)}`);
+    }).catch(err => {
+        console.error(`[Pipeline ${pipeline.id}] Error:`, err);
+    });
+});
+
+// 运行指定集数（测试用）
+app.post('/api/pipeline/:id/run-episodes', async (req, res) => {
+    const pipeline = fullPipelines.get(req.params.id);
+    if (!pipeline) return res.status(404).json({ error: 'Pipeline not found' });
+    
+    const episodes = req.body.episodes || [1, 2];
+    
+    res.json({ 
+        status: 'started', 
+        id: pipeline.id, 
+        mode: pipeline.mode,
+        episodes 
+    });
+    
+    pipeline.runEpisodes(episodes, callAgentHelper, (progress) => {
+        console.log(`[Pipeline ${pipeline.id}] ${progress.type}: ${JSON.stringify(progress)}`);
+    }).catch(err => {
+        console.error(`[Pipeline ${pipeline.id}] Error:`, err);
+    });
+});
+
+// 获取Pipeline状态
+app.get('/api/pipeline/:id', (req, res) => {
+    const pipeline = fullPipelines.get(req.params.id);
+    if (!pipeline) return res.status(404).json({ error: 'Pipeline not found' });
+    
+    res.json(pipeline.getResults());
+});
+
+// 获取Pipeline分镜
+app.get('/api/pipeline/:id/storyboard', (req, res) => {
+    const pipeline = fullPipelines.get(req.params.id);
+    if (!pipeline) return res.status(404).json({ error: 'Pipeline not found' });
+    
+    res.json({
+        mode: pipeline.mode,
+        storyboards: pipeline.storyboards,
+        totalShots: Object.values(pipeline.storyboards).flat().length
+    });
+});
+
+// 列出所有完整Pipeline
+app.get('/api/pipelines', (req, res) => {
+    const list = Array.from(fullPipelines.values()).map(p => ({
+        id: p.id,
+        title: p.title,
+        mode: p.mode,
+        status: p.status,
+        progress: p.progress
+    }));
+    res.json(list);
+});
+
+console.log('✅ 完整Pipeline API (V4) 已启用');
 
 app.listen(PORT, () => {
   const provider = PROVIDERS[currentProvider];

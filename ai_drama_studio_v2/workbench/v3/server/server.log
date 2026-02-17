@@ -1,20 +1,45 @@
-🔐 認證方式: OAuth Token (Claude Max)
-
-╔═══════════════════════════════════════════════╗
-║   🎬 AI番劇工作台 Agent Server                ║
-║   Model: claude-sonnet-4-20250514                    ║
-║   Port: 3001                                   ║
-║   API Key: ✗ 未配置                         ║
-╚═══════════════════════════════════════════════╝
-  
 Loaded .env file
-🎬 AI番劇 Agent Server v3 (OpenClaw Proxy)
+✅ Moodboard API 已啟用
+✅ 長篇小說處理API 已啟用
+✅ 项目API (V3架构) 已启用
+✅ 完整Pipeline API (V4) 已启用
+🎬 AI番劇 Agent Server v3 (Multi-Provider)
    Port: 3001
-   📊 30 Agents | 296 Skills
-Loaded .env file
-🎬 AI番劇 Agent Server v3 (OpenClaw Proxy)
-   Port: 3001
-   📊 30 Agents | 296 Skills
+   🤖 Provider: DeepSeek
+   📊 42 Agents | 291 Skills
+[🎤 訪談師] Processing with 14 skills...
+[🎤 訪談師] Loaded 5 skill files
+[Queue] Added request, queue length: 1
+Calling DeepSeek (interview) model: deepseek-chat, max_tokens: 4096
+[💡 剧本概念生成器] Processing with 5 skills...
+[💡 剧本概念生成器] Loaded skill files for deep analysis
+[Queue] Added request, queue length: 1
+Config updated: provider=deepseek, maxSkills=2, contentLimit=2000
+[🎤 訪談師] Processing with 14 skills...
+[🎤 訪談師] Loaded 5 skill files
+[Queue] Added request, queue length: 2
+Tokens: in=2113, out=1708, cost=$0.000269
+Calling DeepSeek (concept) model: deepseek-chat, max_tokens: 4096
+[🎤 訪談師] Done!
+Tokens: in=2241, out=281, cost=$0.000071
+Calling DeepSeek (interview) model: deepseek-chat, max_tokens: 4096
+[💡 剧本概念生成器] Done!
+Config updated: provider=deepseek, maxSkills=5, contentLimit=4000
 [🎤 訪談師] Processing with 14 skills...
 [🎤 訪談師] Loaded skill files for deep analysis
-Calling Claude via CLI...
+[Queue] Added request, queue length: 1
+Tokens: in=1422, out=1253, cost=$0.000195
+Calling DeepSeek (interview) model: deepseek-chat, max_tokens: 4096
+[🎤 訪談師] Done!
+Tokens: in=5333, out=2364, cost=$0.000406
+[🎤 訪談師] Done!
+[💡 剧本概念生成器] Processing with 5 skills...
+[💡 剧本概念生成器] Loaded skill files for deep analysis
+[Queue] Added request, queue length: 1
+Calling DeepSeek (concept) model: deepseek-chat, max_tokens: 4096
+Tokens: in=4671, out=317, cost=$0.000110
+[💡 剧本概念生成器] Done!
+[📖 敘事/章節] Processing with 18 skills...
+[📖 敘事/章節] Loaded skill files for deep analysis
+[Queue] Added request, queue length: 1
+Calling DeepSeek (narrative) model: deepseek-reasoner, max_tokens: 8192

@@ -1400,7 +1400,7 @@ async function callAgent(endpoint, data, maxRetries = 2) {
 async function checkApiHealth() {
     try {
         // health endpoint在根路径，不在/api下
-        const res = await fetch('/health');
+        const res = await fetch('http://34.58.33.115:3001/api/health');
         const data = await res.json();
         // 支持多种模式：hasApiKey, hasToken, gatewayConnected
         return data.status === 'ok' && (data.hasApiKey || data.hasToken || data.gatewayConnected);
@@ -2211,7 +2211,7 @@ function renderStep1(){
 function selectVersion(ver){
     currentVersion = ver;
     // 更新服務器配置
-    fetch('/api/config', {
+    fetch('http://34.58.33.115:3001/api/config', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({maxSkills: VERSIONS[ver].maxSkills, contentLimit: VERSIONS[ver].contentLimit})
@@ -7019,83 +7019,149 @@ function renderStep7(){
 async function runStoryboardAgent(){
     const ui = document.getElementById('storyboardAgentUI');
     
+    // 獲取用戶配置的集數和時長
+    const episodes = chapterConfig.episodes || state.seriesConfig?.episodes || 10;
+    const durationPerEp = chapterConfig.durationPerEpisode || state.seriesConfig?.duration || 5;
+    const shotsPerMinute = 10; // 每分鐘10個鏡頭
+    const shotsPerEpisode = durationPerEp * shotsPerMinute;
+    const totalShots = episodes * shotsPerEpisode;
+    const batchSize = 1; // 每批處理1集（確保每集都有足夠鏡頭）
+    const totalBatches = Math.ceil(episodes / batchSize);
+    
     ui.innerHTML = `
         <div style="background:var(--surface2);border-radius:8px;padding:20px">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
                 <div class="loading-spinner"></div>
                 <div>
                     <div style="font-weight:600" id="sbStatusText">🎬 分鏡師 啟動中...</div>
-                    <div style="font-size:12px;color:var(--dim)" id="sbSubStatus">準備設計...</div>
+                    <div style="font-size:12px;color:var(--dim)" id="sbSubStatus">準備設計 ${episodes}集 × ${shotsPerEpisode}鏡頭 = ${totalShots}鏡頭</div>
                 </div>
             </div>
-            <div style="background:var(--bg);border-radius:4px;height:4px;overflow:hidden">
-                <div id="sbProgressBar" style="background:var(--primary);height:100%;width:0%;transition:width .5s"></div>
+            <div style="background:var(--bg);border-radius:4px;height:8px;overflow:hidden">
+                <div id="sbProgressBar" style="background:var(--primary);height:100%;width:0%;transition:width .3s"></div>
             </div>
-            <div id="sbSteps" style="margin-top:16px;font-size:12px;color:var(--dim)"></div>
+            <div id="sbBatchInfo" style="margin-top:8px;font-size:11px;color:var(--primary)"></div>
+            <div id="sbSteps" style="margin-top:12px;font-size:12px;color:var(--dim);max-height:200px;overflow-y:auto"></div>
         </div>
     `;
     
     const progressBar = document.getElementById('sbProgressBar');
     const statusText = document.getElementById('sbStatusText');
+    const batchInfo = document.getElementById('sbBatchInfo');
     const stepsEl = document.getElementById('sbSteps');
     
     const addStep = (icon, text) => {
         stepsEl.insertAdjacentHTML('beforeend', `<div style="padding:4px 0">${icon} ${text}</div>`);
+        stepsEl.scrollTop = stepsEl.scrollHeight;
     };
     
     try {
         addStep('🔗', '正在喚醒智能體...');
         const apiOk = await checkApiHealth();
-        progressBar.style.width = '10%';
         if (!apiOk) throw new Error('FizzDragon 智能體連接失敗，請稍後重試');
         addStep('✅', '智能體已就緒');
         
-        addStep('🎬', '分鏡智能體正在設計鏡頭...');
-        await sleep(200);
-        progressBar.style.width = '40%';
-        
-        statusText.textContent = '🎬 設計分鏡...';
-        addStep('🖼️', '生成分鏡表和AI繪圖指令...');
-        
-        // 開始倒計時
-        startCountdown('storyboard', stepsEl);
-        
-        // 添加畫風信息
+        // 獲取畫風信息
         const artStylePrompt = state.artStyle?.prompt || 'anime style, high quality';
         addStep('🎨', '應用畫風：' + (state.artStyle?.name || '默認動畫'));
+        addStep('📋', `開始批量生成：${totalBatches} 批次，每批 ${batchSize} 集`);
         
-        const apiResponse = await callAgent('storyboard', {
-            scripts: state.scripts,
-            concept: state.concept,
-            characters: state.characters,
-            scenes: state.scenes,
-            interview: state.interview || {},  // 傳遞訪談創意方向
-            artStyle: state.artStyle,          // 傳遞畫風設定
-            artStylePrompt: artStylePrompt     // 畫風Prompt關鍵詞
-        });
+        // 準備章節數據
+        const chapters = state.chapters || [];
         
-        // 停止倒計時
-        stopCountdown();
-        progressBar.style.width = '90%';
+        // 批量生成分鏡
+        const allShots = [];
+        let completedEpisodes = 0;
         
-        let result;
-        try {
-            const resultText = apiResponse.result || apiResponse;
-            if(typeof resultText === 'string'){
-                result = JSON.parse(resultText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim());
-            } else {
-                result = resultText;
+        for (let batch = 0; batch < totalBatches; batch++) {
+            const startEp = batch * batchSize + 1;
+            const endEp = Math.min((batch + 1) * batchSize, episodes);
+            const batchEpisodes = endEp - startEp + 1;
+            
+            // 更新進度
+            const progress = Math.round((batch / totalBatches) * 80) + 10;
+            progressBar.style.width = progress + '%';
+            statusText.textContent = `🎬 生成第 ${startEp}-${endEp} 集分鏡...`;
+            batchInfo.textContent = `批次 ${batch + 1}/${totalBatches} | 已完成 ${allShots.length} 鏡頭`;
+            
+            // 獲取這批集數的章節信息
+            const batchChapters = chapters.slice(startEp - 1, endEp);
+            const batchContent = batchChapters.map((ch, i) => {
+                const epNum = startEp + i;
+                return `【第${epNum}集】${ch.title || ''}\n${ch.summary || ch.content || ''}`;
+            }).join('\n\n');
+            
+            addStep('⏳', `生成第 ${startEp}-${endEp} 集 (${batchEpisodes * shotsPerEpisode} 鏡頭)...`);
+            
+            try {
+                const apiResponse = await callAgent('storyboard', {
+                    content: `請為以下${batchEpisodes}集內容生成分鏡表，每集${durationPerEp}分鐘，每分鐘${shotsPerMinute}鏡頭，共${batchEpisodes * shotsPerEpisode}個鏡頭。\n\n${batchContent || state.scripts || state.novel}`,
+                    context: {
+                        startEpisode: startEp,
+                        endEpisode: endEp,
+                        shotsPerEpisode: shotsPerEpisode,
+                        totalShots: batchEpisodes * shotsPerEpisode,
+                        concept: state.concept,
+                        characters: state.characters,
+                        artStyle: artStylePrompt
+                    }
+                });
+                
+                // 解析結果
+                let batchResult = [];
+                try {
+                    const resultText = apiResponse.result || apiResponse;
+                    if(typeof resultText === 'string'){
+                        batchResult = JSON.parse(resultText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim());
+                    } else {
+                        batchResult = resultText;
+                    }
+                    if(!Array.isArray(batchResult)) {
+                        batchResult = batchResult.shots || batchResult.storyboard || [];
+                    }
+                } catch(e){ 
+                    console.warn('解析批次結果失敗:', e);
+                    batchResult = []; 
+                }
+                
+                // 添加集數前綴到shot_id
+                batchResult = batchResult.map((shot, idx) => ({
+                    ...shot,
+                    shot_id: shot.shot_id || `E${String(startEp).padStart(3,'0')}_S${String(idx+1).padStart(3,'0')}`
+                }));
+                
+                allShots.push(...batchResult);
+                completedEpisodes = endEp;
+                addStep('✅', `第 ${startEp}-${endEp} 集完成，獲得 ${batchResult.length} 鏡頭`);
+                
+            } catch (batchErr) {
+                addStep('⚠️', `第 ${startEp}-${endEp} 集生成失敗: ${batchErr.message}`);
+                console.error('批次生成失敗:', batchErr);
             }
-        } catch(e){ result = []; }
+            
+            // 短暫延遲避免API過載
+            if (batch < totalBatches - 1) {
+                await sleep(500);
+            }
+        }
         
-        state.storyboard = Array.isArray(result) ? result : (result.shots || result.storyboard || []);
-        addStep('✅', `完成 ${state.storyboard?.length||0} 個分鏡設計`);
+        // 完成
         progressBar.style.width = '100%';
-        statusText.textContent = '✅ 分鏡設計完成！';
+        state.storyboard = allShots;
         
-        setTimeout(() => showStep(9), 500);
+        const actualMinutes = Math.round(allShots.length / shotsPerMinute);
+        statusText.textContent = '✅ 分鏡設計完成！';
+        batchInfo.textContent = `總計 ${allShots.length} 鏡頭 | 預計 ${actualMinutes} 分鐘`;
+        addStep('🎉', `批量生成完成！共 ${allShots.length} 個專業分鏡`);
+        
+        if (allShots.length < totalShots * 0.5) {
+            addStep('⚠️', `注意：實際生成 ${allShots.length} 鏡頭，少於預期 ${totalShots} 鏡頭`);
+        }
+        
+        setTimeout(() => showStep(9), 1000);
         
     } catch (err) {
+        console.error('分鏡生成失敗:', err);
         ui.innerHTML = renderErrorRetryUI('分鏡師', 'runStoryboardAgent()');
     }
 }

@@ -1,0 +1,46 @@
+{
+  "config": {
+    "name": "pro_40ep_10min",
+    "mode": "pro",
+    "episodes": 40,
+    "duration": 10
+  },
+  "agents": {
+    "interview": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "concept": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "chapters": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "characters": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "artdirector": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "screenwriter": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    },
+    "storyboard": {
+      "success": false,
+      "error": "HTTP 400: Bad Request",
+      "elapsed": "0.0"
+    }
+  },
+  "totalTime": "0.0"
+}
