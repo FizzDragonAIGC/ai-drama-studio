@@ -1,11 +1,9 @@
-const https = require('https');
 const http = require('http');
 
 const BACKEND_HOST = '34.58.33.115';
 const BACKEND_PORT = 3001;
 
 module.exports = async (req, res) => {
-  // 设置CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -15,9 +13,13 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const path = '/api/' + (req.query.path?.join('/') || '');
+  // 构建后端路径
+  const pathArray = req.query.path || [];
+  const path = '/api/' + pathArray.join('/');
   
-  return new Promise((resolve, reject) => {
+  console.log(`Proxying ${req.method} ${path}`);
+
+  return new Promise((resolve) => {
     const options = {
       hostname: BACKEND_HOST,
       port: BACKEND_PORT,
@@ -26,7 +28,7 @@ module.exports = async (req, res) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      timeout: 180000 // 3分钟超时
+      timeout: 180000
     };
 
     const proxyReq = http.request(options, (proxyRes) => {
@@ -44,17 +46,18 @@ module.exports = async (req, res) => {
     });
 
     proxyReq.on('error', (err) => {
+      console.error('Backend error:', err.message);
       res.status(502).json({ error: 'Backend connection failed: ' + err.message });
       resolve();
     });
 
     proxyReq.on('timeout', () => {
       proxyReq.destroy();
-      res.status(504).json({ error: 'Backend timeout' });
+      res.status(504).json({ error: 'Backend timeout (180s)' });
       resolve();
     });
 
-    if (req.body) {
+    if (req.body && Object.keys(req.body).length > 0) {
       proxyReq.write(JSON.stringify(req.body));
     }
     proxyReq.end();
