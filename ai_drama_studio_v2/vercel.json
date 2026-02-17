@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "workbench/v3/index.html", "use": "@vercel/static" },
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/workbench/v3/index.html" }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 180
+    }
+  }
+}
