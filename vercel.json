@@ -1,9 +1,16 @@
 {
   "version": 2,
+  "builds": [
+    { "src": "ai_drama_studio_v2/workbench/v3/index.html", "use": "@vercel/static" },
+    { "src": "ai_drama_studio_v2/api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/ai_drama_studio_v2/api/$1" },
+    { "src": "/(.*)", "dest": "/ai_drama_studio_v2/workbench/v3/index.html" }
+  ],
   "functions": {
-    "api/*.js": {
-      "memory": 128,
-      "maxDuration": 30
+    "ai_drama_studio_v2/api/**/*.js": {
+      "maxDuration": 180
     }
   }
 }
