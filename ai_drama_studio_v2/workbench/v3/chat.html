@@ -2869,8 +2869,11 @@ async function runChaptersStep() {
             interview: state.interview
         };
         
+        // 🔧 修复Bug#3: 防止null.substring()错误
+        const novelText = state.novel || writeState.idea?.premise || writeState.outline?.synopsis || '';
+        
         updateProgress(30);
-        const result = await callAgent('narrative', state.novel.substring(0, 5000), context);
+        const result = await callAgent('narrative', novelText.substring(0, 5000), context);
         updateProgress(100);
         
         state.chapters = safeJSONParse(result, 'chapters');
@@ -2906,8 +2909,11 @@ async function runCharacterStep() {
             chapters: state.chapters
         };
         
+        // 🔧 修复Bug#3: 防止null.substring()错误
+        const novelText = state.novel || writeState.outline?.synopsis || JSON.stringify(state.chapters) || '';
+        
         updateProgress(30);
-        const result = await callAgent('character', state.novel.substring(0, 4000), context);
+        const result = await callAgent('character', novelText.substring(0, 4000), context);
         updateProgress(100);
         
         state.characters = safeJSONParse(result, 'characters');
@@ -2943,8 +2949,11 @@ async function runStoryboardStep() {
             characters: state.characters
         };
         
+        // 🔧 修复Bug#3: 防止null.substring()错误
+        const novelText = state.novel || writeState.outline?.synopsis || JSON.stringify(state.chapters) || '';
+        
         updateProgress(30);
-        const result = await callAgent('storyboard', state.novel.substring(0, 3000), context);
+        const result = await callAgent('storyboard', novelText.substring(0, 3000), context);
         updateProgress(100);
         
         // 解析分镜结果
