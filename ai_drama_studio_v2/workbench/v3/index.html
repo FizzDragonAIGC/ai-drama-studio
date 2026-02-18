@@ -703,9 +703,58 @@
             .header{padding:8px}
             .logo{font-size:16px}
             .main{padding:6px}
-            .center-panel{padding:10px}
+            .center-panel{padding:10px;padding-bottom:70px}
             .chapter-grid{grid-template-columns:repeat(3,1fr)!important}
             .btn{padding:8px 12px;font-size:12px}
+        }
+        
+        /* 🆕 移動端底部步驟導航 */
+        .mobile-step-nav{
+            display:none;
+            position:fixed;
+            bottom:0;
+            left:0;
+            right:0;
+            background:var(--surface);
+            border-top:1px solid var(--border);
+            padding:8px 4px;
+            z-index:1000;
+            box-shadow:0 -2px 10px rgba(0,0,0,.5);
+        }
+        .mobile-step-nav .nav-inner{
+            display:flex;
+            justify-content:space-around;
+            align-items:center;
+            max-width:600px;
+            margin:0 auto;
+        }
+        .mobile-step-nav .nav-item{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            padding:4px 6px;
+            border-radius:6px;
+            cursor:pointer;
+            transition:all .2s;
+            min-width:32px;
+        }
+        .mobile-step-nav .nav-item.active{
+            background:var(--primary);
+            color:#fff;
+        }
+        .mobile-step-nav .nav-item.done{
+            color:var(--success);
+        }
+        .mobile-step-nav .nav-item.locked{
+            color:var(--dim);
+            opacity:0.5;
+            cursor:not-allowed;
+        }
+        .mobile-step-nav .nav-icon{font-size:18px}
+        .mobile-step-nav .nav-label{font-size:8px;margin-top:2px;white-space:nowrap}
+        @media(max-width:768px){
+            .mobile-step-nav{display:block}
+            .center-panel{padding-bottom:80px}
         }
     </style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -974,6 +1023,49 @@ ${sampleEnd ? `\n---結尾---\n${sampleEnd}` : ''}
 3. 請用繁體中文回答`;
 }
 
+// JSON修复函数 - 修复DeepSeek偶尔输出的格式问题
+function repairJSON(jsonStr) {
+    if (!jsonStr || typeof jsonStr !== 'string') return jsonStr;
+    
+    let fixed = jsonStr;
+    
+    // 模式1: "key":值" → "key":"值"  (缺少开始引号，有结束引号)
+    fixed = fixed.replace(/"(\w+)":\s*([^"\s\[\]{},][^"]*?)"/g, '"$1": "$2"');
+    
+    // 模式2: "key":值, → "key":"值",  (完全没引号，后跟逗号/括号)
+    fixed = fixed.replace(/"(\w+)":\s*([^"\s\[\]{},][^,}\]]*?)([,}\]])/g, (match, key, value, end) => {
+        // 跳过数字、布尔、null
+        if (/^(true|false|null|-?\d+\.?\d*)$/i.test(value.trim())) return match;
+        return `"${key}": "${value.trim()}"${end}`;
+    });
+    
+    // 清理末尾逗号: ,} → }
+    fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
+    
+    // 修复单引号: 'value' → "value"  
+    fixed = fixed.replace(/'([^']+)'/g, '"$1"');
+    
+    return fixed;
+}
+
+// 安全JSON解析（带修复）
+function safeJSONParse(jsonStr, context = 'unknown') {
+    try {
+        return JSON.parse(jsonStr);
+    } catch (e1) {
+        console.warn(`⚠️ ${context} JSON解析失败，尝试修复...`);
+        try {
+            const fixed = repairJSON(jsonStr);
+            const result = JSON.parse(fixed);
+            console.log(`✅ ${context} JSON修复成功`);
+            return result;
+        } catch (e2) {
+            console.error(`❌ ${context} JSON修复失败:`, e1.message);
+            throw e1;
+        }
+    }
+}
+
 // 解析AI返回的分析结果
 function parseAIAnalysis(text) {
     try {
@@ -984,7 +1076,7 @@ function parseAIAnalysis(text) {
         
         if (jsonMatch) {
             const jsonStr = jsonMatch[1] || jsonMatch[0];
-            return JSON.parse(jsonStr);
+            return safeJSONParse(jsonStr, 'AIAnalysis');
         }
     } catch (e) {
         console.error('解析AI分析失敗:', e);
@@ -1523,10 +1615,53 @@ function showStep(step){
 }
 
 // ==================== API 配置 ====================
-// 后端服务器地址 - 开发环境
-const API_BASE = '/api';
-let apiMode = 'auto'; // 全自動模式，不支持手動
+// 后端服务器地址配置
+// 优先级: URL参数 > localStorage > 自动检测
+const API_ENDPOINTS = [
+    '/api',                           // 同源部署 (Vercel/本地)
+    'http://34.58.33.115:3001/api',   // GCP服务器
+    'https://ai-drama-api.onrender.com/api'  // 备用 (Render)
+];
+
+// 从URL参数或localStorage获取API地址
+function getApiBase() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const apiParam = urlParams.get('api');
+    if (apiParam) {
+        localStorage.setItem('ai_drama_api', apiParam);
+        return apiParam;
+    }
+    return localStorage.getItem('ai_drama_api') || '/api';
+}
+
+let API_BASE = getApiBase();
+let apiMode = 'auto'; // 全自動模式
 let currentProvider = 'deepseek'; // 當前Provider
+
+// 自动检测可用的API端点
+async function detectApiEndpoint() {
+    for (const endpoint of API_ENDPOINTS) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 3000);
+            const res = await fetch(`${endpoint}/health`, { 
+                signal: controller.signal,
+                mode: 'cors'
+            });
+            clearTimeout(timeout);
+            if (res.ok) {
+                console.log(`✅ API端点可用: ${endpoint}`);
+                API_BASE = endpoint;
+                localStorage.setItem('ai_drama_api', endpoint);
+                return endpoint;
+            }
+        } catch (e) {
+            console.log(`❌ API端点不可用: ${endpoint}`);
+        }
+    }
+    console.warn('⚠️ 所有API端点都不可用，使用默认');
+    return '/api';
+}
 
 // 切換AI Provider
 async function switchProvider(provider) {
@@ -1626,9 +1761,9 @@ function stopCountdown() {
     }
 }
 
-async function callAgent(endpoint, data, maxRetries = 2) {
+async function callAgent(endpoint, data, maxRetries = 3) {
     const startTime = Date.now();
-    const timeoutMs = data.timeout || 90000; // 默認90秒，可通過data.timeout自定義
+    const timeoutMs = data.timeout || 120000; // 默認120秒（2分鐘），更寬鬆
     console.log(`[API] 開始調用 ${endpoint}，數據大小: ${JSON.stringify(data).length} 字節，超時: ${timeoutMs/1000}秒`);
     
     for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
@@ -1636,6 +1771,10 @@ async function callAgent(endpoint, data, maxRetries = 2) {
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
         
         try {
+            if (attempt > 1) {
+                console.log(`[API] ${endpoint} 第${attempt}次嘗試...`);
+            }
+            
             const res = await fetch(`${API_BASE}/${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1648,10 +1787,10 @@ async function callAgent(endpoint, data, maxRetries = 2) {
             
             if (!res.ok) {
                 const errText = await res.text();
-                // 500/502/503錯誤可重試
-                if ([500, 502, 503].includes(res.status) && attempt <= maxRetries) {
-                    console.log(`[API] ${endpoint} 返回 ${res.status}，第${attempt}次重試...`);
-                    await new Promise(r => setTimeout(r, 2000 * attempt)); // 等待2-4秒
+                // 500/502/503/504錯誤可重試
+                if ([500, 502, 503, 504].includes(res.status) && attempt <= maxRetries) {
+                    console.log(`[API] ${endpoint} 返回 ${res.status}，等待重試...`);
+                    await new Promise(r => setTimeout(r, 3000 * attempt)); // 等待3-9秒
                     continue;
                 }
                 throw new Error(`API錯誤 ${res.status}: ${errText.substring(0,200)}`);
@@ -1661,15 +1800,15 @@ async function callAgent(endpoint, data, maxRetries = 2) {
             clearTimeout(timeoutId);
             const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
             
-            if (err.name === 'AbortError') {
-                throw new Error(`請求超時（${timeoutMs/1000}秒），已等待 ${elapsed}秒。`);
+            // 超時或網絡錯誤都重試
+            if ((err.name === 'AbortError' || err.message.includes('Network') || err.message.includes('fetch')) && attempt <= maxRetries) {
+                console.log(`[API] ${endpoint} 連接問題，第${attempt}次重試...`);
+                await new Promise(r => setTimeout(r, 3000 * attempt)); // 等待3-9秒
+                continue;
             }
             
-            // 網絡錯誤可重試
-            if (err.message.includes('Network') && attempt <= maxRetries) {
-                console.log(`[API] ${endpoint} 網絡錯誤，第${attempt}次重試...`);
-                await new Promise(r => setTimeout(r, 2000 * attempt));
-                continue;
+            if (err.name === 'AbortError') {
+                throw new Error(`請求超時（${timeoutMs/1000}秒），已等待 ${elapsed}秒。請檢查網絡或重試。`);
             }
             
             console.error(`[API] ${endpoint} 錯誤 (${elapsed}秒):`, err);
@@ -1679,11 +1818,11 @@ async function callAgent(endpoint, data, maxRetries = 2) {
 }
 
 async function checkApiHealth() {
-    // 重試3次
-    for (let i = 0; i < 3; i++) {
+    // 重試5次，更寬鬆的超時
+    for (let i = 0; i < 5; i++) {
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超時
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15秒超時
             const res = await fetch(`${API_BASE}/health`, { signal: controller.signal });
             clearTimeout(timeoutId);
             const data = await res.json();
@@ -1691,9 +1830,9 @@ async function checkApiHealth() {
             if (data.status === 'ok' && (data.hasApiKey || data.hasToken || data.gatewayConnected)) {
                 return true;
             }
-        } catch {
-            console.log(`Health check attempt ${i+1} failed, retrying...`);
-            await new Promise(r => setTimeout(r, 1000)); // 等1秒再試
+        } catch(e) {
+            console.log(`Health check attempt ${i+1} failed:`, e.message, 'retrying...');
+            await new Promise(r => setTimeout(r, 2000)); // 等2秒再試
         }
     }
     return false;
@@ -7644,15 +7783,25 @@ function renderAIStyleMode(){
         
         ${rec.final_suggestion ? `
             <div style="margin-top:16px;padding:14px;background:rgba(255,10,53,.1);border:1px solid var(--primary);border-radius:8px">
-                <div style="font-weight:600;margin-bottom:8px">✅ 最終推薦：${rec.final_suggestion.primary_style}</div>
+                <div style="font-weight:600;margin-bottom:8px">✅ 最終推薦：${rec.final_suggestion.style_name || rec.final_suggestion.primary_style || rec.recommendations?.[0]?.style_name || '綜合推薦'}</div>
                 <div style="background:var(--bg);padding:8px;border-radius:4px;font-family:monospace;font-size:10px;color:var(--dim)">
-                    ${rec.final_suggestion.full_prompt}
+                    ${rec.final_suggestion.full_prompt || rec.recommendations?.[0]?.prompt_keywords || ''}
                 </div>
                 <button onclick="applyAIFinalSuggestion()" class="btn btn-primary" style="width:100%;margin-top:10px">
                     ✅ 應用此推薦畫風
                 </button>
             </div>
-        ` : ''}
+        ` : (rec.recommendations?.length > 0 ? `
+            <div style="margin-top:16px;padding:14px;background:rgba(255,10,53,.1);border:1px solid var(--primary);border-radius:8px">
+                <div style="font-weight:600;margin-bottom:8px">✅ 最終推薦：${rec.recommendations[0].style_name}</div>
+                <div style="background:var(--bg);padding:8px;border-radius:4px;font-family:monospace;font-size:10px;color:var(--dim)">
+                    ${rec.recommendations[0].prompt_keywords || ''}
+                </div>
+                <button onclick="selectAIRecommendation(0)" class="btn btn-primary" style="width:100%;margin-top:10px">
+                    ✅ 應用此推薦畫風
+                </button>
+            </div>
+        ` : '')}
         
         <button onclick="aiStyleRecommendations=null;document.getElementById('contentArea').innerHTML=renderArtStyleStep()" class="btn" style="width:100%;margin-top:10px">
             🔄 重新分析
@@ -8134,6 +8283,10 @@ async function runDesignAgent(){
         addStep('🏛️', '設計場景氛圍、角色服裝、關鍵道具...');
         progressBar.style.width = '60%';
         
+        // 🎨 獲取用戶選擇的畫風
+        const artStylePrompt = state.artStyle?.prompt || state.artStyle?.name || '';
+        const artStyleName = state.artStyle?.name || '電影級';
+        
         startCountdown('design', stepsEl);
         const apiResponse = await callAgent('production_design', {
             novel: state.novel.text.substring(0, 6000),  // 減少內容防超時
@@ -8143,6 +8296,8 @@ async function runDesignAgent(){
             chapters: state.chapters,
             characters: state.characters,
             interview: state.interview || {},  // 傳遞訪談創意方向
+            artStyle: artStylePrompt,  // 🆕 傳入畫風
+            artStyleName: artStyleName,
             timeout: 300000  // 5分鐘
         });
         stopCountdown();
@@ -8160,17 +8315,29 @@ async function runDesignAgent(){
         } catch(e){ result = apiResponse; }
         
         // 解析美術總監返回的多種格式
-        if(result.scene_design || result.costume_design || result.prop_design){
-            // 新格式：包含scene_design, costume_design, prop_design
+        if(result.costumes || result.scenes || result.props){
+            // 🆕 新格式：直接包含costumes, scenes, props數組
+            state.costumes = result.costumes || [];
+            state.scenes = result.scenes || [];
+            state.props = result.props || [];
+            state.designResult = result;
+            console.log('[服化道] 解析新格式:', { costumes: state.costumes.length, scenes: state.scenes.length, props: state.props.length });
+        } else if(result.scene_design || result.costume_design || result.prop_design){
+            // 舊格式：包含scene_design, costume_design, prop_design
             state.scenes = result.scene_design?.scenes || [result.scene_design] || [];
             state.costumes = result.costume_design?.characters || result.costume_design || [];
             state.props = result.prop_design?.key_items || result.prop_design || [];
             state.visualStyle = result.visual_style || result.lighting_design || {};
-            state.designResult = result;  // 保存完整結果
+            state.designResult = result;
         } else if(Array.isArray(result)){
             state.scenes = result;
+            state.costumes = [];
+            state.props = [];
+            state.designResult = { scenes: result };
         } else {
             state.scenes = result.scenes || [result];
+            state.costumes = result.costumes || [];
+            state.props = result.props || [];
             state.designResult = result;
         }
         const sceneCount = state.scenes?.length || 0;
@@ -8188,6 +8355,39 @@ async function runDesignAgent(){
 }
 
 // 服化道結果渲染 - 簡潔版，專注於服裝/場景/道具的AI Prompt
+// 複製服裝Prompt
+function copyCostumePrompt(index){
+    const result = state.designResult || {};
+    const costumesData = result.costumes || result.costume_design?.characters || result.costume_design || state.costumes || [];
+    const costume = costumesData[index];
+    if(costume?.ai_prompt){
+        navigator.clipboard.writeText(costume.ai_prompt);
+        showToast('✅ 已複製服裝Prompt');
+    }
+}
+
+// 複製場景Prompt
+function copyScenePrompt(index){
+    const result = state.designResult || {};
+    const scenesData = result.scenes || result.scene_design?.scenes || result.scene_design || state.scenes || [];
+    const scene = scenesData[index];
+    if(scene?.ai_prompt){
+        navigator.clipboard.writeText(scene.ai_prompt);
+        showToast('✅ 已複製場景Prompt');
+    }
+}
+
+// 複製道具Prompt
+function copyPropPrompt(index){
+    const result = state.designResult || {};
+    const propsData = result.props || result.prop_design?.key_items || result.prop_design || state.props || [];
+    const prop = propsData[index];
+    if(prop?.ai_prompt){
+        navigator.clipboard.writeText(prop.ai_prompt);
+        showToast('✅ 已複製道具Prompt');
+    }
+}
+
 function renderDesignResult(){
     const result = state.designResult || {};
     
@@ -8270,7 +8470,24 @@ function renderDesignResult(){
                                 `).join('')}
                             </div>
                         ` : `
-                            <p style="font-size:12px">${costume.description || costume.garments || JSON.stringify(costume).substring(0,200)}</p>
+                            <div style="background:var(--bg);border-radius:8px;padding:12px;border-left:3px solid var(--primary)">
+                                ${costume.occasion ? `<p style="font-size:12px;margin-bottom:6px"><strong>📍 場合：</strong>${costume.occasion}</p>` : ''}
+                                ${costume.color ? `<p style="font-size:12px;margin-bottom:6px"><strong>🎨 色彩：</strong>${costume.color}</p>` : ''}
+                                ${costume.material ? `<p style="font-size:12px;margin-bottom:6px"><strong>🧵 材質：</strong>${costume.material}</p>` : ''}
+                                ${costume.accessories ? `<p style="font-size:12px;margin-bottom:6px"><strong>💎 配飾：</strong>${costume.accessories}</p>` : ''}
+                                ${costume.state_change ? `<p style="font-size:12px;margin-bottom:6px"><strong>🔄 狀態變化：</strong>${costume.state_change}</p>` : ''}
+                                ${costume.ai_prompt ? `
+                                    <div style="margin-top:10px;background:linear-gradient(135deg,rgba(255,10,53,.05),var(--surface2));border:1px solid var(--primary);border-radius:6px;padding:10px">
+                                        <div style="font-size:10px;color:var(--primary);font-weight:600;margin-bottom:4px">🖼️ AI Prompt</div>
+                                        <div style="font-size:11px;line-height:1.6;color:var(--text)">${escapeHtml(costume.ai_prompt)}</div>
+                                        <button onclick="copyCostumePrompt(${ci})" 
+                                            style="margin-top:8px;padding:4px 12px;font-size:10px;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer">
+                                            📋 複製Prompt
+                                        </button>
+                                    </div>
+                                ` : ''}
+                                ${costume.description || (!costume.occasion && !costume.color) ? `<p style="font-size:12px">${costume.description || costume.garments || ''}</p>` : ''}
+                            </div>
                         `}
                     </div>
                 `).join('')}
@@ -8285,13 +8502,20 @@ function renderDesignResult(){
                         <div class="item-card">
                             <h5 style="color:var(--primary)">${scene.icon || '📍'} ${scene.name || scene.location || '場景' + (si+1)}</h5>
                             <p style="font-size:12px;margin:8px 0">${scene.brief || scene.description || scene.atmosphere || ''}</p>
-                            ${scene.structure ? `<p style="font-size:11px"><strong>🏗️ 結構：</strong>${scene.structure}</p>` : ''}
+                            ${scene.time ? `<p style="font-size:11px"><strong>🕐 時間：</strong>${scene.time}</p>` : ''}
                             ${scene.lighting ? `<p style="font-size:11px"><strong>💡 光線：</strong>${scene.lighting}</p>` : ''}
+                            ${scene.color_tone ? `<p style="font-size:11px"><strong>🎨 色調：</strong>${scene.color_tone}</p>` : ''}
+                            ${scene.key_elements ? `<p style="font-size:11px"><strong>🔑 關鍵元素：</strong>${Array.isArray(scene.key_elements) ? scene.key_elements.join('、') : scene.key_elements}</p>` : ''}
+                            ${scene.structure ? `<p style="font-size:11px"><strong>🏗️ 結構：</strong>${scene.structure}</p>` : ''}
                             ${scene.props ? `<p style="font-size:11px"><strong>🎭 道具：</strong>${Array.isArray(scene.props) ? scene.props.join('、') : scene.props}</p>` : ''}
                             ${scene.ai_prompt ? `
-                                <div style="margin-top:8px;background:var(--bg);padding:8px;border-radius:4px">
-                                    <div style="font-size:10px;color:var(--primary)">🖼️ AI Prompt</div>
-                                    <div style="font-size:11px">${scene.ai_prompt}</div>
+                                <div style="margin-top:10px;background:linear-gradient(135deg,rgba(255,10,53,.05),var(--surface2));border:1px solid var(--primary);border-radius:6px;padding:10px">
+                                    <div style="font-size:10px;color:var(--primary);font-weight:600;margin-bottom:4px">🖼️ AI Prompt</div>
+                                    <div style="font-size:11px;line-height:1.6">${escapeHtml(scene.ai_prompt)}</div>
+                                    <button onclick="copyScenePrompt(${si})" 
+                                        style="margin-top:8px;padding:4px 12px;font-size:10px;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer">
+                                        📋 複製Prompt
+                                    </button>
                                 </div>
                             ` : ''}
                         </div>
@@ -8308,9 +8532,21 @@ function renderDesignResult(){
                     ${propsData.slice(0, 8).map((prop, pi) => `
                         <div class="item-card">
                             <h5>${prop.name || prop.category || '道具' + (pi+1)}</h5>
-                            <p style="font-size:12px">${prop.description || prop.details || ''}</p>
+                            <p style="font-size:12px">${prop.description || prop.details || prop.appearance || ''}</p>
+                            ${prop.symbolism ? `<p style="font-size:11px"><strong>💫 象徵：</strong>${prop.symbolism}</p>` : ''}
                             ${prop.significance ? `<p style="font-size:11px;color:var(--dim)">📖 ${prop.significance}</p>` : ''}
+                            ${prop.story_function ? `<p style="font-size:11px"><strong>📖 功能：</strong>${prop.story_function}</p>` : ''}
                             ${prop.items ? `<p style="font-size:11px"><strong>物品：</strong>${Array.isArray(prop.items) ? prop.items.join('、') : prop.items}</p>` : ''}
+                            ${prop.ai_prompt ? `
+                                <div style="margin-top:8px;background:linear-gradient(135deg,rgba(255,10,53,.05),var(--surface2));border:1px solid var(--primary);border-radius:6px;padding:8px">
+                                    <div style="font-size:10px;color:var(--primary);font-weight:600;margin-bottom:4px">🖼️ AI Prompt</div>
+                                    <div style="font-size:10px;line-height:1.5">${escapeHtml(prop.ai_prompt)}</div>
+                                    <button onclick="copyPropPrompt(${pi})" 
+                                        style="margin-top:6px;padding:3px 10px;font-size:9px;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer">
+                                        📋 複製
+                                    </button>
+                                </div>
+                            ` : ''}
                         </div>
                     `).join('')}
                 </div>
@@ -8459,6 +8695,13 @@ function selectChapterForScript(index){
 }
 
 async function runScriptAgent(){
+    // 🔗 統一使用帶上下文的版本，確保章節關聯
+    const chapterIndex = parseInt(document.getElementById('scriptChapterSelect')?.value || state.selectedScriptChapter || 0);
+    return runScriptAgentWithContext(chapterIndex);
+}
+
+// 舊版本保留但不使用（已被上下文版本替代）
+async function runScriptAgentOld(){
     const ui = document.getElementById('scriptAgentUI');
     const chapterIndex = parseInt(document.getElementById('scriptChapterSelect')?.value || state.selectedScriptChapter || 0);
     const chapter = state.chapters[chapterIndex];
@@ -8566,32 +8809,62 @@ function renderScriptsResult(){
                     ${chapters.map((ch,i) => {
                         const hasScript = scripts[i] && scripts[i].chapter;
                         const isViewing = currentView === i;
-                        return `<div onclick="viewOrGenerateScript(${i})" style="
-                            padding:10px 6px;border-radius:6px;text-align:center;cursor:pointer;
-                            background:${hasScript ? (isViewing ? 'var(--primary)' : 'var(--success)') : 'var(--surface2)'};
-                            color:${hasScript ? '#fff' : 'var(--text)'};
+                        // 🔒 順序邏輯：找到下一個可生成的章節
+                        const lastCompletedIdx = scripts.reduce((max, s, idx) => (s && s.chapter) ? idx : max, -1);
+                        const nextToGenerate = lastCompletedIdx + 1;
+                        const canGenerate = i <= nextToGenerate; // 只有下一個或已完成的可點擊
+                        const isNextUp = (i === nextToGenerate && !hasScript); // 下一個待生成
+                        
+                        return `<div onclick="${canGenerate ? `viewOrGenerateScript(${i})` : `showToast('🔒 請先按順序生成第 ${nextToGenerate+1} 章','warning')`}" style="
+                            padding:10px 6px;border-radius:6px;text-align:center;
+                            cursor:${canGenerate ? 'pointer' : 'not-allowed'};
+                            background:${hasScript ? (isViewing ? 'var(--primary)' : 'var(--success)') : (isNextUp ? 'linear-gradient(135deg,var(--primary),var(--primary-dark))' : 'var(--surface2)')};
+                            color:${(hasScript || isNextUp) ? '#fff' : 'var(--dim)'};
                             border:${isViewing ? '2px solid #fff' : '1px solid var(--border)'};
+                            opacity:${canGenerate ? 1 : 0.5};
                             transition:all .2s;
                         ">
                             <div style="font-size:12px;font-weight:600">${i+1}</div>
-                            <div style="font-size:9px;margin-top:2px">${hasScript ? '✅' : '⏳'}</div>
+                            <div style="font-size:9px;margin-top:2px">${hasScript ? '✅' : (isNextUp ? '🚀' : '🔒')}</div>
                         </div>`;
                     }).join('')}
+                </div>
+                <div style="font-size:11px;color:var(--dim);margin-top:8px;text-align:center">
+                    🔗 章節必須按順序生成，確保劇情連貫 | ✅已完成 🚀下一章 🔒等待中
                 </div>
             </div>
             
             <!-- 當前查看的劇本 -->
             <div id="scriptDisplay">
-                ${scripts[currentView] && scripts[currentView].chapter
-                    ? renderScriptDetailEditable(scripts[currentView], currentView)
-                    : `<div style="text-align:center;padding:40px;background:var(--surface2);border-radius:8px">
+                ${(() => {
+                    const hasScript = scripts[currentView] && scripts[currentView].chapter;
+                    if(hasScript) return renderScriptDetailEditable(scripts[currentView], currentView);
+                    
+                    // 檢查是否可以生成（順序檢查）
+                    const lastCompletedIdx = scripts.reduce((max, s, idx) => (s && s.chapter) ? idx : max, -1);
+                    const canGenerate = currentView <= lastCompletedIdx + 1;
+                    const needPrevChapter = currentView > 0 && (!scripts[currentView-1] || !scripts[currentView-1].chapter);
+                    
+                    if(needPrevChapter){
+                        return `<div style="text-align:center;padding:40px;background:var(--surface2);border-radius:8px">
+                            <div style="font-size:48px;margin-bottom:16px">🔒</div>
+                            <div style="font-weight:600;margin-bottom:8px;color:var(--warning)">請先生成第 ${currentView} 章</div>
+                            <div style="font-size:12px;color:var(--dim);margin-bottom:16px">章節必須按順序生成，確保劇情連貫</div>
+                            <button class="btn" onclick="viewOrGenerateScript(${currentView-1})" style="margin-top:12px">
+                                ← 前往第 ${currentView} 章
+                            </button>
+                        </div>`;
+                    }
+                    
+                    return `<div style="text-align:center;padding:40px;background:var(--surface2);border-radius:8px">
                         <div style="font-size:48px;margin-bottom:16px">📝</div>
                         <div style="font-weight:600;margin-bottom:8px">第${currentView+1}章 尚未生成劇本</div>
+                        ${currentView > 0 ? `<div style="font-size:11px;color:var(--success);margin-bottom:12px">🔗 將自動銜接第 ${currentView} 章結尾</div>` : ''}
                         <button class="btn btn-primary" onclick="generateScriptForChapter(${currentView})" style="margin-top:12px">
                             🚀 生成本章劇本 (20⚡)
                         </button>
-                    </div>`
-                }
+                    </div>`;
+                })()}
             </div>
             
             <div class="btn-group" style="margin-top:20px">
@@ -8610,11 +8883,170 @@ function viewOrGenerateScript(index){
     document.getElementById('contentArea').innerHTML = renderScriptsResult();
 }
 
-// 生成指定章節劇本
+// 生成指定章節劇本（帶前後章節關聯）
 async function generateScriptForChapter(index){
+    // 🔒 順序檢查：必須按順序生成，確保章節關聯
+    if(index > 0){
+        const prevScript = state.scripts?.[index - 1];
+        if(!prevScript || !prevScript.rawText){
+            showToast(`⚠️ 請先生成第 ${index} 章劇本！章節必須按順序生成以確保劇情連貫。`, 'warning');
+            // 高亮前一章
+            state.viewingScriptIndex = index - 1;
+            document.getElementById('contentArea').innerHTML = renderScriptsResult();
+            return;
+        }
+    }
+    
     state.selectedScriptChapter = index;
-    document.getElementById('scriptChapterSelect').value = index;
-    await runScriptAgent();
+    
+    // 安全設置（元素可能不存在）
+    const selectEl = document.getElementById('scriptChapterSelect');
+    if(selectEl) selectEl.value = index;
+    
+    // 直接調用帶章節關聯的生成
+    await runScriptAgentWithContext(index);
+}
+
+// 帶上下文的劇本生成（章節關聯機制）
+async function runScriptAgentWithContext(chapterIndex){
+    const ui = document.getElementById('scriptAgentUI') || document.getElementById('contentArea');
+    const chapter = state.chapters[chapterIndex];
+    
+    // 🔗 章節關聯：收集前一章的劇本摘要
+    let previousContext = '';
+    if(chapterIndex > 0 && state.scripts?.[chapterIndex - 1]){
+        const prevScript = state.scripts[chapterIndex - 1];
+        const prevText = prevScript.rawText || prevScript.text || '';
+        // 取前一章最後500字作為上下文
+        previousContext = prevText.slice(-500);
+    }
+    
+    // 🔗 章節關聯：收集後一章的大綱（如果有）
+    let nextChapterHint = '';
+    if(chapterIndex < state.chapters.length - 1){
+        const nextChapter = state.chapters[chapterIndex + 1];
+        nextChapterHint = nextChapter?.title + ': ' + (nextChapter?.summary || nextChapter?.content || '').slice(0, 200);
+    }
+    
+    ui.innerHTML = `
+        <div style="background:var(--surface2);border-radius:8px;padding:20px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                <div class="loading-spinner"></div>
+                <div>
+                    <div style="font-weight:600" id="scriptStatusText">✍️ 編劇智能體 啟動中...</div>
+                    <div style="font-size:12px;color:var(--dim)" id="scriptSubStatus">第${chapterIndex+1}章：${chapter?.title}</div>
+                </div>
+            </div>
+            <div style="background:var(--bg);border-radius:4px;height:4px;overflow:hidden">
+                <div id="scriptProgressBar" style="background:var(--primary);height:100%;width:0%;transition:width .5s"></div>
+            </div>
+            <div id="scriptSteps" style="margin-top:16px;font-size:12px;color:var(--dim)"></div>
+        </div>
+    `;
+    
+    const progressBar = document.getElementById('scriptProgressBar');
+    const statusText = document.getElementById('scriptStatusText');
+    const stepsEl = document.getElementById('scriptSteps');
+    
+    const addStep = (icon, text) => {
+        stepsEl.insertAdjacentHTML('beforeend', `<div style="padding:4px 0">${icon} ${text}</div>`);
+    };
+    
+    try {
+        addStep('🔗', '正在喚醒智能體...');
+        const apiOk = await checkApiHealth();
+        progressBar.style.width = '10%';
+        if (!apiOk) throw new Error('FizzDragon 智能體連接失敗，請稍後重試');
+        addStep('✅', '智能體已就緒');
+        
+        if(previousContext) addStep('📖', `載入前一章上下文 (${previousContext.length}字)`);
+        if(nextChapterHint) addStep('🔮', '預讀下一章大綱以確保銜接');
+        
+        addStep('✍️', '編劇智能體正在改編劇本...');
+        await sleep(200);
+        progressBar.style.width = '40%';
+        
+        statusText.textContent = '✍️ 生成劇本...';
+        addStep('📝', `正在將「${chapter?.title}」改編為劇本格式...`);
+        
+        // 📖 提取本章對應的原文內容
+        const novelText = state.novel?.text || '';
+        const chapterContent = chapter?.content || chapter?.summary || '';
+        // 如果有原始章節標記，嘗試提取原文片段
+        let originalContent = chapterContent;
+        if(chapter?.originalChapters && novelText){
+            // 提取原始章節範圍的內容（每集約2000字）
+            const startRatio = chapterIndex / state.chapters.length;
+            const endRatio = (chapterIndex + 1) / state.chapters.length;
+            const startPos = Math.floor(novelText.length * startRatio);
+            const endPos = Math.floor(novelText.length * endRatio);
+            originalContent = novelText.substring(startPos, Math.min(endPos, startPos + 4000));
+        } else if(novelText && !chapterContent){
+            // 按比例切分原文
+            const chunkSize = Math.ceil(novelText.length / state.chapters.length);
+            const startPos = chapterIndex * chunkSize;
+            originalContent = novelText.substring(startPos, startPos + 4000);
+        }
+        
+        startCountdown('script', stepsEl);
+        const apiResponse = await callAgent('script', {
+            chapter: chapter,
+            chapterIndex: chapterIndex,
+            novel: state.novel?.title,
+            novelContent: originalContent,  // 🆕 傳入原文內容！
+            concept: state.concept,
+            characters: state.characters,
+            interview: state.interview || {},
+            // 🔗 章節關聯數據
+            previousChapterEnding: previousContext,
+            nextChapterHint: nextChapterHint,
+            totalChapters: state.chapters.length,
+            timeout: 300000
+        });
+        stopCountdown();
+        
+        progressBar.style.width = '90%';
+        
+        let result;
+        const rawResultText = apiResponse.result || apiResponse;
+        try {
+            const resultText = typeof rawResultText === 'string' ? rawResultText : JSON.stringify(rawResultText);
+            if(typeof rawResultText === 'string'){
+                result = JSON.parse(resultText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim());
+            } else {
+                result = rawResultText;
+            }
+        } catch(e){ 
+            result = { chapter: chapterIndex+1, scenes: [], rawText: rawResultText };
+        }
+        
+        result.rawText = typeof rawResultText === 'string' ? rawResultText : JSON.stringify(rawResultText, null, 2);
+        result.chapter = chapterIndex + 1;
+        
+        if(!state.scripts) state.scripts = [];
+        state.scripts[chapterIndex] = result;
+        
+        addStep('✅', '劇本生成完成');
+        progressBar.style.width = '100%';
+        statusText.textContent = '✅ 劇本完成！';
+        
+        // 刷新顯示
+        setTimeout(() => {
+            state.viewingScriptIndex = chapterIndex;
+            document.getElementById('contentArea').innerHTML = renderScriptsResult();
+        }, 500);
+        
+    } catch (err) {
+        console.error('[Script Error]', err);
+        ui.innerHTML = `
+            <div style="background:var(--error-bg);border:1px solid var(--error);border-radius:8px;padding:20px;text-align:center">
+                <div style="font-size:32px;margin-bottom:12px">❌</div>
+                <div style="color:var(--error);font-weight:600;margin-bottom:8px">劇本生成失敗</div>
+                <div style="color:var(--dim);font-size:12px;margin-bottom:16px">${err.message}</div>
+                <button class="btn btn-primary" onclick="generateScriptForChapter(${chapterIndex})">🔄 重試</button>
+            </div>
+        `;
+    }
 }
 
 // 可編輯版本的劇本詳情
@@ -8624,9 +9056,10 @@ function renderScriptDetailEditable(script, index){
     text = text.replace(/\*\*/g, '').replace(/\*/g, '');
     return `
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px">
-            <div style="background:var(--primary);padding:10px 16px;color:#fff;display:flex;justify-content:space-between;align-items:center">
+            <div style="background:var(--primary);padding:10px 16px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
                 <span>📜 第${script.chapter}章 劇本</span>
-                <div style="display:flex;gap:8px">
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <button onclick="regenerateScript(${index})" style="background:rgba(255,100,100,.3);border:none;color:#fff;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px">🔄 重新生成</button>
                     <button onclick="copyScriptToClipboard(${index})" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px">📋 複製</button>
                     <button onclick="saveScriptEdit(${index})" style="background:#fff;border:none;color:var(--primary);padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600">💾 保存</button>
                 </div>
@@ -8639,6 +9072,17 @@ function renderScriptDetailEditable(script, index){
             💡 提示：可直接修改對話、動作描述、場景設定，修改後點擊「保存」
         </div>
     `;
+}
+
+// 🔄 重新生成指定章節劇本
+function regenerateScript(index){
+    if(!confirm(`確定要重新生成第 ${index+1} 章劇本嗎？\n現有內容將被覆蓋。`)) return;
+    
+    // 清除現有劇本
+    if(state.scripts) state.scripts[index] = null;
+    
+    // 重新生成
+    generateScriptForChapter(index);
 }
 
 // 保存劇本編輯
@@ -10431,8 +10875,63 @@ const DEMO_NOVEL = `《海上絲綢之路密碼》
 「一切都將重演...」她的眼神空洞而深邃，「就像千年前一樣...」
 卜夢師的銀鏈開始搖晃：「輪迴的鎖鏈，已經開始斷裂...」`;
 
+// ==================== 移動端底部導航 ====================
+function renderMobileNav(){
+    const nav = document.getElementById('mobileStepNav');
+    if(!nav) return;
+    
+    nav.innerHTML = `
+        <div class="nav-inner">
+            ${STEPS.map(s => {
+                const isDone = s.id < state.currentStep;
+                const isActive = s.id === state.currentStep;
+                const isLocked = s.id > state.currentStep;
+                let cls = 'nav-item';
+                if(isActive) cls += ' active';
+                else if(isDone) cls += ' done';
+                else if(isLocked) cls += ' locked';
+                
+                return `<div class="${cls}" onclick="${isLocked ? '' : `goToStep(${s.id})`}" title="${s.name}">
+                    <span class="nav-icon">${isDone ? '✓' : s.icon}</span>
+                    <span class="nav-label">${s.id}</span>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
+// 修改原有函數，添加移動端導航更新
+const _originalGoToStep = goToStep;
+goToStep = function(step){
+    _originalGoToStep(step);
+    renderMobileNav();
+};
+
+const _originalNextStep = nextStep;
+nextStep = function(){
+    _originalNextStep();
+    renderMobileNav();
+};
+
+const _originalPrevStep = prevStep;
+prevStep = function(){
+    _originalPrevStep();
+    renderMobileNav();
+};
+
+// 初始化時渲染移動端導航
+const _originalInit = init;
+init = function(){
+    _originalInit();
+    renderMobileNav();
+};
+
 // ==================== 初始化 ====================
 document.addEventListener('DOMContentLoaded', init);
 </script>
+
+<!-- 🆕 移動端底部步驟導航 -->
+<div class="mobile-step-nav" id="mobileStepNav"></div>
+
 </body>
 </html>
