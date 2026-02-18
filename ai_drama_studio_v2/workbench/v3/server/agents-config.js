@@ -90,7 +90,7 @@ export const AGENTS = {
 2. 針對具體元素設計問題
 3. 每個問題必須說明【為什麼問這個】和【答案會影響哪些集/場景】
 
-## 必須覆蓋的8個維度（共10-15個問題）
+## 必須覆蓋的10個維度（共12-18個問題）
 1. 🎭 角色心理 - 「為什麼這樣選擇？」→ 影響演員指導、表情設計
 2. 💔 關係衝突 - 「潛台詞是什麼？」→ 影響對白設計、鏡頭語言
 3. 🔄 情節轉折 - 「需要多少鋪墊？」→ 影響前幾集的伏筆
@@ -99,6 +99,8 @@ export const AGENTS = {
 6. 🌍 世界觀 - 「設定的邏輯是什麼？」→ 影響道具、服裝設計
 7. ✂️ 改編取捨 - 「哪些必保留？」→ 影響分集結構
 8. 🎨 風格基調 - 「參考什麼作品？」→ 影響整體美術風格
+9. ❤️ 作者心聲 - 「為什麼寫這個故事？為什麼想拍？想拍成什麼樣？」→ 影響整體調性、核心表達
+10. 👥 角色意義 - 「每個角色對你來說代表什麼？有什麼私人意義嗎？」→ 影響角色塑造深度
 
 ---
 **輸出JSON格式（直接輸出，不要markdown標記）：**
@@ -500,74 +502,40 @@ export const AGENTS = {
         name: '👔 服化道設計',
         group: '美術',
         skills: ['character_design_complete', 'cinematography_lighting'],
-        prompt: `你是服化道設計Agent（Production Designer）。負責設計故事中所有的服裝、道具、場景。
+        prompt: `你是服化道設計Agent。快速設計服裝、場景、道具。
 
-## 必須輸出JSON格式：
+## 輸出JSON（簡潔版）：
 {
   "costumes": [
-    {
-      "character": "角色名",
-      "role": "主角/配角/反派",
-      "outfits": [
-        {
-          "name": "服裝名稱（日常裝/戰鬥服/正裝等）",
-          "description": "詳細描述（100字：顏色、款式、材質、剪裁、配飾）",
-          "occasion": "適用場合",
-          "colors": ["主色", "輔色"],
-          "materials": ["材質1", "材質2"],
-          "accessories": ["配飾1", "配飾2"],
-          "ai_prompt": "英文服裝提示詞（80-120字）"
-        }
-      ],
-      "hairstyle": "髮型描述",
-      "makeup": "妝容描述（如適用）"
-    }
+    {"character": "角色名", "outfit": "服裝描述（30字）", "prompt": "英文prompt（50字）"}
   ],
   "scenes": [
-    {
-      "name": "場景名稱",
-      "type": "室內/室外",
-      "location": "地點",
-      "time_of_day": "時間",
-      "description": "詳細場景描述（150字）",
-      "key_elements": ["視覺元素1", "視覺元素2", "視覺元素3"],
-      "atmosphere": "氛圍",
-      "color_palette": ["主色", "輔色", "點綴色"],
-      "lighting": "光線設計",
-      "ai_prompt": "英文場景提示詞（100-150字）"
-    }
+    {"name": "場景名", "description": "場景描述（30字）", "prompt": "英文prompt（50字）"}
   ],
   "props": [
-    {
-      "name": "道具名稱",
-      "category": "武器/家具/交通工具/日用品/特殊道具",
-      "description": "外觀描述",
-      "significance": "戲劇意義（為什麼重要）",
-      "appears_in": ["場景1"],
-      "ai_prompt": "英文道具提示詞（50-80字）"
-    }
+    {"name": "道具名", "description": "描述", "prompt": "英文prompt（30字）"}
   ]
 }
 
-要求：
-- 每個主要角色至少2套服裝
-- 至少設計5個重要場景
-- 列出所有關鍵道具
-- 每個元素都要有可用的AI提示詞`
+要求：2-3個角色服裝 + 3個場景 + 3個道具`
     },
     
     character: {
         name: '👤 角色設計',
         group: '美術',
         skills: ['character_design_complete', 'psychology_motivation'],
-        prompt: `你是角色設計Agent。快速分析3-5個主要角色。
+        prompt: `你是角色設計Agent。必須分析所有重要角色，包括：主角、配角、反派、導師。
 
-## 輸出JSON（簡潔版）：
+## 🚨 重要：必須識別反派！
+- 誰阻礙主角？誰是對手？誰有邪惡動機？
+- 即使沒有明確反派，也要找出"對立力量"
+
+## 輸出JSON：
 {
   "characters": [
     {
       "name": "角色名",
-      "role": "主角/配角/反派",
+      "role": "主角/配角/反派/導師/對手",
       "age": "年齡",
       "appearance": "外貌描述（50字）",
       "personality": "性格特點",
@@ -575,7 +543,8 @@ export const AGENTS = {
       "fear": "害怕什麼",
       "prompt": "英文AI繪圖prompt（80字）"
     }
-  ]
+  ],
+  "antagonist_analysis": "反派/對立力量分析（誰阻礙主角？為什麼？）"
 }
 
 注意：必須分析小說中**所有有名字的角色**，不要只分析主角！`

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI番劇工作台 - FizzDragon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #ff0a35;
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --text: #ffffff;
+            --dim: #888;
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            background: 
+                radial-gradient(ellipse at 50% 0%, rgba(255,10,53,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(255,10,53,0.1) 0%, transparent 40%),
+                var(--bg);
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            letter-spacing: 8px;
+            color: var(--primary);
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+        
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #ff0a35 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--dim);
+            margin-bottom: 50px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 60px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            color: var(--primary);
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 20px 60px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(255,10,53,0.4);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 20px;
+            background: var(--surface);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: var(--bg);
+            border: 1px solid rgba(255,10,53,0.2);
+            border-radius: 12px;
+            padding: 40px 30px;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card p {
+            color: var(--dim);
+            line-height: 1.6;
+        }
+        
+        /* Books Section */
+        .books {
+            padding: 100px 20px;
+        }
+        
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .book-card {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 25px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .book-card h4 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        
+        .book-card .author {
+            font-size: 13px;
+            color: var(--dim);
+        }
+        
+        /* Slogans Section */
+        .slogans {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+        }
+        
+        .slogan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .slogan-card {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .slogan-card .version {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            color: var(--primary);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+        
+        .slogan-card blockquote {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        
+        .slogan-card .desc {
+            color: var(--dim);
+            font-size: 14px;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        footer p {
+            color: var(--dim);
+            font-size: 14px;
+        }
+        
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="logo">FizzDragon AI Studio</div>
+    <h1>AI番劇工作台</h1>
+    <p class="tagline">
+        融合 43 位 AI 智能體 × 300+ 專業技能 × 20+ 大師方法論<br>
+        讓每個創作者都能製作專業級 AI 番劇
+    </p>
+    
+    <div class="stats">
+        <div class="stat">
+            <span class="stat-number">43</span>
+            <span class="stat-label">AI 智能體</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number">300+</span>
+            <span class="stat-label">專業技能</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number">20+</span>
+            <span class="stat-label">大師方法論</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number">55</span>
+            <span class="stat-label">視覺風格</span>
+        </div>
+    </div>
+    
+    <a href="index.html" class="cta-button">開始創作</a>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">一站式 AI 番劇製作</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎬</div>
+                <h3>10 步完整流程</h3>
+                <p>從概念訪談到分鏡輸出，AI 引導你完成專業番劇製作的每一步。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>43 位專業智能體</h3>
+                <p>編劇、導演、美術、角色、分鏡⋯每個環節都有專屬 AI 專家。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>大師方法論加持</h3>
+                <p>融合 McKee、Truby、Campbell、迪士尼等專業書籍精華。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>55 種視覺風格</h3>
+                <p>從吉卜力到賽博朋克，從王家衛到 Wes Anderson，一鍵切換。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>AI Prompt 自動生成</h3>
+                <p>每個角色、場景、分鏡都自動生成可用的 AI 繪圖提示詞。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌏</div>
+                <h3>多元文化支持</h3>
+                <p>中國、日本、好萊塢、寶萊塢、歐洲藝術電影風格全覆蓋。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Books Section -->
+<section class="books">
+    <div class="container">
+        <h2 class="section-title">站在巨人的肩膀上</h2>
+        <p style="text-align:center;color:var(--dim);margin-bottom:40px">我們將這些專業書籍的精華轉化為 AI 可理解的技能</p>
+        <div class="book-grid">
+            <div class="book-card">
+                <h4>《Story》</h4>
+                <div class="author">Robert McKee — 劇本結構聖經</div>
+            </div>
+            <div class="book-card">
+                <h4>《Save the Cat》</h4>
+                <div class="author">Blake Snyder — 15 節拍結構</div>
+            </div>
+            <div class="book-card">
+                <h4>《The Hero's Journey》</h4>
+                <div class="author">Joseph Campbell — 英雄旅程原型</div>
+            </div>
+            <div class="book-card">
+                <h4>《Creating Characters with Personality》</h4>
+                <div class="author">Tom Bancroft — 迪士尼角色設計</div>
+            </div>
+            <div class="book-card">
+                <h4>《Color and Light》</h4>
+                <div class="author">James Gurney — 光影色彩大師</div>
+            </div>
+            <div class="book-card">
+                <h4>《Framed Ink》</h4>
+                <div class="author">Marcos Mateu-Mestre — 構圖敘事</div>
+            </div>
+            <div class="book-card">
+                <h4>《The Animator's Survival Kit》</h4>
+                <div class="author">Richard Williams — 動畫聖經</div>
+            </div>
+            <div class="book-card">
+                <h4>《Painting with Light》</h4>
+                <div class="author">John Alton — 電影打光藝術</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Slogans Section -->
+<section class="slogans">
+    <div class="container">
+        <h2 class="section-title">我們的願景</h2>
+        <div class="slogan-grid">
+            <div class="slogan-card">
+                <div class="version">VERSION 01 — 專業賦能</div>
+                <blockquote>「43 位 AI 專家，300 項專業技能<br>讓每個人都能創作番劇」</blockquote>
+                <p class="desc">從編劇到分鏡，從角色到場景，專業流程一站搞定</p>
+            </div>
+            <div class="slogan-card">
+                <div class="version">VERSION 02 — 大師傳承</div>
+                <blockquote>「迪士尼 × 皮克斯 × 吉卜力<br>大師方法論，AI 幫你用」</blockquote>
+                <p class="desc">20+ 本專業書籍精華，轉化為 AI 可執行的技能</p>
+            </div>
+            <div class="slogan-card">
+                <div class="version">VERSION 03 — 創意解放</div>
+                <blockquote>「你負責想像<br>AI 負責實現」</blockquote>
+                <p class="desc">專注創意本身，技術細節交給 AI 智能體</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>
+        <strong style="color:var(--text)">FizzDragon AI Studio</strong><br><br>
+        AI 番劇工作台 — 讓創作更簡單<br><br>
+        <a href="index.html">進入工作台</a> · 
+        <a href="https://fizzdragon.com" target="_blank">FizzDragon.com</a>
+    </p>
+</footer>
+
+</body>
+</html>

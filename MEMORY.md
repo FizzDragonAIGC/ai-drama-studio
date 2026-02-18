@@ -87,7 +87,14 @@
 - **技术栈**: Node.js Express + Claude OAuth
 - **OAuth方案**: 需要`@anthropic-ai/claude-code` SDK（标准SDK不支持OAuth token）
 
+## Fizziks信用系统
+- **定价**: 100 Fizziks = $1.00 USD
+- **毛利**: ~99% (API成本极低)
+- **工作流**: 手动步进，每步确认扣费
+- **小说向导**: 结构10⚡→章节15⚡→角色10⚡→场景10⚡→写作20⚡ = 65⚡/项目
+
 ## 待办
+- [ ] 修复 renderDesignResult() 服化道UI渲染
 - [ ] Moodboard多画风组合功能
 - [ ] 导出功能（Excel/JSON）
 - [ ] 对接FizzDragon平台测试
@@ -95,6 +102,7 @@
 - [ ] 清理死代码 (7个SKILLS数组, 14处重复JSON清理)
 - [ ] 配置TOGETHER_API_KEY (Moodboard图片生成)
 - [ ] 100集批次生成测试
+- [ ] Git历史清理（移除泄露的API Key）
 
 ## 技术细节
 

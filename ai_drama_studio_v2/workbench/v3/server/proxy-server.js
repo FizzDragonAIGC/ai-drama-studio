@@ -26,8 +26,8 @@ const PROVIDERS = {
     baseUrl: 'https://api.deepseek.com/v1',
     models: {
       fast: 'deepseek-chat',
-      standard: 'deepseek-reasoner',
-      best: 'deepseek-reasoner'
+      standard: 'deepseek-chat',    // 改为chat，reasoner太慢会超时
+      best: 'deepseek-chat'         // 同上
     },
     pricing: { input: 0.014/1000000, output: 0.14/1000000 }  // 超便宜!
   },
@@ -86,7 +86,7 @@ function loadSkill(skillId) {
 
 // 动态配置 - maxSkills=5确保书籍方法论被加载
 // 新增turbo模式：maxSkills=2, contentLimit=2000 更快
-let runtimeConfig = { maxSkills: 3, contentLimit: 3000 };
+let runtimeConfig = { maxSkills: 2, contentLimit: 2000 };
 
 // 模式預設
 const MODE_PRESETS = {
@@ -278,10 +278,10 @@ async function processQueue() {
   if (isProcessing || requestQueue.length === 0) return;
   
   isProcessing = true;
-  const { resolve, reject, systemPrompt, userMessage, agentId } = requestQueue.shift();
+  const { resolve, reject, systemPrompt, userMessage, agentId, options } = requestQueue.shift();
   
   try {
-    const result = await callClaudeInternal(systemPrompt, userMessage, agentId);
+    const result = await callClaudeInternal(systemPrompt, userMessage, agentId, options || {});
     resolve(result);
   } catch (err) {
     reject(err);
@@ -292,9 +292,9 @@ async function processQueue() {
 }
 
 // 包裝函數，將請求加入隊列
-async function callClaude(systemPrompt, userMessage, agentId = '') {
+async function callClaude(systemPrompt, userMessage, agentId = '', options = {}) {
   return new Promise((resolve, reject) => {
-    requestQueue.push({ resolve, reject, systemPrompt, userMessage, agentId });
+    requestQueue.push({ resolve, reject, systemPrompt, userMessage, agentId, options });
     console.log(`[Queue] Added request, queue length: ${requestQueue.length}`);
     processQueue();
   });
@@ -306,7 +306,7 @@ const anthropic = new Anthropic({
 });
 
 // ========== DeepSeek/OpenRouter API调用 (OpenAI兼容) ==========
-async function callOpenAICompatible(systemPrompt, userMessage, agentId = '') {
+async function callOpenAICompatible(systemPrompt, userMessage, agentId = '', options = {}) {
   const provider = PROVIDERS[currentProvider];
   const baseUrl = provider.baseUrl;
   const apiKey = currentProvider === 'deepseek' 
@@ -317,12 +317,12 @@ async function callOpenAICompatible(systemPrompt, userMessage, agentId = '') {
     throw new Error(`Missing API key for ${currentProvider}. Set ${currentProvider.toUpperCase()}_API_KEY in .env`);
   }
   
-  const needsLongOutput = agentId === 'storyboard' || agentId === 'narrative';
-  // storyboard和narrative用reasoner (已修复空content问题)
-  const useReasoner = false; // DISABLED: needsLongOutput && currentProvider === 'deepseek';
+  const needsLongOutput = ['storyboard', 'narrative', 'chapters', 'concept', 'screenwriter', 'character'].includes(agentId);
+  // 允许前端指定使用reasoner模式（用于逐集详写等需要高质量输出的场景）
+  const useReasoner = options.useReasoner === true && currentProvider === 'deepseek';
   const model = useReasoner ? 'deepseek-reasoner' : (needsLongOutput ? provider.models.standard : provider.models.fast);
   
-  // deepseek-reasoner支持64K输出
+  // deepseek-reasoner支持64K输出，chat限制8K
   const maxTokens = useReasoner ? 64000 : (needsLongOutput ? 8192 : 4096);
   
   console.log(`Calling ${provider.name} (${agentId || 'unknown'}) model: ${model}, max_tokens: ${maxTokens}`);
@@ -376,7 +376,7 @@ async function callOpenAICompatible(systemPrompt, userMessage, agentId = '') {
 
 // ========== Anthropic Claude API调用 ==========
 async function callAnthropicAPI(systemPrompt, userMessage, agentId = '') {
-  const needsLongOutput = agentId === 'storyboard' || agentId === 'narrative';
+  const needsLongOutput = ['storyboard', 'narrative', 'chapters', 'concept', 'screenwriter', 'character'].includes(agentId);
   let model = 'claude-3-haiku-20240307';
   let maxTokens = 4096;
   
@@ -426,7 +426,7 @@ async function callGeminiAPI(systemPrompt, userMessage, agentId = '') {
   }
   
   const provider = PROVIDERS.gemini;
-  const needsLongOutput = agentId === 'storyboard' || agentId === 'narrative';
+  const needsLongOutput = ['storyboard', 'narrative', 'chapters', 'concept', 'screenwriter', 'character'].includes(agentId);
   const model = needsLongOutput ? provider.models.standard : provider.models.fast;
   
   console.log(`Calling Gemini (${agentId || 'unknown'}) model: ${model}`);
@@ -476,21 +476,22 @@ async function callGeminiAPI(systemPrompt, userMessage, agentId = '') {
 }
 
 // ========== 统一调用入口 ==========
-async function callClaudeInternal(systemPrompt, userMessage, agentId = '') {
+async function callClaudeInternal(systemPrompt, userMessage, agentId = '', options = {}) {
   if (currentProvider === 'anthropic') {
     return callAnthropicAPI(systemPrompt, userMessage, agentId);
   } else if (currentProvider === 'gemini') {
     return callGeminiAPI(systemPrompt, userMessage, agentId);
   } else {
-    return callOpenAICompatible(systemPrompt, userMessage, agentId);
+    return callOpenAICompatible(systemPrompt, userMessage, agentId, options);
   }
 }
 
 // 单个Agent API路由
 app.post('/api/agent/:agentId', async (req, res) => {
   const { agentId } = req.params;
-  const { content, context, novel, title, userInput } = req.body;
+  const { content, context, novel, title, userInput, useReasoner } = req.body;
   const actualContent = content || novel || userInput || "";
+  const options = { useReasoner: useReasoner === true };
   
   const agent = AGENTS[agentId];
   if (!agent) {
@@ -529,7 +530,7 @@ ${skillsContent}
       ? `背景：${JSON.stringify(context)}\n\n内容：\n${truncatedContent}`
       : `内容：\n${truncatedContent}`;
     
-    const result = await callClaude(systemPrompt, userMessage, agentId);
+    const result = await callClaude(systemPrompt, userMessage, agentId, options);
     
     console.log(`[${agent.name}] Done!`);
     res.json({ 
@@ -1065,17 +1066,68 @@ app.post('/api/moodboard/analyze', async (req, res) => {
     const { image } = req.body;
     if (!image) return res.status(400).json({ error: '缺少圖片數據' });
     
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      return res.status(400).json({ error: '圖片分析需要 ANTHROPIC_API_KEY' });
+    // 優先使用 Google Gemini (免費)，其次 Anthropic
+    const geminiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    
+    if (!geminiKey && !anthropicKey) {
+      return res.status(400).json({ error: '圖片分析需要 GOOGLE_API_KEY 或 ANTHROPIC_API_KEY' });
     }
     
+    const analysisPrompt = `分析這張圖片的視覺風格，輸出JSON：
+{
+  "style_name": "風格名稱",
+  "mood": "氛圍",
+  "color_palette": ["主色1", "主色2", "主色3"],
+  "lighting": "光線特點",
+  "art_reference": "最接近的藝術風格/作品",
+  "prompt_keywords": ["關鍵詞1", "關鍵詞2"],
+  "full_prompt": "完整AI繪圖Prompt（英文）"
+}
+只輸出JSON。`;
+
+    let response;
+    
+    if (geminiKey) {
+      // 使用 Google Gemini (免費額度)
+      console.log('[Moodboard] 使用 Gemini Vision 分析圖片...');
+      
+      const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+      const mimeType = image.includes('data:') ? image.split(';')[0].split(':')[1] : 'image/jpeg';
+      
+      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { inlineData: { mimeType, data: base64Data } },
+              { text: analysisPrompt }
+            ]
+          }]
+        })
+      });
+      
+      if (!response.ok) throw new Error(await response.text());
+      
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const jsonStr = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      
+      try {
+        return res.json(JSON.parse(jsonStr));
+      } catch {
+        return res.json({ full_prompt: text, style_name: '分析結果' });
+      }
+    }
+    
+    // 備選: 使用 Claude Vision
     console.log('[Moodboard] 使用 Claude Vision 分析圖片...');
     
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'x-api-key': apiKey,
+        'x-api-key': anthropicKey,
         'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json'
       },
@@ -1093,20 +1145,7 @@ app.post('/api/moodboard/analyze', async (req, res) => {
                 data: image.replace(/^data:image\/\w+;base64,/, '')
               }
             },
-            {
-              type: 'text',
-              text: `分析這張圖片的視覺風格，輸出JSON：
-{
-  "style_name": "風格名稱",
-  "mood": "氛圍",
-  "color_palette": ["主色1", "主色2", "主色3"],
-  "lighting": "光線特點",
-  "art_reference": "最接近的藝術風格/作品",
-  "prompt_keywords": ["關鍵詞1", "關鍵詞2"],
-  "full_prompt": "完整AI繪圖Prompt（英文）"
-}
-只輸出JSON。`
-            }
+            { type: 'text', text: analysisPrompt }
           ]
         }]
       })

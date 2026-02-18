@@ -683,6 +683,30 @@
         
         /* Responsive */
         @media(max-width:1200px){.main{grid-template-columns:1fr}.panel-left,.panel-right{display:none}}
+        
+        /* 手機適配 */
+        @media(max-width:768px){
+            .header{flex-direction:column;gap:10px;padding:10px}
+            .logo{font-size:18px}
+            .main{padding:10px}
+            .center-panel{padding:15px}
+            .step-card{padding:15px}
+            .btn{padding:10px 16px;font-size:13px}
+            .chapter-grid{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}
+            .chapter-grid>div{padding:8px 4px!important;font-size:11px!important}
+            textarea{font-size:14px}
+            .interview-q{font-size:14px}
+            h2{font-size:18px}
+            h3{font-size:16px}
+        }
+        @media(max-width:480px){
+            .header{padding:8px}
+            .logo{font-size:16px}
+            .main{padding:6px}
+            .center-panel{padding:10px}
+            .chapter-grid{grid-template-columns:repeat(3,1fr)!important}
+            .btn{padding:8px 12px;font-size:12px}
+        }
     </style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -1655,14 +1679,24 @@ async function callAgent(endpoint, data, maxRetries = 2) {
 }
 
 async function checkApiHealth() {
-    try {
-        const res = await fetch(`${API_BASE}/health`);
-        const data = await res.json();
-        // 支持多种模式：hasApiKey, hasToken, gatewayConnected
-        return data.status === 'ok' && (data.hasApiKey || data.hasToken || data.gatewayConnected);
-    } catch {
-        return false;
+    // 重試3次
+    for (let i = 0; i < 3; i++) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超時
+            const res = await fetch(`${API_BASE}/health`, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            const data = await res.json();
+            // 支持多种模式：hasApiKey, hasToken, gatewayConnected
+            if (data.status === 'ok' && (data.hasApiKey || data.hasToken || data.gatewayConnected)) {
+                return true;
+            }
+        } catch {
+            console.log(`Health check attempt ${i+1} failed, retrying...`);
+            await new Promise(r => setTimeout(r, 1000)); // 等1秒再試
+        }
     }
+    return false;
 }
 
 // ==================== Step 2: 創意訪談 ====================
@@ -8379,17 +8413,36 @@ function renderStep6(){
         <div class="content-card">
             <h3><span class="icon">✍️</span> 編劇智能體</h3>
             
-            <div style="margin-bottom:16px">
-                <label style="font-size:12px;color:var(--dim)">選擇章節生成劇本：</label>
-                <select id="scriptChapterSelect" class="form-input" style="margin-top:4px">
-                    ${(state.chapters||[]).map((ch,i) => `<option value="${i}">第${i+1}章：${ch.title}</option>`).join('')}
-                </select>
+            <!-- 所有章節Grid -->
+            <div style="margin-bottom:20px">
+                <label style="font-size:12px;color:var(--dim);margin-bottom:8px;display:block">點擊章節生成劇本：</label>
+                <div class="chapter-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px">
+                    ${(state.chapters||[]).map((ch,i) => {
+                        const hasScript = state.scripts && state.scripts[i];
+                        return `<div onclick="selectChapterForScript(${i})" style="
+                            padding:12px 8px;border-radius:8px;text-align:center;cursor:pointer;
+                            background:${hasScript ? 'var(--success)' : state.selectedScriptChapter===i ? 'var(--primary)' : 'var(--surface2)'};
+                            color:${hasScript || state.selectedScriptChapter===i ? '#fff' : 'var(--text)'};
+                            border:${state.selectedScriptChapter===i ? '2px solid #fff' : '1px solid var(--border)'};
+                            transition:all .2s;
+                        ">
+                            <div style="font-size:14px;font-weight:600">第${i+1}章</div>
+                            <div style="font-size:10px;opacity:.8;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ch.title?.substring(0,6)||'待命名'}</div>
+                            ${hasScript ? '<div style="font-size:10px;margin-top:4px">✅</div>' : ''}
+                        </div>`;
+                    }).join('')}
+                </div>
             </div>
+            
+            <input type="hidden" id="scriptChapterSelect" value="${state.selectedScriptChapter||0}">
             
             <div id="scriptAgentUI">
                 <div style="text-align:center;padding:20px">
+                    <div style="margin-bottom:12px;font-size:13px;color:var(--dim)">
+                        已選擇：<span style="color:var(--primary);font-weight:600">第${(state.selectedScriptChapter||0)+1}章</span>
+                    </div>
                     <button class="btn btn-primary" onclick="confirmFizziksDeduction(20, '✍️ 劇本生成 (1集)', runScriptAgent)" style="padding:16px 40px;font-size:16px">
-                        🚀 開始AI劇本生成 <span style="opacity:.7;font-size:13px">(20⚡/集)</span>
+                        🚀 生成選中章節劇本 <span style="opacity:.7;font-size:13px">(20⚡/集)</span>
                     </button>
                 </div>
             </div>
@@ -8397,9 +8450,17 @@ function renderStep6(){
     `;
 }
 
+// 選擇章節生成劇本
+function selectChapterForScript(index){
+    state.selectedScriptChapter = index;
+    document.getElementById('scriptChapterSelect').value = index;
+    // 重新渲染整個Step6
+    document.getElementById('contentArea').innerHTML = renderStep6();
+}
+
 async function runScriptAgent(){
     const ui = document.getElementById('scriptAgentUI');
-    const chapterIndex = parseInt(document.getElementById('scriptChapterSelect')?.value || 0);
+    const chapterIndex = parseInt(document.getElementById('scriptChapterSelect')?.value || state.selectedScriptChapter || 0);
     const chapter = state.chapters[chapterIndex];
     
     ui.innerHTML = `
@@ -8488,32 +8549,53 @@ async function runScriptAgent(){
 
 function renderScriptsResult(){
     const scripts = state.scripts || [];
+    const chapters = state.chapters || [];
+    const currentView = state.viewingScriptIndex || 0;
+    
     return `
         <div class="content-card">
             <h3><span class="icon">✍️</span> 章節劇本</h3>
             
-            <!-- 可編輯提示 -->
-            <div style="background:linear-gradient(135deg,var(--primary)15,var(--surface2));border:1px solid var(--primary);border-radius:8px;padding:16px;margin-bottom:16px">
-                <div style="display:flex;align-items:center;gap:12px">
-                    <span style="font-size:28px">✏️</span>
-                    <div>
-                        <div style="font-weight:600;color:var(--primary)">可修改劇本</div>
-                        <div style="font-size:12px;color:var(--dim)">直接在文本框中編輯劇本內容，修改對話、場景後再生成分鏡</div>
-                    </div>
+            <!-- 所有章節Grid -->
+            <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <span style="font-size:12px;color:var(--dim)">點擊查看/生成劇本：</span>
+                    <span style="font-size:11px;color:var(--success)">✅ 已生成 ${scripts.filter(s=>s).length} / ${chapters.length} 章</span>
+                </div>
+                <div class="chapter-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px">
+                    ${chapters.map((ch,i) => {
+                        const hasScript = scripts[i] && scripts[i].chapter;
+                        const isViewing = currentView === i;
+                        return `<div onclick="viewOrGenerateScript(${i})" style="
+                            padding:10px 6px;border-radius:6px;text-align:center;cursor:pointer;
+                            background:${hasScript ? (isViewing ? 'var(--primary)' : 'var(--success)') : 'var(--surface2)'};
+                            color:${hasScript ? '#fff' : 'var(--text)'};
+                            border:${isViewing ? '2px solid #fff' : '1px solid var(--border)'};
+                            transition:all .2s;
+                        ">
+                            <div style="font-size:12px;font-weight:600">${i+1}</div>
+                            <div style="font-size:9px;margin-top:2px">${hasScript ? '✅' : '⏳'}</div>
+                        </div>`;
+                    }).join('')}
                 </div>
             </div>
             
-            <div class="tabs">
-                ${scripts.map((s,i) => `<div class="tab ${i===0?'active':''}" onclick="showScriptTab(${i})">第${s.chapter}章</div>`).join('')}
-            </div>
-            
+            <!-- 當前查看的劇本 -->
             <div id="scriptDisplay">
-                ${scripts[0] ? renderScriptDetailEditable(scripts[0], 0) : '<p>暫無劇本</p>'}
+                ${scripts[currentView] && scripts[currentView].chapter
+                    ? renderScriptDetailEditable(scripts[currentView], currentView)
+                    : `<div style="text-align:center;padding:40px;background:var(--surface2);border-radius:8px">
+                        <div style="font-size:48px;margin-bottom:16px">📝</div>
+                        <div style="font-weight:600;margin-bottom:8px">第${currentView+1}章 尚未生成劇本</div>
+                        <button class="btn btn-primary" onclick="generateScriptForChapter(${currentView})" style="margin-top:12px">
+                            🚀 生成本章劇本 (20⚡)
+                        </button>
+                    </div>`
+                }
             </div>
             
-            <div class="btn-group">
+            <div class="btn-group" style="margin-top:20px">
                 <button class="btn btn-back" onclick="prevStep()">← 返回</button>
-                <button class="btn" onclick="state.scripts=[];showStep(8)">+ 繼續生成其他章節</button>
                 <button class="btn btn-primary" onclick="nextStep()" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:12px 24px">
                     ✅ 確認劇本，生成分鏡 →
                 </button>
@@ -8522,9 +8604,24 @@ function renderScriptsResult(){
     `;
 }
 
+// 查看或生成指定章節的劇本
+function viewOrGenerateScript(index){
+    state.viewingScriptIndex = index;
+    document.getElementById('contentArea').innerHTML = renderScriptsResult();
+}
+
+// 生成指定章節劇本
+async function generateScriptForChapter(index){
+    state.selectedScriptChapter = index;
+    document.getElementById('scriptChapterSelect').value = index;
+    await runScriptAgent();
+}
+
 // 可編輯版本的劇本詳情
 function renderScriptDetailEditable(script, index){
-    const text = script.rawText || script.text || script.content || '';
+    let text = script.rawText || script.text || script.content || '';
+    // 去除*符號（Markdown粗體標記）
+    text = text.replace(/\*\*/g, '').replace(/\*/g, '');
     return `
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px">
             <div style="background:var(--primary);padding:10px 16px;color:#fff;display:flex;justify-content:space-between;align-items:center">

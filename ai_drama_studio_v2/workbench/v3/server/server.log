@@ -6,40 +6,30 @@ Loaded .env file
 🎬 AI番劇 Agent Server v3 (Multi-Provider)
    Port: 3001
    🤖 Provider: DeepSeek
-   📊 42 Agents | 291 Skills
-[🎤 訪談師] Processing with 14 skills...
-[🎤 訪談師] Loaded 5 skill files
+   📊 43 Agents | 300 Skills
+[👔 服化道設計] Processing with 8 skills...
+[👔 服化道設計] Loaded skill files for deep analysis
 [Queue] Added request, queue length: 1
-Calling DeepSeek (interview) model: deepseek-chat, max_tokens: 4096
-[💡 剧本概念生成器] Processing with 5 skills...
-[💡 剧本概念生成器] Loaded skill files for deep analysis
+Calling DeepSeek (production_design) model: deepseek-chat, max_tokens: 4096
+[✍️ 編劇] Processing with 5 skills...
+[✍️ 編劇] Loaded skill files for deep analysis
 [Queue] Added request, queue length: 1
-Config updated: provider=deepseek, maxSkills=2, contentLimit=2000
-[🎤 訪談師] Processing with 14 skills...
-[🎤 訪談師] Loaded 5 skill files
-[Queue] Added request, queue length: 2
-Tokens: in=2113, out=1708, cost=$0.000269
-Calling DeepSeek (concept) model: deepseek-chat, max_tokens: 4096
-[🎤 訪談師] Done!
-Tokens: in=2241, out=281, cost=$0.000071
-Calling DeepSeek (interview) model: deepseek-chat, max_tokens: 4096
-[💡 剧本概念生成器] Done!
-Config updated: provider=deepseek, maxSkills=5, contentLimit=4000
-[🎤 訪談師] Processing with 14 skills...
-[🎤 訪談師] Loaded skill files for deep analysis
+Tokens: in=3777, out=4096, cost=$0.000626
+Calling DeepSeek (screenwriter) model: deepseek-chat, max_tokens: 4096
+[👔 服化道設計] Done!
+Tokens: in=3873, out=2776, cost=$0.000443
+[✍️ 編劇] Done!
+[Stream] Starting stream with DeepSeek, model: deepseek-reasoner
+[✍️ 編劇] Processing with 5 skills...
+[✍️ 編劇] Loaded skill files for deep analysis
 [Queue] Added request, queue length: 1
-Tokens: in=1422, out=1253, cost=$0.000195
-Calling DeepSeek (interview) model: deepseek-chat, max_tokens: 4096
-[🎤 訪談師] Done!
-Tokens: in=5333, out=2364, cost=$0.000406
-[🎤 訪談師] Done!
-[💡 剧本概念生成器] Processing with 5 skills...
-[💡 剧本概念生成器] Loaded skill files for deep analysis
+Calling DeepSeek (screenwriter) model: deepseek-chat, max_tokens: 4096
+Tokens: in=1811, out=1060, cost=$0.000174
+[✍️ 編劇] Done!
+[🎥 分鏡] Processing with 5 skills...
+[🎥 分鏡] Loaded skill files for deep analysis
 [Queue] Added request, queue length: 1
-Calling DeepSeek (concept) model: deepseek-chat, max_tokens: 4096
-Tokens: in=4671, out=317, cost=$0.000110
-[💡 剧本概念生成器] Done!
-[📖 敘事/章節] Processing with 18 skills...
-[📖 敘事/章節] Loaded skill files for deep analysis
+Calling DeepSeek (storyboard) model: deepseek-reasoner, max_tokens: 8192
+[✍️ 編劇] Processing with 5 skills...
+[✍️ 編劇] Loaded skill files for deep analysis
 [Queue] Added request, queue length: 1
-Calling DeepSeek (narrative) model: deepseek-reasoner, max_tokens: 8192
