@@ -58,7 +58,8 @@ let currentProvider = process.env.AI_PROVIDER || 'anthropic';
 import { AGENTS, AGENT_GROUPS, STATS } from './agents-config.js';
 
 // Skills目录路径
-const SKILLS_DIR = '/home/beerbear/.openclaw/workspace/skills';
+// Skills目录 - 使用本地合并版_complete
+const SKILLS_DIR = '/home/beerbear/.openclaw/workspace/ai_drama_studio_v2/workbench/v3/server/skills';
 
 // 加载skill文件内容的缓存
 const skillCache = new Map();

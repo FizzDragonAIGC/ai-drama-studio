@@ -1619,8 +1619,8 @@ function showStep(step){
 // 优先级: URL参数 > localStorage > 自动检测
 const API_ENDPOINTS = [
     '/api',                           // 同源部署 (Vercel/本地)
-    'http://34.58.33.115:3001/api',   // GCP服务器
-    'https://ai-drama-api.onrender.com/api'  // 备用 (Render)
+    'https://dvds-hoping-consultancy-site.trycloudflare.com/api',  // Cloudflare隧道
+    'http://34.58.33.115:3001/api',   // GCP服务器 (需开防火墙)
 ];
 
 // 从URL参数或localStorage获取API地址

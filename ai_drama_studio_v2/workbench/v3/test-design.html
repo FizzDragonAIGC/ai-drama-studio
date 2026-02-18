@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服化道測試 - 千與千尋</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background: #0a0a0a; 
+            color: #fff; 
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 { color: #ff0a35; margin-bottom: 20px; font-size: 24px; }
+        h2 { color: #ff0a35; margin: 20px 0 10px; font-size: 18px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+        h3 { color: #ff6b6b; margin: 15px 0 8px; font-size: 14px; }
+        .card { background: #1a1a1a; border-radius: 8px; padding: 15px; margin-bottom: 15px; border-left: 3px solid #ff0a35; }
+        .label { color: #888; font-size: 11px; }
+        .value { color: #fff; font-size: 13px; margin-bottom: 8px; }
+        .prompt-box { 
+            background: linear-gradient(135deg, rgba(255,10,53,0.1), #111); 
+            border: 1px solid #ff0a35; 
+            border-radius: 6px; 
+            padding: 10px; 
+            margin-top: 10px;
+        }
+        .prompt-label { color: #ff0a35; font-size: 10px; font-weight: bold; margin-bottom: 5px; }
+        .prompt-text { color: #ccc; font-size: 11px; line-height: 1.5; }
+        .copy-btn {
+            background: #ff0a35;
+            color: #fff;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media(max-width:500px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <h1>🎬 千與千尋 - 服化道設計</h1>
+    
+    <h2>👔 服裝設計</h2>
+    
+    <div class="card">
+        <h3>千尋/小千</h3>
+        <p class="label">📍 場合</p>
+        <p class="value">日常穿著 → 湯屋工作服</p>
+        <p class="label">🎨 色彩</p>
+        <p class="value">白綠條紋T恤、粉色短褲 → 粉紅色湯屋工作服</p>
+        <p class="label">🧵 材質</p>
+        <p class="value">棉質休閒 → 傳統日式布料</p>
+        <p class="label">🔄 狀態變化</p>
+        <p class="value">從現代女孩到湯屋勞工，衣著從明亮漸變為樸素</p>
+        <div class="prompt-box">
+            <p class="prompt-label">🖼️ AI Prompt</p>
+            <p class="prompt-text">A 10-year-old Japanese girl, Chihiro, wearing a white and green striped T-shirt with pink shorts, tired and worried expression, her hair tied back with a purple hair tie, barefoot, standing in a fantastical bathhouse corridor, soft diffused lighting, Studio Ghibli anime style, detailed fabric textures</p>
+            <button class="copy-btn" onclick="copy(this)">📋 複製Prompt</button>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3>白龍</h3>
+        <p class="label">🎨 色彩</p>
+        <p class="value">白色和服，青綠點綴</p>
+        <p class="label">🧵 材質</p>
+        <p class="value">飄逸絲綢、神聖光澤</p>
+        <div class="prompt-box">
+            <p class="prompt-label">🖼️ AI Prompt</p>
+            <p class="prompt-text">A mysterious boy Haku wearing a flowing white traditional Japanese haori and hakama with subtle teal accents, long dark hair, piercing calm eyes, ethereal and otherworldly presence, standing in a misty moonlit bathhouse corridor, soft backlighting, Studio Ghibli style, character design</p>
+            <button class="copy-btn" onclick="copy(this)">📋 複製Prompt</button>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3>無臉男</h3>
+        <p class="label">外觀</p>
+        <p class="value">黑色半透明身體，白色能面具</p>
+        <div class="prompt-box">
+            <p class="prompt-label">🖼️ AI Prompt</p>
+            <p class="prompt-text">No-Face, a tall ghostly figure with a translucent black body and a stark white Noh-style mask, appearing partially transparent against a dark rainy background, lit by distant bathhouse lanterns, eerie and lonely atmosphere, Studio Ghibli style, full body shot</p>
+            <button class="copy-btn" onclick="copy(this)">📋 複製Prompt</button>
+        </div>
+    </div>
+    
+    <h2>🏛️ 場景設計</h2>
+    
+    <div class="card">
+        <h3>神秘隧道入口</h3>
+        <p class="label">🕐 時間</p>
+        <p class="value">黃昏</p>
+        <p class="label">💡 光線</p>
+        <p class="value">隧道外明亮夕陽 vs 內部深邃黑暗</p>
+        <p class="label">🎨 色調</p>
+        <p class="value">暖橙 vs 冷黑</p>
+        <div class="prompt-box">
+            <p class="prompt-label">🖼️ AI Prompt</p>
+            <p class="prompt-text">A mysterious red stone tunnel entrance in the middle of an overgrown forest, late afternoon golden hour lighting from behind, the interior of the tunnel is pitch black and foreboding, fallen leaves and moss on the ground, a single car parked nearby, sense of threshold between worlds, Studio Ghibli style, cinematic wide shot, 4K</p>
+            <button class="copy-btn" onclick="copy(this)">📋 複製Prompt</button>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3>湯屋大澡堂</h3>
+        <p class="label">🕐 時間</p>
+        <p class="value">夜晚營業時間</p>
+        <p class="label">💡 光線</p>
+        <p class="value">暖黃色燈籠光、蒸汽瀰漫</p>
+        <div class="prompt-box">
+            <p class="prompt-label">🖼️ AI Prompt</p>
+            <p class="prompt-text">A grand multi-level Japanese bathhouse interior at night, filled with steam and warm lantern light, intricate wooden architecture, various spirit guests bathing, workers rushing, chaotic yet organized atmosphere, opulent and fantastical, Studio Ghibli style, cinematic composition, 4K, detailed</p>
+            <button class="copy-btn" onclick="copy(this)">📋 複製Prompt</button>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3>鍋爐房</h3>
+        <p class="label">💡 光線</p>
+        <p class="value">爐火橙紅光、陰暗角落</p>
+        <div class="prompt-box">
+            <p class="prompt-label">🖼️ AI Prompt</p>
+            <p class="prompt-text">A cramped industrial boiler room deep in a bathhouse, dominated by a massive roaring furnace emitting orange-red light, an elderly six-armed man working intensely, small soot sprites carrying coal, endless drawers lining the walls, atmosphere of hard work and hidden warmth, Studio Ghibli style, cinematic, 4K</p>
+            <button class="copy-btn" onclick="copy(this)">📋 複製Prompt</button>
+        </div>
+    </div>
+    
+    <h2>🏺 道具設計</h2>
+    
+    <div class="grid">
+        <div class="card">
+            <h3>河神丸子</h3>
+            <p class="label">💫 象徵</p>
+            <p class="value">淨化、救贖與真正的治癒力量</p>
+            <p class="label">📖 功能</p>
+            <p class="value">千尋用它治癒白龍、淨化無臉男</p>
+            <div class="prompt-box">
+                <p class="prompt-label">🖼️ AI Prompt</p>
+                <p class="prompt-text">Close-up of a small round dark green herbal medicine ball with a crumbly texture, resting on a character's palm, ethereal lighting from within the pill, mystical and pure atmosphere, Studio Ghibli style, detailed macro shot</p>
+                <button class="copy-btn" onclick="copy(this)">📋 複製</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>無臉男的金子</h3>
+            <p class="label">💫 象徵</p>
+            <p class="value">空洞的慾望、誘惑與虛假的價值</p>
+            <div class="prompt-box">
+                <p class="prompt-label">🖼️ AI Prompt</p>
+                <p class="prompt-text">Close-up of a handful of glittering gold nuggets, perfectly shaped and reflecting warm light, held in a dark shadowy hand, the gold appears enticing but with a subtle hint of falseness, dramatic lighting contrast, Studio Ghibli style</p>
+                <button class="copy-btn" onclick="copy(this)">📋 複製</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>電車票</h3>
+            <p class="label">💫 象徵</p>
+            <p class="value">幫助、規則與通往自由的許可</p>
+            <div class="prompt-box">
+                <p class="prompt-label">🖼️ AI Prompt</p>
+                <p class="prompt-text">Close-up of an old-fashioned paper train ticket with a intricate red wax seal stamp, textured paper, resting on a wooden surface, lit by a single source of light that highlights the embossed seal and paper fibers, atmosphere of mystery, Studio Ghibli style, detailed still life</p>
+                <button class="copy-btn" onclick="copy(this)">📋 複製</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>白龍的鱗片</h3>
+            <p class="label">💫 象徵</p>
+            <p class="value">白龍的真實身份、傷痛與記憶的碎片</p>
+            <div class="prompt-box">
+                <p class="prompt-label">🖼️ AI Prompt</p>
+                <p class="prompt-text">Close-up of a single beautiful dragon scale, shaped like a dagger, in shades of cyan and white with iridescent sheen like water, one edge is chipped and stained with dried blood, lying on a wet stone, lit with soft watery light to highlight its texture and fragility, Studio Ghibli style, macro photography</p>
+                <button class="copy-btn" onclick="copy(this)">📋 複製</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    function copy(btn) {
+        const text = btn.previousElementSibling.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = '✅ 已複製!';
+            setTimeout(() => btn.textContent = '📋 複製', 2000);
+        });
+    }
+    </script>
+</body>
+</html>
