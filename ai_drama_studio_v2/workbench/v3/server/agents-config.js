@@ -5,11 +5,9 @@ export const AGENTS = {
         name: '🎬 總導演',
         group: '統籌',
         skills: [
-            'directing_visual_storytelling',  // 視覺敘事
-            'directing_climax',               // 高潮設計
-            'directing_emotional_arc',        // 情緒弧線
-            'lighting_aesthetic_master',      // 光影美學
-            'director_kubrick'                // 大師風格代表
+            'narrative_campbell_monomyth',    // 英雄之旅
+            'cinematography_lighting',        // 光影設計
+            'episodic_tv_structure'           // 劇集結構
         ],
         prompt: `你是總導演Agent。負責整體把控：
 - 視覺敘事策略（光影即叙事工具）
@@ -22,7 +20,7 @@ export const AGENTS = {
     concept: {
         name: '💡 剧本概念生成器',
         group: '統籌',
-        skills: ['pro_concept_generator','concept_high_concept','hook_design','addictive_design','viral_elements'],
+        skills: ['narrative_campbell_monomyth', 'analysis_storygrid_coyne', 'episodic_tv_structure'],
         prompt: `# 角色：专业剧本概念架构师
 
 ## 专业资质
@@ -71,11 +69,7 @@ export const AGENTS = {
         name: '🎤 訪談師',
         group: '故事',
         // 重排序：核心5個放前面（maxSkills=5只載入前5個）
-        skills: ['interview_enhanced','interview_hitchcock_truffaut','interview_creative_vision',
-                 'interview_diagnostic','interview_seidman_depth',  // ← 前5個會被載入
-                 'interview_empathy','interview_audience','interview_brief','interview_conflict',
-                 'interview_reference','interview_style','interview_theme','interview_vision_guide',
-                 'interview_metzler_creative'],
+        skills: ['narrative_campbell_monomyth', 'psychology_motivation', 'analysis_storygrid_coyne'],
         prompt: `你是專業創意訪談Agent。
 
 ## 🚨 最重要的規則
@@ -130,11 +124,9 @@ export const AGENTS = {
         name: '✍️ 編劇',
         group: '故事',
         skills: [
-            'script_master_theory',      // 三大編劇聖經合併版
-            'script_writing_complete',   // 完整劇本格式
-            'dialogue_craft',            // 對白技法
-            'scene_description',         // 場景描寫
-            'tv_drama_writing'           // 電視劇寫作
+            'screenplay_format_chinese_film',  // 中國電影劇本格式
+            'narrative_campbell_monomyth',     // 英雄之旅
+            'episodic_tv_structure'            // 劇集結構
         ],
         prompt: `你是編劇Agent。運用麥基《故事》+ 斯奈德《救貓咪》+ 菲爾德《三幕式》。
 
@@ -171,9 +163,7 @@ export const AGENTS = {
     adaptation: {
         name: '📚 改編',
         group: '故事',
-        skills: ['adaptation_novel_analysis','adaptation_structure','adaptation_pacing',
-                 'adaptation_character_arc','adaptation_dialogue','adaptation_episode',
-                 'adaptation_novel_to_script','adaptation_scene_selection','adaptation_visual'],
+        skills: ['adaptation_seger_art', 'narrative_campbell_monomyth', 'episodic_tv_structure'],
         prompt: `你是改編Agent。小說→劇本專家：
 - 分析原著精髓
 - 結構重組
@@ -187,19 +177,10 @@ export const AGENTS = {
         name: '📖 敘事/章節',
         group: '故事',
         skills: [
-            // 智能章節分配
-            'chapter_smart_allocation',      // 智能集數和時長分配
-            'chapter_multi_version',         // 多版本方案設計
-            // 核心章節拆分Skills
-            'chapter_savethecat_15beats',    // Blake Snyder 15節拍
-            'chapter_mckee_sequence',        // McKee序列結構
-            'chapter_hook_cliffhanger',      // 章節鉤子設計
-            'chapter_serialized_drama',      // 連載劇章節法
-            // 敘事結構Skills
-            'story_heros_journey','outline_emotional_arc','outline_cliffhanger',
-            'outline_act_structure','outline_episode_hook','outline_information',
-            'outline_scene_sequence','outline_subplot','outline_time_management',
-            'outline_series_design','anime_narrative','pacing_rhythm'
+            'narrative_campbell_monomyth',     // 英雄之旅
+            'narrative_propp_31functions',     // 普洛普31功能
+            'episodic_tv_structure',           // 劇集結構
+            'analysis_storygrid_coyne'         // 故事網格分析
         ],
         prompt: `你是敘事/章節拆分Agent，專精於將長篇小說拆分為精彩的AI番劇集數。
 
@@ -344,7 +325,7 @@ export const AGENTS = {
     storyboard: {
         name: '🎥 分鏡',
         group: '導演',
-        skills: ['shot_density_planner','video_cinematic_camera','cinematography_shots','camera_angles','storyboard_professional_complete'],
+        skills: ['storyboard_professional_complete', 'shot_density_planner', 'cinematography_shot_sizes'],
         prompt: `你是電影級分鏡Agent，專精AI視頻生成的運鏡設計。
 
 ## 🚨 第一步：計算本集需要多少鏡頭（必須執行！）
@@ -424,8 +405,7 @@ export const AGENTS = {
     cinematography: {
         name: '📷 攝影',
         group: '導演',
-        skills: ['camera_angles','camera_movement_advanced','perspective_depth',
-                 'directing_coverage','directing_master_shot','directing_single_take'],
+        skills: ['cinematography_shot_sizes', 'cinematography_camera_movements', 'cinematography_lighting'],
         prompt: `你是攝影Agent。專注：
 - 攝影機角度
 - 景深控制
@@ -437,7 +417,7 @@ export const AGENTS = {
     editing: {
         name: '✂️ 剪輯',
         group: '導演',
-        skills: ['editing_rhythm','short_form_pacing','pacing_rhythm'],
+        skills: ['episodic_tv_structure', 'narrative_campbell_monomyth'],
         prompt: `你是剪輯Agent。設計：
 - 剪輯節奏
 - 轉場方式
@@ -448,10 +428,7 @@ export const AGENTS = {
     blocking: {
         name: '🎯 調度',
         group: '導演',
-        skills: ['directing_blocking','directing_180_rule','directing_crossing_line',
-                 'directing_geography','directing_eye_trace','directing_establishing',
-                 'directing_insert','directing_reaction_shot','directing_sequence',
-                 'directing_subtext','directing_suspense','directing_tension','scene_types'],
+        skills: ['cinematography_shot_sizes', 'cinematography_camera_movements'],
         prompt: `你是調度Agent。處理：
 - 場面調度
 - 180度法則
@@ -465,7 +442,7 @@ export const AGENTS = {
     artstyle: {
         name: '🎨 畫風智能體',
         group: '美術',
-        skills: ['art_styles_detailed','color_emotion','lighting_aesthetic_master','aesthetic_visual','midjourney_sref_library'],
+        skills: ['cinematography_lighting', 'screenplay_culture_chinese', 'screenplay_culture_japanese'],
         prompt: `你是畫風分析智能體。根據故事內容分析並推薦最適合的視覺風格。
 
 ## 分析維度：
@@ -510,8 +487,7 @@ export const AGENTS = {
         name: '🎨 美術總監',
         group: '美術',
         // 優先加載書籍方法論（maxSkills=3時能用到）
-        skills: ['painting_with_light','color_film_psychology','visual_story_structure',
-                 'lighting_aesthetic_master','color_and_light_gurney','art_styles_detailed','color_emotion','lighting_cinematic','worldbuilding_bible'],
+        skills: ['cinematography_lighting', 'character_design_complete'],
         prompt: `你是美術總監Agent。統籌：
 - 整體視覺風格定調
 - 十大電影級光影類型應用
@@ -520,35 +496,85 @@ export const AGENTS = {
 - 色彩情緒映射與冷暖對比設計`
     },
     
+    production_design: {
+        name: '👔 服化道設計',
+        group: '美術',
+        skills: ['character_design_complete', 'cinematography_lighting'],
+        prompt: `你是服化道設計Agent（Production Designer）。負責設計故事中所有的服裝、道具、場景。
+
+## 必須輸出JSON格式：
+{
+  "costumes": [
+    {
+      "character": "角色名",
+      "role": "主角/配角/反派",
+      "outfits": [
+        {
+          "name": "服裝名稱（日常裝/戰鬥服/正裝等）",
+          "description": "詳細描述（100字：顏色、款式、材質、剪裁、配飾）",
+          "occasion": "適用場合",
+          "colors": ["主色", "輔色"],
+          "materials": ["材質1", "材質2"],
+          "accessories": ["配飾1", "配飾2"],
+          "ai_prompt": "英文服裝提示詞（80-120字）"
+        }
+      ],
+      "hairstyle": "髮型描述",
+      "makeup": "妝容描述（如適用）"
+    }
+  ],
+  "scenes": [
+    {
+      "name": "場景名稱",
+      "type": "室內/室外",
+      "location": "地點",
+      "time_of_day": "時間",
+      "description": "詳細場景描述（150字）",
+      "key_elements": ["視覺元素1", "視覺元素2", "視覺元素3"],
+      "atmosphere": "氛圍",
+      "color_palette": ["主色", "輔色", "點綴色"],
+      "lighting": "光線設計",
+      "ai_prompt": "英文場景提示詞（100-150字）"
+    }
+  ],
+  "props": [
+    {
+      "name": "道具名稱",
+      "category": "武器/家具/交通工具/日用品/特殊道具",
+      "description": "外觀描述",
+      "significance": "戲劇意義（為什麼重要）",
+      "appears_in": ["場景1"],
+      "ai_prompt": "英文道具提示詞（50-80字）"
+    }
+  ]
+}
+
+要求：
+- 每個主要角色至少2套服裝
+- 至少設計5個重要場景
+- 列出所有關鍵道具
+- 每個元素都要有可用的AI提示詞`
+    },
+    
     character: {
         name: '👤 角色設計',
         group: '美術',
-        skills: ['character_design_complete','character_appearance_table','character_relationship_map',
-                 'character_design_archetype','psychology_motivation'],  // 5個核心skills，complete融合了表情/體型/比例等
-        prompt: `你是角色設計Agent。分析小說中的**所有主要角色**（主角+配角+反派，至少3-5人），為每個角色設計：
+        skills: ['character_design_complete', 'psychology_motivation'],
+        prompt: `你是角色設計Agent。快速分析3-5個主要角色。
 
-## 必須輸出JSON格式：
+## 輸出JSON（簡潔版）：
 {
   "characters": [
     {
       "name": "角色名",
-      "role": "主角/配角/反派/導師",
-      "silhouette": {"dominant_shape":"圓/方/三角", "distinctive_feature":"標誌性特徵", "recognition_distance":"遠/中/近"},
-      "facial_features": {"eyes":"", "nose":"", "mouth":"", "expression":"默認表情"},
-      "body_proportions": {"height":"", "build":"", "posture":""},
-      "age_representation": {"apparent_age":"", "maturity_level":""},
-      "archetype": {"type":"英雄/導師/陰影/使者等", "function":"在故事中的功能"},
-      "psychology": {
-        "desire": "最深層的渴望",
-        "fear": "最大的恐懼", 
-        "flaw": "性格缺陷",
-        "arc": "成長弧線"
-      },
-      "appearance_prompt": "用於AI生成的外觀描述（英文，50字）"
+      "role": "主角/配角/反派",
+      "age": "年齡",
+      "appearance": "外貌描述（50字）",
+      "personality": "性格特點",
+      "desire": "渴望什麼",
+      "fear": "害怕什麼",
+      "prompt": "英文AI繪圖prompt（80字）"
     }
-  ],
-  "relationships": [
-    {"from":"角色A", "to":"角色B", "type":"友情/敵對/愛情/師徒", "description":"關係描述"}
   ]
 }
 
@@ -558,27 +584,82 @@ export const AGENTS = {
     costume: {
         name: '👔 服裝設計',
         group: '美術',
-        skills: ['character_appearance_table','clothing_modern','hair_styles','materials_textures'],
-        prompt: `你是服裝Agent。設計：
-- 符合角色性格的服裝
-- 髮型設計
-- 材質紋理
-- 配色方案`
+        skills: ['character_design_complete'],
+        prompt: `你是服裝設計Agent。為故事中的每個角色設計具體的服裝方案。
+
+## 必須輸出JSON格式：
+{
+  "costumes": [
+    {
+      "character": "角色名",
+      "role": "主角/配角/反派",
+      "outfits": [
+        {
+          "name": "服裝名稱（如：日常裝/戰鬥服/正裝）",
+          "description": "詳細描述（顏色、款式、材質、配飾）",
+          "occasion": "適用場合",
+          "color_palette": ["主色", "輔色", "點綴色"],
+          "materials": ["材質1", "材質2"],
+          "accessories": ["配飾1", "配飾2"],
+          "ai_prompt": "英文AI繪圖提示詞（80-120字，含服裝細節、材質、光影）"
+        }
+      ],
+      "hairstyle": {
+        "description": "髮型描述",
+        "color": "髮色",
+        "ai_prompt": "英文髮型提示詞"
+      }
+    }
+  ]
+}
+
+要求：
+- 每個主要角色至少設計2套服裝
+- 服裝要符合角色性格和故事背景
+- AI提示詞要包含具體細節（材質、皺褶、光澤等）`
     },
     
     scene: {
         name: '🏛️ 場景設計',
         group: '美術',
-        skills: ['background_elements','weather_atmosphere','prompt_architecture',
-                 'prompt_interior','prompt_landscape','prompt_vehicle','prompt_weapon',
-                 'scene_description','scene_types'],
-        prompt: `你是場景Agent。設計：
-- 背景元素
-- 建築風格
-- 室內陳設
-- 自然景觀
-- 載具/武器等道具
-- 氛圍營造`
+        skills: ['cinematography_lighting', 'character_design_complete'],
+        prompt: `你是場景設計Agent。設計故事中的所有重要場景。
+
+## 必須輸出JSON格式：
+{
+  "scenes": [
+    {
+      "name": "場景名稱",
+      "type": "室內/室外/混合",
+      "description": "詳細場景描述（200字）",
+      "location": "地點設定",
+      "time_period": "時代背景",
+      "atmosphere": "氛圍（壓抑/溫馨/緊張等）",
+      "key_elements": ["元素1", "元素2", "元素3"],
+      "color_tone": "主色調",
+      "lighting": "光線設計（自然光/人工光/混合）",
+      "props": [
+        {"name": "道具名", "description": "描述", "significance": "戲劇意義"}
+      ],
+      "ai_prompt": "英文AI繪圖提示詞（100-150字，含建築風格、氛圍、光影、細節）"
+    }
+  ],
+  "props_master_list": [
+    {
+      "name": "道具名稱",
+      "category": "家具/武器/交通工具/日用品/特殊道具",
+      "description": "詳細描述",
+      "appears_in": ["場景1", "場景2"],
+      "ai_prompt": "英文道具提示詞"
+    }
+  ]
+}
+
+要求：
+- 列出所有重要場景（至少5個）
+- 每個場景要有具體的視覺元素
+- 關鍵道具要單獨列出
+- AI提示詞要能直接用於生成`
     },
     
     color: {
@@ -596,7 +677,7 @@ export const AGENTS = {
     expression: {
         name: '😊 表情設計',
         group: '表演',
-        skills: ['facial_expressions','acting_microexpression','eyes_detailed','acting_subtext'],
+        skills: ['psychology_motivation', 'character_design_complete'],
         prompt: `你是表情Agent。設計：
 - 微表情捕捉
 - 眼神戲
@@ -607,8 +688,7 @@ export const AGENTS = {
     acting: {
         name: '🎭 演技指導',
         group: '表演',
-        skills: ['body_language','emotion_visual','acting_stanislavski','acting_method',
-                 'acting_subtext','movement_daily','gesture_cultural'],
+        skills: ['psychology_motivation', 'character_design_complete'],
         prompt: `你是演技Agent。運用：
 - 斯坦尼斯拉夫斯基體系
 - 方法派演技
@@ -620,8 +700,7 @@ export const AGENTS = {
     pose: {
         name: '🕺 動作設計',
         group: '表演',
-        skills: ['action_poses','action_choreography','action_martial_arts','action_special_moves',
-                 'fight_wuxia','fight_street','movement_daily','gesture_cultural'],
+        skills: ['character_design_complete', 'cinematography_camera_movements'],
         prompt: `你是動作Agent。設計：
 - 姿勢設計
 - 動作編排
@@ -632,8 +711,7 @@ export const AGENTS = {
     psychology: {
         name: '🧠 角色心理',
         group: '表演',
-        skills: ['dialogue_craft','audience_emotion_prediction','audience_persona',
-                 'psychology_motivation','acting_stanislavski','acting_method'],
+        skills: ['psychology_motivation', 'narrative_campbell_monomyth'],
         prompt: `你是心理Agent。分析：
 - 角色動機（Want/Need/Wound）
 - 心理弧線
@@ -645,26 +723,44 @@ export const AGENTS = {
     prompt: {
         name: '🖼️ Prompt師',
         group: 'AI輸出',
-        skills: ['ai_midjourney','ai_stable_diffusion','ai_flux','ai_dalle','ai_leonardo',
-                 'prompt_portrait','prompt_full_body','prompt_group','prompt_action',
-                 'prompt_emotion','prompt_architecture','prompt_interior','prompt_landscape',
-                 'prompt_vehicle','prompt_weapon','prompt_negative','quality_modifiers'],
-        prompt: `你是Prompt Agent。生成：
-- MidJourney格式Prompt
-- Stable Diffusion格式
-- DALL-E格式
-- Flux格式
-針對不同鏡頭類型優化Prompt。`
+        skills: ['storyboard_professional_complete', 'character_design_complete'],
+        prompt: `你是專業Prompt師Agent。將分鏡描述轉換為多平台AI繪圖提示詞。
+
+## 輸入
+你會收到分鏡列表，每個分鏡包含：畫面描述、鏡頭類型、角色、場景等信息。
+
+## 必須輸出JSON格式：
+{
+  "shots": [
+    {
+      "shot_id": "原shot_id",
+      "midjourney_prompt": "MidJourney格式（含--ar --style --v參數）",
+      "stable_diffusion_prompt": "SD格式（含quality tags, negative prompt）",
+      "flux_prompt": "Flux格式（自然語言描述）",
+      "video_prompt": "視頻生成Prompt（Runway/Pika/Kling用）",
+      "negative_prompt": "通用負面提示詞"
+    }
+  ]
+}
+
+## Prompt優化原則：
+1. **MidJourney**: 關鍵詞優先，加 --ar 16:9 --style raw --v 6
+2. **Stable Diffusion**: 加 quality tags (masterpiece, best quality)，分離 negative prompt
+3. **Flux**: 自然語言長描述，強調細節和氛圍
+4. **Video**: 加動作描述 + 鏡頭運動 + 時長
+
+## 鏡頭類型對應Prompt風格：
+- ECU極特寫 → 微距細節，淺景深
+- CU特寫 → 人像，情緒表達
+- MS中景 → 人物互動，環境暗示
+- LS全景 → 場景建立，史詩感
+- 動作鏡頭 → 動態模糊，速度線`
     },
     
     platform: {
         name: '🔧 平台適配',
         group: 'AI輸出',
-        skills: ['ai_prompt_engineering','ai_consistency','ai_controlnet','ai_lora',
-                 'ai_inpainting','ai_outpainting','ai_upscaling','ai_img2img',
-                 'ai_face_swap','ai_style_transfer','ai_negative_prompt',
-                 'ai_runway','ai_pika','ai_kling','ai_txt2video','ai_img2video',
-                 'ai_lip_sync','ai_voice_clone','ai_music_gen'],
+        skills: ['storyboard_professional_complete'],
         prompt: `你是平台適配Agent。處理：
 - ControlNet參數
 - LoRA選擇
@@ -678,10 +774,7 @@ export const AGENTS = {
     vfx: {
         name: '💥 VFX特效',
         group: '專項',
-        skills: ['vfx_compositing','vfx_green_screen','vfx_matte_painting','vfx_particle',
-                 'vfx_fluid','vfx_fire','vfx_water','vfx_smoke','vfx_explosion',
-                 'vfx_destruction','vfx_weather_effects','vfx_magic','vfx_superhero_powers',
-                 'vfx_creature','vfx_environment'],
+        skills: ['cinematography_lighting', 'storyboard_professional_complete'],
         prompt: `你是VFX Agent。設計：
 - 粒子特效
 - 流體模擬（水/火/煙）
@@ -694,11 +787,7 @@ export const AGENTS = {
     manga: {
         name: '💢 漫畫效果',
         group: '專項',
-        skills: ['manga_panel_design','manga_narrative','manga_visual_effects',
-                 'manga_page_layout','manga_flow','manga_gutter','manga_splash_page',
-                 'manga_speed_lines','manga_focus_lines','manga_screen_tone',
-                 'manga_onomatopoeia','manga_emotion_symbols','manga_chibi',
-                 'webtoon_design','anime_effects'],
+        skills: ['storyboard_professional_complete', 'character_design_complete'],
         prompt: `你是漫畫效果Agent。設計：
 - 分格設計
 - 速度線/集中線
@@ -712,9 +801,7 @@ export const AGENTS = {
     genre: {
         name: '🎬 類型研究',
         group: '專項',
-        skills: ['genre_mystery','genre_fantasy','genre_romance','genre_comedy',
-                 'genre_horror','genre_scifi','genre_action','genre_drama',
-                 'genre_thriller','genre_crime','genre_war','genre_wuxia','genre_xianxia'],
+        skills: ['narrative_campbell_monomyth', 'analysis_storygrid_coyne'],
         prompt: `你是類型Agent。研究：
 - 類型慣例（懸疑/奇幻/愛情等）
 - 類型融合
@@ -725,7 +812,7 @@ export const AGENTS = {
     era: {
         name: '📜 時代考據',
         group: '專項',
-        skills: ['culture_history'],
+        skills: ['screenplay_culture_chinese', 'screenplay_culture_japanese'],
         prompt: `你是考據Agent。研究：
 - 歷史準確性
 - 時代服飾/建築/道具
@@ -736,7 +823,7 @@ export const AGENTS = {
     culture: {
         name: '🌍 文化顧問',
         group: '專項',
-        skills: ['culture_history','worldbuilding_bible'],
+        skills: ['screenplay_culture_chinese', 'screenplay_culture_hollywood', 'screenplay_culture_japanese'],
         prompt: `你是文化Agent。顧問：
 - 文化敏感度
 - 地域特色
@@ -747,7 +834,7 @@ export const AGENTS = {
     music: {
         name: '🎵 音樂設計',
         group: '專項',
-        skills: ['ai_music_gen','editing_rhythm'],
+        skills: ['narrative_campbell_monomyth'],
         prompt: `你是音樂Agent。設計：
 - 配樂風格
 - 主題曲
@@ -758,7 +845,7 @@ export const AGENTS = {
     lighting: {
         name: '💡 燈光設計',
         group: '專項',
-        skills: ['lighting_cinematic','lighting_aesthetic_master','aesthetic_visual'],
+        skills: ['cinematography_lighting'],
         prompt: `你是燈光Agent。設計：
 - 十大電影級光影類型（側逆光/倫勃朗光/丁達爾效應/低調光等）
 - 光影情緒對照（希望→暖金丁達爾/絕望→冷藍低調光）
@@ -770,7 +857,7 @@ export const AGENTS = {
     weather: {
         name: '🌤️ 氛圍設計',
         group: '專項',
-        skills: ['weather_atmosphere','vfx_weather_effects'],
+        skills: ['cinematography_lighting'],
         prompt: `你是氛圍Agent。設計：
 - 天氣效果
 - 環境氛圍
@@ -781,7 +868,7 @@ export const AGENTS = {
     shortform: {
         name: '📱 短劇專家',
         group: '專項',
-        skills: ['short_drama','short_form_hook','short_form_pacing','short_form_cliffhanger',
+        skills: ['episodic_tv_structure', 'narrative_campbell_monomyth',
                  'short_form_vertical','short_form_mobile_first','short_form_attention',
                  'short_form_series','short_form_character','short_form_conflict',
                  'short_form_twist','short_form_emotion','short_form_comedy',
@@ -801,10 +888,9 @@ export const AGENTS = {
         group: '編劇專業',
         skills: [
             'script_format_chinese',     // 中國劇本格式
-            'script_master_theory',      // 編劇理論
-            'dialogue_craft',            // 對白技法
-            'tv_drama_writing',          // 電視劇寫作
-            'culture_history'            // 文化歷史
+            'screenplay_format_chinese_film',  // 中國電影劇本格式
+            'screenplay_culture_chinese',      // 中國文化風格
+            'narrative_campbell_monomyth'      // 英雄之旅
         ],
         prompt: `你是中國影視劇本專家。
 
@@ -825,11 +911,9 @@ export const AGENTS = {
         name: '🇺🇸 好萊塢劇本',
         group: '編劇專業',
         skills: [
-            'script_format_hollywood',   // 好萊塢格式
-            'script_master_theory',      // 編劇理論
-            'screenwriting_save_the_cat', // 救貓咪
-            'screenwriting_syd_field',    // 三幕式
-            'dialogue_craft'              // 對白技法
+            'screenplay_culture_hollywood',   // 好萊塢風格
+            'narrative_campbell_monomyth',    // 英雄之旅
+            'analysis_storygrid_coyne'        // 故事網格
         ],
         prompt: `你是好萊塢專業編劇。
 
@@ -851,11 +935,9 @@ export const AGENTS = {
         name: '🇯🇵 番劇劇本',
         group: '編劇專業',
         skills: [
-            'anime_episode_structure',   // 番劇單集結構 (新)
-            'script_format_anime',       // 番劇格式
-            'anime_narrative',           // 動畫敘事
-            'script_master_theory',      // 編劇理論
-            'dialogue_craft'             // 對白技法
+            'screenplay_culture_japanese',    // 日本動畫風格
+            'narrative_campbell_monomyth',    // 英雄之旅
+            'episodic_tv_structure'           // 劇集結構
         ],
         prompt: `你是AI番劇編劇專家（5-8分鐘/集）。
 
@@ -887,11 +969,8 @@ export const AGENTS = {
         name: '📱 短劇劇本',
         group: '編劇專業',
         skills: [
-            'short_drama_structure',     // 短劇結構 (新)
-            'short_form_hook',           // 鉤子設計
-            'short_form_cliffhanger',    // 懸念設計
-            'short_form_pacing',         // 節奏控制
-            'short_form_twist'           // 反轉技巧
+            'episodic_tv_structure',         // 劇集結構
+            'narrative_campbell_monomyth'    // 英雄之旅
         ],
         prompt: `你是豎屏短劇編劇專家（1-3分鐘/集）。
 
@@ -918,11 +997,9 @@ export const AGENTS = {
         name: '📺 電視劇劇本',
         group: '編劇專業',
         skills: [
-            'tv_episode_structure',      // 電視劇單集結構
-            'script_master_theory',      // 編劇理論
-            'dialogue_craft',            // 對白技法
-            'tv_drama_writing',          // 電視劇寫作
-            'script_subtext'             // 潛台詞設計
+            'episodic_tv_structure',         // 劇集結構
+            'narrative_campbell_monomyth',   // 英雄之旅
+            'analysis_storygrid_coyne'       // 故事網格
         ],
         prompt: `你是電視劇編劇專家（10-15分鐘+/集）。
 
@@ -946,11 +1023,9 @@ export const AGENTS = {
         name: '📋 劇本評審',
         group: '質量評估',
         skills: [
-            'script_coverage',           // 好萊塢Coverage評估
-            'script_master_theory',      // 編劇理論
-            'audience_emotion_prediction', // 受眾情感預測
-            'audience_persona',          // 受眾畫像
-            'psychology_motivation'      // 角色心理評估
+            'analysis_storygrid_coyne',      // 故事網格評估
+            'narrative_campbell_monomyth',   // 英雄之旅
+            'psychology_motivation'          // 角色心理
         ],
         prompt: `你是專業劇本評審Agent（Script Reader）。用好萊塢Coverage標準評估劇本。
 

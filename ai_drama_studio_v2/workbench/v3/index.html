@@ -513,6 +513,8 @@
         @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
         @keyframes fadeIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes fadeInUp{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}
+        @keyframes fadeOut{to{opacity:0;transform:translate(-50%,-10px)}}
         @keyframes dotBounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
         @keyframes typing{from{width:0}to{width:100%}}
         
@@ -682,6 +684,9 @@
         /* Responsive */
         @media(max-width:1200px){.main{grid-template-columns:1fr}.panel-left,.panel-right{display:none}}
     </style>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 </head>
 <body>
 <div class="app">
@@ -696,7 +701,15 @@
         </div>
         <div class="header-info">
             <span class="badge" id="novelStats">STANDBY</span>
-            <span class="badge">30 AGENTS</span>
+            <span class="badge">43 AGENTS</span>
+            <span class="badge" style="cursor:pointer" onclick="exportProject()" title="導出項目備份">💾</span>
+            <label class="badge" style="cursor:pointer" title="導入項目">
+                📂
+                <input type="file" accept=".json" onchange="importProject(this.files[0]);this.value=''" style="display:none">
+            </label>
+            <span class="badge active" style="cursor:pointer" onclick="showFizziksPanel()" title="點擊充值">
+                ⚡ <span id="fizziks-balance">10000</span> FIZZIKS
+            </span>
         </div>
     </header>
     
@@ -785,6 +798,61 @@ const VERSIONS = {
 };
 
 let currentVersion = 'lite';  // 默認極速版
+
+// ==================== FIZZIKS 積分系統 ====================
+const FIZZIKS = {
+    // 用戶餘額（測試用，實際從後端獲取）
+    balance: 10000,
+    
+    // 定價配置 (100 Fizziks = $1.00)
+    pricing: {
+        interview: 0,      // 🎤 訪談 - 免費
+        concept: 20,       // 💡 高概念
+        chapters: 50,      // 📑 章節規劃
+        character: 50,     // 👥 角色設計
+        artStyle: 0,       // 🎨 畫風 - 免費
+        production: 30,    // 👔 服化道
+        script: 20,        // ✍️ 劇本/每集
+        storyboard: 30     // 🎬 分鏡/每集
+    },
+    
+    // 獲取步驟費用
+    getCost(step, episodes = 1) {
+        const price = this.pricing[step] || 0;
+        if (step === 'script' || step === 'storyboard') {
+            return price * episodes;
+        }
+        return price;
+    },
+    
+    // 檢查餘額
+    canAfford(cost) {
+        return this.balance >= cost;
+    },
+    
+    // 扣費
+    deduct(amount, reason) {
+        if (this.canAfford(amount)) {
+            this.balance -= amount;
+            console.log(`⚡ Fizziks: -${amount} (${reason}), 餘額: ${this.balance}`);
+            this.updateDisplay();
+            return true;
+        }
+        return false;
+    },
+    
+    // 更新顯示
+    updateDisplay() {
+        const el = document.getElementById('fizziks-balance');
+        if (el) el.textContent = this.balance;
+    },
+    
+    // 格式化費用顯示
+    formatCost(cost) {
+        if (cost === 0) return '免費';
+        return `${cost} ⚡`;
+    }
+};
 
 const ALL_STEPS = [
     {id:1, name:'導入小說', desc:'上傳或貼入小說', icon:'📖'},
@@ -1025,80 +1093,84 @@ const SUBJECT_TYPES = {
     none: {label:'空鏡', color:'dim', icon:'🏞️'}
 };
 
-// 畫風庫 - 完整版
+// 畫風庫 - 完整版 (使用漸變色塊預覽)
 const ART_STYLES = [
     // ========== 2D動畫 ==========
-    { id: '2d_anime', name: '2D動畫', category: '2D動畫', prompt: 'anime style, clean lines, vibrant colors, Japanese animation', preview: '🌸' },
-    { id: '2d_ghibli', name: '吉卜力', category: '2D動畫', prompt: 'Studio Ghibli style, hand-painted backgrounds, soft colors, whimsical', preview: '🏯' },
-    { id: '2d_makoto', name: '新海誠', category: '2D動畫', prompt: 'Makoto Shinkai style, detailed skies, lens flare, romantic atmosphere, hyper detailed backgrounds', preview: '☁️' },
-    { id: '2d_korean', name: '韓式動畫', category: '2D動畫', prompt: 'Korean webtoon style, clean lineart, soft shading, manhwa aesthetic', preview: '🇰🇷' },
-    { id: '2d_shonen', name: '熱血動畫', category: '2D動畫', prompt: 'shonen anime style, dynamic poses, action lines, intense expressions', preview: '🔥' },
-    { id: '2d_toriyama', name: '鳥山明', category: '2D動畫', prompt: 'Akira Toriyama style, Dragon Ball aesthetic, bold lines, dynamic action', preview: '💥' },
-    { id: '2d_vintage', name: '復古動畫', category: '2D動畫', prompt: 'vintage anime style, 80s aesthetic, soft gradients, nostalgic colors', preview: '📼' },
-    { id: '2d_chibi', name: 'Q版動畫', category: '2D動畫', prompt: 'chibi anime style, cute proportions, big eyes, kawaii aesthetic', preview: '🎀' },
+    { id: '2d_anime', name: '2D動畫', category: '2D動畫', prompt: 'anime style, clean lines, vibrant colors, Japanese animation', color: 'linear-gradient(135deg, #ff6b9d, #c44569)' },
+    { id: '2d_ghibli', name: '吉卜力', category: '2D動畫', prompt: 'Studio Ghibli style, hand-painted backgrounds, soft colors, whimsical', color: 'linear-gradient(135deg, #a8e6cf, #88d8b0)' },
+    { id: '2d_makoto', name: '新海誠', category: '2D動畫', prompt: 'Makoto Shinkai style, detailed skies, lens flare, romantic atmosphere, hyper detailed backgrounds', color: 'linear-gradient(135deg, #667eea, #f093fb)' },
+    { id: '2d_korean', name: '韓式動畫', category: '2D動畫', prompt: 'Korean webtoon style, clean lineart, soft shading, manhwa aesthetic', color: 'linear-gradient(135deg, #ffecd2, #fcb69f)' },
+    { id: '2d_shonen', name: '熱血動畫', category: '2D動畫', prompt: 'shonen anime style, dynamic poses, action lines, intense expressions', color: 'linear-gradient(135deg, #ff512f, #f09819)' },
+    { id: '2d_toriyama', name: '鳥山明', category: '2D動畫', prompt: 'Akira Toriyama style, Dragon Ball aesthetic, bold lines, dynamic action', color: 'linear-gradient(135deg, #f5af19, #f12711)' },
+    { id: '2d_vintage', name: '復古動畫', category: '2D動畫', prompt: 'vintage anime style, 80s aesthetic, soft gradients, nostalgic colors', color: 'linear-gradient(135deg, #d4a574, #c9a86c)' },
+    { id: '2d_chibi', name: 'Q版動畫', category: '2D動畫', prompt: 'chibi anime style, cute proportions, big eyes, kawaii aesthetic', color: 'linear-gradient(135deg, #ffb6c1, #ffc0cb)' },
     
     // ========== 3D風格 ==========
-    { id: '3d_fantasy', name: '3D玄幻', category: '3D風格', prompt: '3D render, fantasy style, magical lighting, detailed textures, cinematic', preview: '🔮' },
-    { id: '3d_pixar', name: '3D皮克斯', category: '3D風格', prompt: '3D animation, Pixar style, vibrant colors, expressive characters, subsurface scattering', preview: '🎬' },
-    { id: '3d_realistic', name: '3D寫實', category: '3D風格', prompt: '3D realistic render, photorealistic, detailed skin textures, ray tracing', preview: '📸' },
-    { id: '3d_game', name: '3D遊戲', category: '3D風格', prompt: '3D game cinematic, Unreal Engine 5, high fidelity, AAA quality', preview: '🎮' },
-    { id: '3d_stylized', name: '3D風格化', category: '3D風格', prompt: '3D stylized render, cel shading, cartoon textures, vibrant', preview: '🎨' },
+    { id: '3d_fantasy', name: '3D玄幻', category: '3D風格', prompt: '3D render, fantasy style, magical lighting, detailed textures, cinematic', color: 'linear-gradient(135deg, #8e44ad, #9b59b6)' },
+    { id: '3d_pixar', name: '3D皮克斯', category: '3D風格', prompt: '3D animation, Pixar style, vibrant colors, expressive characters, subsurface scattering', color: 'linear-gradient(135deg, #3498db, #2ecc71)' },
+    { id: '3d_realistic', name: '3D寫實', category: '3D風格', prompt: '3D realistic render, photorealistic, detailed skin textures, ray tracing', color: 'linear-gradient(135deg, #636e72, #2d3436)' },
+    { id: '3d_game', name: '3D遊戲', category: '3D風格', prompt: '3D game cinematic, Unreal Engine 5, high fidelity, AAA quality', color: 'linear-gradient(135deg, #00b894, #00cec9)' },
+    { id: '3d_stylized', name: '3D風格化', category: '3D風格', prompt: '3D stylized render, cel shading, cartoon textures, vibrant', color: 'linear-gradient(135deg, #fd79a8, #e84393)' },
     
-    // ========== 🎞️ 電影質感類 ==========
-    { id: 'film_doc', name: '紀實電影', category: '電影質感', prompt: 'documentary film style, natural lighting, handheld camera, authentic, 35mm film', preview: '📹' },
-    { id: 'film_art', name: '文藝片柔光', category: '電影質感', prompt: 'art house film, soft diffused lighting, shallow depth of field, melancholic mood, 35mm', preview: '🎭' },
-    { id: 'film_cyber', name: '賽博朋克暗調', category: '電影質感', prompt: 'cyberpunk cinematic, neon lights, dark atmosphere, rain, Blade Runner style, anamorphic lens', preview: '🌃' },
-    { id: 'film_scifi', name: '科幻冷色調', category: '電影質感', prompt: 'sci-fi film, cold blue tones, futuristic, clean aesthetic, volumetric lighting', preview: '🚀' },
-    { id: 'film_fantasy', name: '奇幻高飽和', category: '電影質感', prompt: 'fantasy film, high saturation, magical lighting, epic scale, Lord of the Rings style', preview: '⚔️' },
-    { id: 'film_vintage', name: '復古膠片顆粒', category: '電影質感', prompt: 'vintage film grain, 70s aesthetic, warm tones, Kodak film stock, nostalgic', preview: '📽️' },
-    { id: 'film_bw', name: '黑白膠片', category: '電影質感', prompt: 'black and white film, high contrast, dramatic shadows, film noir, classic cinema', preview: '🎬' },
-    { id: 'film_euro', name: '歐洲藝術電影', category: '電影質感', prompt: 'European art cinema, muted colors, contemplative, long takes, Tarkovsky style', preview: '🎥' },
+    // ========== 電影質感類 ==========
+    { id: 'film_doc', name: '紀實電影', category: '電影質感', prompt: 'documentary film style, natural lighting, handheld camera, authentic, 35mm film', color: 'linear-gradient(135deg, #bdc3c7, #95a5a6)' },
+    { id: 'film_art', name: '文藝片柔光', category: '電影質感', prompt: 'art house film, soft diffused lighting, shallow depth of field, melancholic mood, 35mm', color: 'linear-gradient(135deg, #dfe6e9, #b2bec3)' },
+    { id: 'film_cyber', name: '賽博朋克暗調', category: '電影質感', prompt: 'cyberpunk cinematic, neon lights, dark atmosphere, rain, Blade Runner style, anamorphic lens', color: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)' },
+    { id: 'film_scifi', name: '科幻冷色調', category: '電影質感', prompt: 'sci-fi film, cold blue tones, futuristic, clean aesthetic, volumetric lighting', color: 'linear-gradient(135deg, #4834d4, #686de0)' },
+    { id: 'film_fantasy', name: '奇幻高飽和', category: '電影質感', prompt: 'fantasy film, high saturation, magical lighting, epic scale, Lord of the Rings style', color: 'linear-gradient(135deg, #f39c12, #e74c3c)' },
+    { id: 'film_vintage', name: '復古膠片顆粒', category: '電影質感', prompt: 'vintage film grain, 70s aesthetic, warm tones, Kodak film stock, nostalgic', color: 'linear-gradient(135deg, #d35400, #e67e22)' },
+    { id: 'film_bw', name: '黑白膠片', category: '電影質感', prompt: 'black and white film, high contrast, dramatic shadows, film noir, classic cinema', color: 'linear-gradient(135deg, #2c3e50, #000000)' },
+    { id: 'film_euro', name: '歐洲藝術電影', category: '電影質感', prompt: 'European art cinema, muted colors, contemplative, long takes, Tarkovsky style', color: 'linear-gradient(135deg, #7f8c8d, #95a5a6)' },
     
-    // ========== 🧝 人物造型類 ==========
-    { id: 'char_ancient', name: '古裝史詩', category: '人物造型', prompt: 'ancient costume drama, elaborate traditional dress, palace setting, cinematic portrait', preview: '👑' },
-    { id: 'char_modern', name: '現代都市', category: '人物造型', prompt: 'modern urban style, contemporary fashion, city background, street photography', preview: '🏙️' },
-    { id: 'char_wasteland', name: '廢土流浪者', category: '人物造型', prompt: 'post-apocalyptic wasteland, rugged clothing, weathered face, Mad Max style', preview: '🏜️' },
-    { id: 'char_warrior', name: '奇幻戰士', category: '人物造型', prompt: 'fantasy warrior, armor and weapons, battle-ready, epic hero portrait', preview: '⚔️' },
-    { id: 'char_minguo', name: '民國風情', category: '人物造型', prompt: 'Republic of China era, 1920s-40s fashion, qipao, vintage Shanghai style', preview: '🎎' },
-    { id: 'char_future', name: '未來戰士', category: '人物造型', prompt: 'futuristic soldier, sci-fi armor, cybernetic enhancements, tactical gear', preview: '🤖' },
-    { id: 'char_ethnic', name: '異域民族風', category: '人物造型', prompt: 'exotic ethnic costume, traditional jewelry, cultural heritage, vibrant textiles', preview: '🌍' },
-    { id: 'char_royal', name: '宮廷華麗風', category: '人物造型', prompt: 'royal court luxury, ornate costume, gold embroidery, regal elegance, palace', preview: '👸' },
+    // ========== 人物造型類 ==========
+    { id: 'char_ancient', name: '古裝史詩', category: '人物造型', prompt: 'ancient costume drama, elaborate traditional dress, palace setting, cinematic portrait', color: 'linear-gradient(135deg, #c0392b, #8e44ad)' },
+    { id: 'char_modern', name: '現代都市', category: '人物造型', prompt: 'modern urban style, contemporary fashion, city background, street photography', color: 'linear-gradient(135deg, #34495e, #2c3e50)' },
+    { id: 'char_wasteland', name: '廢土流浪者', category: '人物造型', prompt: 'post-apocalyptic wasteland, rugged clothing, weathered face, Mad Max style', color: 'linear-gradient(135deg, #b8860b, #8b4513)' },
+    { id: 'char_warrior', name: '奇幻戰士', category: '人物造型', prompt: 'fantasy warrior, armor and weapons, battle-ready, epic hero portrait', color: 'linear-gradient(135deg, #7f8c8d, #c0c0c0)' },
+    { id: 'char_minguo', name: '民國風情', category: '人物造型', prompt: 'Republic of China era, 1920s-40s fashion, qipao, vintage Shanghai style', color: 'linear-gradient(135deg, #c9a86c, #8b7355)' },
+    { id: 'char_future', name: '未來戰士', category: '人物造型', prompt: 'futuristic soldier, sci-fi armor, cybernetic enhancements, tactical gear', color: 'linear-gradient(135deg, #1abc9c, #16a085)' },
+    { id: 'char_ethnic', name: '異域民族風', category: '人物造型', prompt: 'exotic ethnic costume, traditional jewelry, cultural heritage, vibrant textiles', color: 'linear-gradient(135deg, #e74c3c, #f1c40f)' },
+    { id: 'char_royal', name: '宮廷華麗風', category: '人物造型', prompt: 'royal court luxury, ornate costume, gold embroidery, regal elegance, palace', color: 'linear-gradient(135deg, #f1c40f, #d4af37)' },
     
-    // ========== 🎨 視覺風格類 ==========
-    { id: 'vis_oil', name: '油畫質感', category: '視覺風格', prompt: 'oil painting style, thick brushstrokes, rich colors, classical art, impasto texture', preview: '🖼️' },
-    { id: 'vis_watercolor', name: '水彩暈染', category: '視覺風格', prompt: 'watercolor painting, soft edges, transparent layers, wet-on-wet technique', preview: '🎨' },
-    { id: 'vis_sketch', name: '素描速寫', category: '視覺風格', prompt: 'pencil sketch style, rough lines, crosshatching, artistic drawing', preview: '✏️' },
-    { id: 'vis_woodcut', name: '版畫線條', category: '視覺風格', prompt: 'woodcut print style, bold lines, high contrast, graphic art, linocut', preview: '🪵' },
-    { id: 'vis_minimal', name: '光影極簡', category: '視覺風格', prompt: 'minimalist light and shadow, high contrast, silhouette, dramatic chiaroscuro', preview: '💡' },
-    { id: 'vis_contrast', name: '高對比黑白', category: '視覺風格', prompt: 'high contrast black and white, dramatic shadows, stark lighting, graphic', preview: '⬛' },
-    { id: 'vis_dreamy', name: '柔焦夢幻', category: '視覺風格', prompt: 'soft focus dreamy, gaussian blur, ethereal glow, romantic atmosphere', preview: '💭' },
-    { id: 'vis_neon', name: '霓虹夜影', category: '視覺風格', prompt: 'neon night aesthetic, colorful lights, urban night, glowing signs, cyberpunk vibes', preview: '🌆' },
+    // ========== 視覺風格類 ==========
+    { id: 'vis_oil', name: '油畫質感', category: '視覺風格', prompt: 'oil painting style, thick brushstrokes, rich colors, classical art, impasto texture', color: 'linear-gradient(135deg, #8b4513, #cd853f)' },
+    { id: 'vis_watercolor', name: '水彩暈染', category: '視覺風格', prompt: 'watercolor painting, soft edges, transparent layers, wet-on-wet technique', color: 'linear-gradient(135deg, #87ceeb, #add8e6)' },
+    { id: 'vis_sketch', name: '素描速寫', category: '視覺風格', prompt: 'pencil sketch style, rough lines, crosshatching, artistic drawing', color: 'linear-gradient(135deg, #696969, #a9a9a9)' },
+    { id: 'vis_woodcut', name: '版畫線條', category: '視覺風格', prompt: 'woodcut print style, bold lines, high contrast, graphic art, linocut', color: 'linear-gradient(135deg, #2c1810, #4a3728)' },
+    { id: 'vis_minimal', name: '光影極簡', category: '視覺風格', prompt: 'minimalist light and shadow, high contrast, silhouette, dramatic chiaroscuro', color: 'linear-gradient(135deg, #f5f5f5, #1a1a1a)' },
+    { id: 'vis_contrast', name: '高對比黑白', category: '視覺風格', prompt: 'high contrast black and white, dramatic shadows, stark lighting, graphic', color: 'linear-gradient(135deg, #000000, #ffffff)' },
+    { id: 'vis_dreamy', name: '柔焦夢幻', category: '視覺風格', prompt: 'soft focus dreamy, gaussian blur, ethereal glow, romantic atmosphere', color: 'linear-gradient(135deg, #fce4ec, #f8bbd9)' },
+    { id: 'vis_neon', name: '霓虹夜影', category: '視覺風格', prompt: 'neon night aesthetic, colorful lights, urban night, glowing signs, cyberpunk vibes', color: 'linear-gradient(135deg, #ff00ff, #00ffff)' },
     
-    // ========== 🧠 AI特效類 ==========
-    { id: 'ai_vangogh', name: '梵高風格遷移', category: 'AI特效', prompt: 'Van Gogh style transfer, swirling brushstrokes, Starry Night aesthetic, post-impressionist', preview: '🌻' },
-    { id: 'ai_monet', name: '莫奈風格遷移', category: 'AI特效', prompt: 'Monet style transfer, impressionist, soft colors, water lilies aesthetic, dappled light', preview: '🪷' },
-    { id: 'ai_surreal', name: '超現實融合', category: 'AI特效', prompt: 'surrealist composition, dreamlike fusion, impossible architecture, Dali inspired', preview: '🌀' },
-    { id: 'ai_glitch', name: 'AI故障美學', category: 'AI特效', prompt: 'AI glitch art, digital artifacts, data corruption aesthetic, vaporwave', preview: '📺' },
-    { id: 'ai_morph', name: '動態變形', category: 'AI特效', prompt: 'morphing transition, fluid transformation, seamless blend, AI interpolation', preview: '🔄' },
-    { id: 'ai_enhance', name: '超清增強', category: 'AI特效', prompt: 'AI enhanced, ultra high definition, sharp details, 8K resolution, pristine quality', preview: '✨' },
+    // ========== AI特效類 ==========
+    { id: 'ai_vangogh', name: '梵高風格遷移', category: 'AI特效', prompt: 'Van Gogh style transfer, swirling brushstrokes, Starry Night aesthetic, post-impressionist', color: 'linear-gradient(135deg, #1e3a5f, #f4d03f)' },
+    { id: 'ai_monet', name: '莫奈風格遷移', category: 'AI特效', prompt: 'Monet style transfer, impressionist, soft colors, water lilies aesthetic, dappled light', color: 'linear-gradient(135deg, #a8d8a8, #e8b4d8)' },
+    { id: 'ai_surreal', name: '超現實融合', category: 'AI特效', prompt: 'surrealist composition, dreamlike fusion, impossible architecture, Dali inspired', color: 'linear-gradient(135deg, #ff6b6b, #4ecdc4)' },
+    { id: 'ai_glitch', name: 'AI故障美學', category: 'AI特效', prompt: 'AI glitch art, digital artifacts, data corruption aesthetic, vaporwave', color: 'linear-gradient(135deg, #ff71ce, #01cdfe, #05ffa1)' },
+    { id: 'ai_morph', name: '動態變形', category: 'AI特效', prompt: 'morphing transition, fluid transformation, seamless blend, AI interpolation', color: 'linear-gradient(135deg, #667eea, #764ba2)' },
+    { id: 'ai_enhance', name: '超清增強', category: 'AI特效', prompt: 'AI enhanced, ultra high definition, sharp details, 8K resolution, pristine quality', color: 'linear-gradient(135deg, #00d2ff, #3a7bd5)' },
     
-    // ========== 🌍 地域美學類 ==========
-    { id: 'geo_chinese', name: '中式水墨真人', category: '地域美學', prompt: 'Chinese ink wash photography, traditional aesthetics, misty mountains, zen atmosphere', preview: '🏔️' },
-    { id: 'geo_japanese', name: '日系清新真人', category: '地域美學', prompt: 'Japanese aesthetic, clean and fresh, soft natural light, minimalist, wabi-sabi', preview: '🎌' },
-    { id: 'geo_korean', name: '韓式濾鏡劇情', category: '地域美學', prompt: 'Korean drama filter, soft skin tones, romantic lighting, K-drama aesthetic', preview: '🇰🇷' },
-    { id: 'geo_bollywood', name: '寶萊塢色彩', category: '地域美學', prompt: 'Bollywood style, vibrant saturated colors, dramatic, festive, Indian cinema', preview: '🇮🇳' },
-    { id: 'geo_nordic', name: '北歐極簡冷峻', category: '地域美學', prompt: 'Nordic minimalism, cold tones, stark landscapes, Scandinavian aesthetic, melancholic', preview: '🇸🇪' },
-    { id: 'geo_latam', name: '拉美魔幻現實', category: '地域美學', prompt: 'Latin American magical realism, vibrant colors, surreal elements, Gabriel Garcia Marquez inspired', preview: '🦜' },
-    { id: 'geo_desert', name: '中東沙漠史詩', category: '地域美學', prompt: 'Middle Eastern epic, desert landscape, golden hour, Arabian nights, Lawrence of Arabia', preview: '🏜️' },
-    { id: 'geo_african', name: '非洲部落紀實', category: '地域美學', prompt: 'African tribal documentary, earth tones, traditional culture, authentic portraits', preview: '🌍' },
+    // ========== 地域美學類 ==========
+    { id: 'geo_chinese', name: '中式水墨真人', category: '地域美學', prompt: 'Chinese ink wash photography, traditional aesthetics, misty mountains, zen atmosphere', color: 'linear-gradient(135deg, #2c3e50, #bdc3c7)' },
+    { id: 'geo_japanese', name: '日系清新真人', category: '地域美學', prompt: 'Japanese aesthetic, clean and fresh, soft natural light, minimalist, wabi-sabi', color: 'linear-gradient(135deg, #ffeaa7, #dfe6e9)' },
+    { id: 'geo_korean', name: '韓式濾鏡劇情', category: '地域美學', prompt: 'Korean drama filter, soft skin tones, romantic lighting, K-drama aesthetic', color: 'linear-gradient(135deg, #fab1a0, #ffeaa7)' },
+    { id: 'geo_bollywood', name: '寶萊塢色彩', category: '地域美學', prompt: 'Bollywood style, vibrant saturated colors, dramatic, festive, Indian cinema', color: 'linear-gradient(135deg, #ff9f43, #ee5a24, #f368e0)' },
+    { id: 'geo_nordic', name: '北歐極簡冷峻', category: '地域美學', prompt: 'Nordic minimalism, cold tones, stark landscapes, Scandinavian aesthetic, melancholic', color: 'linear-gradient(135deg, #a4b0be, #57606f)' },
+    { id: 'geo_latam', name: '拉美魔幻現實', category: '地域美學', prompt: 'Latin American magical realism, vibrant colors, surreal elements, Gabriel Garcia Marquez inspired', color: 'linear-gradient(135deg, #6c5ce7, #fd79a8)' },
+    { id: 'geo_desert', name: '中東沙漠史詩', category: '地域美學', prompt: 'Middle Eastern epic, desert landscape, golden hour, Arabian nights, Lawrence of Arabia', color: 'linear-gradient(135deg, #f39c12, #d68910)' },
+    { id: 'geo_african', name: '非洲部落紀實', category: '地域美學', prompt: 'African tribal documentary, earth tones, traditional culture, authentic portraits', color: 'linear-gradient(135deg, #784212, #a04000)' },
     
-    // ========== 🎬 導演風格 ==========
-    { id: 'dir_zhang', name: '張藝謀', category: '導演風格', prompt: 'Zhang Yimou style, high saturation red, epic composition, Chinese cinema, Hero aesthetic', preview: '🔴' },
-    { id: 'dir_wong', name: '王家衛', category: '導演風格', prompt: 'Wong Kar-wai style, neon lights, blur effects, In the Mood for Love, melancholic romance', preview: '🌃' },
-    { id: 'dir_nolan', name: '諾蘭', category: '導演風格', prompt: 'Christopher Nolan style, IMAX quality, practical effects, mind-bending, Inception aesthetic', preview: '🎯' },
-    { id: 'dir_wes', name: '乌德爾森', category: '導演風格', prompt: 'Wes Anderson style, symmetrical composition, pastel colors, whimsical, Grand Budapest aesthetic', preview: '🎀' },
-    { id: 'dir_kubrick', name: '庫布里克', category: '導演風格', prompt: 'Stanley Kubrick style, one-point perspective, cold precision, 2001 Space Odyssey aesthetic', preview: '🚀' },
-    { id: 'dir_tarantino', name: '塔倫蒂諾', category: '導演風格', prompt: 'Quentin Tarantino style, bold colors, dynamic angles, pulp aesthetic, stylized violence', preview: '🩸' }
+    // ========== 導演風格 ==========
+    { id: 'dir_zhang', name: '張藝謀', category: '導演風格', prompt: 'Zhang Yimou style, high saturation red, epic composition, Chinese cinema, Hero aesthetic', color: 'linear-gradient(135deg, #c0392b, #e74c3c)' },
+    { id: 'dir_wong', name: '王家衛', category: '導演風格', prompt: 'Wong Kar-wai style, neon lights, blur effects, In the Mood for Love, melancholic romance', color: 'linear-gradient(135deg, #16a085, #e74c3c)' },
+    { id: 'dir_nolan', name: '諾蘭', category: '導演風格', prompt: 'Christopher Nolan style, IMAX quality, practical effects, mind-bending, Inception aesthetic', color: 'linear-gradient(135deg, #2c3e50, #3498db)' },
+    { id: 'dir_wes', name: '乌德爾森', category: '導演風格', prompt: 'Wes Anderson style, symmetrical composition, pastel colors, whimsical, Grand Budapest aesthetic', color: 'linear-gradient(135deg, #fab1a0, #81ecec)' },
+    { id: 'dir_kubrick', name: '庫布里克', category: '導演風格', prompt: 'Stanley Kubrick style, one-point perspective, cold precision, 2001 Space Odyssey aesthetic', color: 'linear-gradient(135deg, #dfe6e9, #ff7675)' },
+    { id: 'dir_tarantino', name: '塔倫蒂諾', category: '導演風格', prompt: 'Quentin Tarantino style, bold colors, dynamic angles, pulp aesthetic, stylized violence', color: 'linear-gradient(135deg, #fdcb6e, #e74c3c)' },
+    { id: 'dir_villeneuve', name: '維倫紐瓦', category: '導演風格', prompt: 'Denis Villeneuve style, monumental scale, orange dust, fog, minimalist sci-fi, Dune aesthetic', color: 'linear-gradient(135deg, #d68910, #7f8c8d)' },
+    { id: 'dir_fincher', name: '大衛芬奇', category: '導演風格', prompt: 'David Fincher style, dark desaturated, green tint, meticulous framing, thriller aesthetic', color: 'linear-gradient(135deg, #1e272e, #2f3542)' },
+    { id: 'dir_miyazaki', name: '宮崎駿', category: '導演風格', prompt: 'Hayao Miyazaki style, hand-drawn animation, lush nature, flying scenes, Ghibli magic', color: 'linear-gradient(135deg, #55efc4, #81ecec)' },
+    { id: 'dir_tarkovsky', name: '塔可夫斯基', category: '導演風格', prompt: 'Andrei Tarkovsky style, long contemplative takes, water imagery, sepia tones, spiritual', color: 'linear-gradient(135deg, #6c5b4b, #8b7355)' }
 ];
 
 // 狀態
@@ -1131,12 +1203,202 @@ let state = {
     storyboard: []
 };
 
+// ==================== 自動保存/恢復 ====================
+const AUTOSAVE_KEY = 'ai_drama_autosave';
+
+function autoSave(stepName = '') {
+    try {
+        const saveData = {
+            version: 2,
+            timestamp: Date.now(),
+            currentStep: state.currentStep,
+            novel: state.novel,
+            concept: state.concept,
+            chapters: state.chapters,
+            characters: state.characters,
+            artStyle: state.artStyle,
+            costumes: state.costumes,
+            scripts: state.scripts,
+            storyboard: state.storyboard,
+            episodeShots: state.episodeShots,
+            chapterConfig: typeof chapterConfig !== 'undefined' ? chapterConfig : null,
+            novelWizard: typeof novelWizardState !== 'undefined' ? novelWizardState : null
+        };
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(saveData));
+        
+        // 顯示保存提示
+        if (stepName) {
+            showSaveToast(`✅ ${stepName} 已保存`);
+        }
+        console.log('[AutoSave] 已保存到本地', new Date().toLocaleTimeString());
+    } catch (e) {
+        console.error('[AutoSave] 保存失敗:', e);
+    }
+}
+
+function showSaveToast(message) {
+    let toast = document.getElementById('saveToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'saveToast';
+        toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--success);color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+}
+
+function checkAutoRestore() {
+    try {
+        const saved = localStorage.getItem(AUTOSAVE_KEY);
+        if (!saved) return;
+        
+        const data = JSON.parse(saved);
+        if (!data.timestamp) return;
+        
+        const age = Date.now() - data.timestamp;
+        const ageMinutes = Math.round(age / 60000);
+        const ageText = ageMinutes < 60 ? `${ageMinutes}分鐘前` : `${Math.round(ageMinutes/60)}小時前`;
+        
+        // 如果保存時間超過7天，不提示恢復
+        if (age > 7 * 24 * 60 * 60 * 1000) return;
+        
+        // 檢查是否有實質內容
+        const hasContent = data.novel?.text || data.concept?.logline || (data.chapters?.length > 0);
+        if (!hasContent) return;
+        
+        // 顯示恢復提示
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal" style="max-width:400px">
+                <h3 style="margin-bottom:12px">💾 發現未完成項目</h3>
+                <div style="background:var(--surface2);padding:12px;border-radius:6px;margin-bottom:16px;font-size:13px">
+                    <div style="color:var(--primary);font-weight:600;margin-bottom:8px">${data.novel?.title || '未命名項目'}</div>
+                    <div style="color:var(--dim)">
+                        保存時間：${ageText}<br>
+                        ${data.novel?.text ? `小說：${Math.round(data.novel.text.length/1000)}K字` : ''}<br>
+                        ${data.chapters?.length ? `章節：${data.chapters.length}章` : ''}
+                        ${data.storyboard?.length ? ` | 分鏡：${data.storyboard.length}鏡` : ''}
+                    </div>
+                </div>
+                <div style="display:flex;gap:10px">
+                    <button class="btn btn-primary" onclick="restoreAutoSave();this.closest('.modal-overlay').remove()" style="flex:1">
+                        ✅ 恢復進度
+                    </button>
+                    <button class="btn" onclick="clearAutoSave();this.closest('.modal-overlay').remove()" style="flex:1">
+                        🗑️ 重新開始
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+    } catch (e) {
+        console.error('[AutoRestore] 檢查失敗:', e);
+    }
+}
+
+function restoreAutoSave() {
+    try {
+        const saved = localStorage.getItem(AUTOSAVE_KEY);
+        if (!saved) return;
+        
+        const data = JSON.parse(saved);
+        
+        // 恢復 state
+        if (data.novel) state.novel = data.novel;
+        if (data.concept) state.concept = data.concept;
+        if (data.chapters) state.chapters = data.chapters;
+        if (data.characters) state.characters = data.characters;
+        if (data.artStyle) state.artStyle = data.artStyle;
+        if (data.costumes) state.costumes = data.costumes;
+        if (data.scripts) state.scripts = data.scripts;
+        if (data.storyboard) state.storyboard = data.storyboard;
+        if (data.episodeShots) state.episodeShots = data.episodeShots;
+        
+        // 恢復 chapterConfig
+        if (data.chapterConfig && typeof chapterConfig !== 'undefined') {
+            Object.assign(chapterConfig, data.chapterConfig);
+        }
+        
+        // 恢復 novelWizardState
+        if (data.novelWizard && typeof novelWizardState !== 'undefined') {
+            Object.assign(novelWizardState, data.novelWizard);
+        }
+        
+        // 跳轉到上次的步驟
+        const targetStep = data.currentStep || 1;
+        showStep(targetStep);
+        updateProgress();
+        
+        showSaveToast('✅ 已恢復上次進度');
+        console.log('[AutoRestore] 已恢復', data);
+        
+    } catch (e) {
+        console.error('[AutoRestore] 恢復失敗:', e);
+    }
+}
+
+function clearAutoSave() {
+    localStorage.removeItem(AUTOSAVE_KEY);
+    showSaveToast('🗑️ 已清除舊進度');
+}
+
+// 導出項目（可下載備份）
+function exportProject() {
+    const data = {
+        version: 2,
+        exportTime: new Date().toISOString(),
+        title: state.novel?.title || '未命名',
+        state: state,
+        chapterConfig: typeof chapterConfig !== 'undefined' ? chapterConfig : null,
+        novelWizard: typeof novelWizardState !== 'undefined' ? novelWizardState : null
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${state.novel?.title || 'project'}_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// 導入項目
+function importProject(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.state) {
+                Object.assign(state, data.state);
+            }
+            if (data.chapterConfig) {
+                Object.assign(chapterConfig, data.chapterConfig);
+            }
+            if (data.novelWizard && typeof novelWizardState !== 'undefined') {
+                Object.assign(novelWizardState, data.novelWizard);
+            }
+            showStep(state.currentStep || 1);
+            updateProgress();
+            showSaveToast('✅ 項目導入成功');
+        } catch (err) {
+            alert('導入失敗：' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
 // ==================== 初始化 ====================
 function init(){
     renderSteps();
     showStep(1);
     updateProgress();
     updateAgentSkillsPanel(1);
+    
+    // 檢查是否有未完成的項目
+    setTimeout(checkAutoRestore, 500);
 }
 
 function renderSteps(){
@@ -1191,49 +1453,43 @@ function prevStep(){
 function showStep(step){
     const content = document.getElementById('contentArea');
     
+    // 🔒 切換步驟時自動保存（只有在有實質內容時才保存）
+    if (state.novel?.text || state.concept?.logline || state.chapters?.length) {
+        state.currentStep = step;
+        autoSave();
+    }
+    
     switch(step){
         case 1: content.innerHTML = renderStep1(); break;
         case 2: 
             content.innerHTML = renderStepInterview(); 
             break;
-        case 3: // 高概念 - 如果沒結果則自動運行
+        case 3: // 高概念 - 等待用戶確認後再生成
             content.innerHTML = renderStep2();
-            if(!state.concept?.logline) {
-                setTimeout(() => runConceptAgent(), 100);
-            }
+            // 不再自動運行
             break;
-        case 4: // 章節 - 如果沒結果則自動運行
+        case 4: // 章節 - 等待用戶確認後再生成
             content.innerHTML = renderStep3();
-            if(!state.chapters?.length || !state.chapters[0]?.summary) {
-                setTimeout(() => runChapterAgent(), 100);
-            }
+            // 不再自動運行，讓用戶先確認配置再點擊生成
             break;
-        case 5: // 角色設計 - 如果沒結果則自動運行
+        case 5: // 角色設計 - 等待用戶確認後再生成
             content.innerHTML = renderStep4();
-            if(!state.characters?.main?.length) {
-                setTimeout(() => runCharacterAgent(), 100);
-            }
+            // 不再自動運行
             break;
         case 6: // 畫風選擇 (NEW)
             content.innerHTML = renderArtStyleStep();
             break;
-        case 7: // 服化道 - 如果沒結果則自動運行
+        case 7: // 服化道 - 等待用戶確認後再生成
             content.innerHTML = renderStep5();
-            if(!state.scenes?.length && !state.costumes?.length) {
-                setTimeout(() => runDesignAgent(), 100);
-            }
+            // 不再自動運行
             break;
-        case 8: // 劇本 - 如果沒結果則自動運行
+        case 8: // 劇本 - 等待用戶確認後再生成
             content.innerHTML = renderStep6();
-            if(!state.scripts?.length) {
-                setTimeout(() => runScriptAgent(), 100);
-            }
+            // 不再自動運行
             break;
-        case 9: // 分鏡 - 如果沒結果則自動運行
+        case 9: // 分鏡 - 等待用戶確認後再生成
             content.innerHTML = renderStep7();
-            if(!state.storyboard?.length) {
-                setTimeout(() => runStoryboardAgent(), 100);
-            }
+            // 不再自動運行
             break;
         case 10: content.innerHTML = renderStep8(); break;  // 輸出
     }
@@ -1348,11 +1604,12 @@ function stopCountdown() {
 
 async function callAgent(endpoint, data, maxRetries = 2) {
     const startTime = Date.now();
-    console.log(`[API] 開始調用 ${endpoint}，數據大小: ${JSON.stringify(data).length} 字節`);
+    const timeoutMs = data.timeout || 90000; // 默認90秒，可通過data.timeout自定義
+    console.log(`[API] 開始調用 ${endpoint}，數據大小: ${JSON.stringify(data).length} 字節，超時: ${timeoutMs/1000}秒`);
     
     for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 180000);
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
         
         try {
             const res = await fetch(`${API_BASE}/${endpoint}`, {
@@ -1381,7 +1638,7 @@ async function callAgent(endpoint, data, maxRetries = 2) {
             const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
             
             if (err.name === 'AbortError') {
-                throw new Error(`請求超時（180秒），已等待 ${elapsed}秒。請減少內容或重試。`);
+                throw new Error(`請求超時（${timeoutMs/1000}秒），已等待 ${elapsed}秒。`);
             }
             
             // 網絡錯誤可重試
@@ -1399,8 +1656,7 @@ async function callAgent(endpoint, data, maxRetries = 2) {
 
 async function checkApiHealth() {
     try {
-        // health endpoint在根路径，不在/api下
-        const res = await fetch('http://34.58.33.115:3001/api/health');
+        const res = await fetch(`${API_BASE}/health`);
         const data = await res.json();
         // 支持多种模式：hasApiKey, hasToken, gatewayConnected
         return data.status === 'ok' && (data.hasApiKey || data.hasToken || data.gatewayConnected);
@@ -1566,8 +1822,9 @@ async function runInterviewAgent(){
         startCountdown('interview', stepsEl);
         
         const apiResponse = await callAgent('interview', {
-            novel: state.novel.text,
-            title: state.novel.title
+            novel: state.novel.text.substring(0, 6000),  // 限制長度
+            title: state.novel.title,
+            timeout: 300000  // 5分鐘
         });
         
         // 停止倒計時
@@ -2211,7 +2468,7 @@ function renderStep1(){
 function selectVersion(ver){
     currentVersion = ver;
     // 更新服務器配置
-    fetch('http://34.58.33.115:3001/api/config', {
+    fetch(`${API_BASE}/config`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({maxSkills: VERSIONS[ver].maxSkills, contentLimit: VERSIONS[ver].contentLimit})
@@ -2450,7 +2707,848 @@ function renderNovelMode(){
         <div id="generateStatus" style="margin:16px 0"></div>
         
         <div class="btn-group">
-            <button class="btn btn-primary" onclick="generateNovel()">✨ 開始創作小說</button>
+            <button class="btn btn-primary" onclick="startNovelWizard()">✨ 開始創作小說（分步模式）</button>
+        </div>
+    `;
+}
+
+// ==================== 小說分步生成器 ====================
+const novelWizardState = {
+    step: 0,
+    genre: '',
+    idea: '',
+    reference: '',
+    episodes: 8,
+    duration: '5-8',
+    // 生成結果
+    structure: null,    // Step 1: 三幕式結構
+    chapters: null,     // Step 2: 章節大綱（簡短版，每集一句話）
+    characters: null,   // Step 3: 角色設計
+    scenes: null,       // Step 4: 場景列表
+    content: '',        // Step 5: 正文
+    // 逐集編寫模式
+    episodeByEpisode: {
+        enabled: false,
+        currentEpisode: 1,
+        completedEpisodes: [],  // [{ep:1, title:'', summary:'', script:'', confirmed:true}, ...]
+        isPaused: false
+    }
+};
+
+const NOVEL_STEPS = [
+    { 
+        id: 1, name: '故事結構', desc: '選擇敘事框架', icon: '🏗️', cost: 10,
+        skills: [
+            { id: 'three_act', name: '三幕式', desc: '好萊塢經典結構', selected: true },
+            { id: 'save_the_cat', name: 'Save the Cat', desc: '15個節拍點', selected: false },
+            { id: 'heros_journey', name: '英雄之旅', desc: '12步神話結構', selected: false },
+            { id: 'kishotenketsu', name: '起承轉合', desc: '東方敘事結構', selected: false }
+        ]
+    },
+    { 
+        id: 2, name: '章節規劃', desc: '選擇章節風格', icon: '📑', cost: 15,
+        skills: [
+            { id: 'episodic', name: '單元劇式', desc: '每集獨立故事', selected: false },
+            { id: 'serial', name: '連續劇式', desc: '強連貫性', selected: true },
+            { id: 'cliffhanger', name: '懸念大師', desc: '每集結尾鉤子', selected: true },
+            { id: 'slow_burn', name: '慢熱鋪墊', desc: '漸進式揭露', selected: false }
+        ]
+    },
+    { 
+        id: 3, name: '角色設計', desc: '選擇角色理論', icon: '👥', cost: 10,
+        skills: [
+            { id: 'lajos_egri', name: 'Lajos Egri三維', desc: '生理/社會/心理', selected: true },
+            { id: 'want_need_wound', name: 'Want/Need/Wound', desc: '慾望/需求/創傷', selected: true },
+            { id: 'archetype', name: '榮格原型', desc: '12種人格原型', selected: false },
+            { id: 'enneagram', name: '九型人格', desc: '性格分類系統', selected: false }
+        ]
+    },
+    { 
+        id: 4, name: '場景列表', desc: '選擇視覺風格', icon: '🎬', cost: 10,
+        skills: [
+            { id: 'cinematic', name: '電影感', desc: '大銀幕視覺', selected: true },
+            { id: 'intimate', name: '親密感', desc: '角色特寫為主', selected: false },
+            { id: 'action', name: '動作場景', desc: '快節奏視覺', selected: false },
+            { id: 'atmospheric', name: '氛圍營造', desc: '環境敘事', selected: true }
+        ]
+    },
+    { 
+        id: 5, name: '正文撰寫', desc: '選擇寫作風格', icon: '✍️', cost: 20,
+        skills: [
+            { id: 'dialogue_focus', name: '對白驅動', desc: '以對話推進', selected: true },
+            { id: 'action_focus', name: '動作描寫', desc: '視覺化敘述', selected: true },
+            { id: 'inner_voice', name: '內心獨白', desc: '心理描寫', selected: false },
+            { id: 'poetic', name: '詩意散文', desc: '文學性語言', selected: false }
+        ]
+    }
+];
+
+function startNovelWizard(){
+    // 讀取表單數據
+    novelWizardState.genre = document.getElementById('storyGenre')?.value || '武俠';
+    novelWizardState.idea = document.getElementById('storyIdea')?.value || '';
+    novelWizardState.reference = document.getElementById('storyReference')?.value || '';
+    novelWizardState.episodes = chapterConfig.episodes || 8;
+    novelWizardState.duration = `${chapterConfig.durationPerEpisode || 5}`;
+    novelWizardState.step = 0;
+    
+    if(!novelWizardState.idea.trim()){
+        alert('請填寫故事創意/設定！');
+        return;
+    }
+    
+    showNovelWizardStep(1);
+}
+
+function showNovelWizardStep(stepNum){
+    novelWizardState.step = stepNum;
+    const statusDiv = document.getElementById('generateStatus');
+    const step = NOVEL_STEPS[stepNum - 1];
+    
+    if(stepNum > NOVEL_STEPS.length){
+        // 完成
+        finishNovelWizard();
+        return;
+    }
+    
+    // 根據步驟顯示不同內容
+    let resultContent = '';
+    let hasResult = false;
+    
+    switch(stepNum){
+        case 1: hasResult = !!novelWizardState.structure; resultContent = novelWizardState.structure || ''; break;
+        case 2: hasResult = !!novelWizardState.chapters; resultContent = novelWizardState.chapters || ''; break;
+        case 3: hasResult = !!novelWizardState.characters; resultContent = novelWizardState.characters || ''; break;
+        case 4: hasResult = !!novelWizardState.scenes; resultContent = novelWizardState.scenes || ''; break;
+        case 5: hasResult = novelWizardState.content.length > 100; resultContent = novelWizardState.content || ''; break;
+    }
+    
+    statusDiv.innerHTML = `
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <!-- 進度條 -->
+            <div style="display:flex;background:var(--surface2);border-bottom:1px solid var(--border)">
+                ${NOVEL_STEPS.map((s, i) => `
+                    <div style="flex:1;padding:12px 8px;text-align:center;font-size:11px;
+                        ${i + 1 < stepNum ? 'background:var(--primary);color:#fff' : ''}
+                        ${i + 1 === stepNum ? 'background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff' : ''}
+                        ${i + 1 > stepNum ? 'color:var(--dim)' : ''}">
+                        <div style="font-size:18px;margin-bottom:4px">${s.icon}</div>
+                        <div>${s.name}</div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <!-- 當前步驟 -->
+            <div style="padding:20px">
+                <h4 style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
+                    <span style="font-size:24px">${step.icon}</span>
+                    Step ${stepNum}/5: ${step.name}
+                    <span style="margin-left:auto;font-size:12px;color:var(--primary)">${step.cost}⚡</span>
+                </h4>
+                <p style="color:var(--dim);font-size:13px;margin-bottom:16px">${step.desc}</p>
+                
+                ${hasResult ? `
+                    <!-- 已有結果：顯示可編輯區域 -->
+                    <div style="background:linear-gradient(135deg,rgba(255,10,53,.1),var(--surface2));border:1px solid var(--primary);border-radius:8px;padding:12px;margin-bottom:16px">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                            <span style="color:var(--primary);font-weight:600">✏️ 可編輯區域</span>
+                            <span style="font-size:11px;color:var(--dim)">修改後點擊「確認並繼續」</span>
+                        </div>
+                        <textarea id="novelWizardResult" rows="12" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:13px;line-height:1.8;color:var(--text);resize:vertical">${escapeHtml(resultContent)}</textarea>
+                    </div>
+                    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+                        ${stepNum > 1 ? `<button class="btn" onclick="showNovelWizardStep(${stepNum - 1})">← 上一步</button>` : ''}
+                        <button class="btn" onclick="regenerateNovelStep(${stepNum})">🔄 重新生成</button>
+                        <button class="btn btn-primary" onclick="confirmNovelStep(${stepNum})">✅ 確認並繼續 →</button>
+                    </div>
+                    ${stepNum === 2 ? `
+                    <!-- 逐集編寫模式入口 -->
+                    <div style="margin-top:20px;padding:16px;background:linear-gradient(135deg,rgba(255,153,0,.1),rgba(255,10,53,.1));border:2px solid var(--primary);border-radius:12px;text-align:center">
+                        <div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:8px">📝 需要編寫詳細劇本？</div>
+                        <div style="font-size:12px;color:var(--dim);margin-bottom:12px">
+                            進入「逐集編寫模式」，使用 DeepSeek Reasoner 為每集生成完整劇本<br>
+                            <span style="color:var(--text)">一集一集寫 → 確認 → 下一集</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="startEpisodeByEpisodeMode()" style="padding:12px 24px">
+                            🚀 進入逐集編寫模式
+                        </button>
+                        ${novelWizardState.episodeByEpisode.completedEpisodes?.length > 0 ? `
+                        <button class="btn" onclick="resumeEpisodeMode()" style="margin-left:10px;padding:12px 24px">
+                            ▶️ 繼續上次進度 (${novelWizardState.episodeByEpisode.completedEpisodes.length}集已完成)
+                        </button>
+                        ` : ''}
+                    </div>
+                    ` : ''}
+                ` : `
+                    <!-- 無結果：顯示技能選擇器 + 生成按鈕 -->
+                    
+                    <!-- 技能選擇器 -->
+                    <div style="background:var(--surface2);border-radius:8px;padding:16px;margin-bottom:16px">
+                        <div style="font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+                            <span>🎯 選擇寫作技法</span>
+                            <span style="font-size:11px;color:var(--dim);font-weight:normal">（點擊選擇/取消）</span>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px" id="skillSelector-${stepNum}">
+                            ${step.skills.map((sk, si) => `
+                                <div class="skill-option ${sk.selected ? 'selected' : ''}" 
+                                     onclick="toggleNovelSkill(${stepNum}, ${si})"
+                                     style="padding:12px;border:2px solid ${sk.selected ? 'var(--primary)' : 'var(--border)'};
+                                            border-radius:8px;cursor:pointer;transition:all .2s;
+                                            background:${sk.selected ? 'rgba(255,10,53,.1)' : 'var(--bg)'}">
+                                    <div style="font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px">
+                                        <span style="color:${sk.selected ? 'var(--primary)' : 'var(--dim)'}">${sk.selected ? '✓' : '○'}</span>
+                                        ${sk.name}
+                                    </div>
+                                    <div style="font-size:11px;color:var(--dim);margin-top:4px">${sk.desc}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="font-size:10px;color:var(--dim);margin-top:12px;text-align:center">
+                            已選擇 <span style="color:var(--primary)" id="selectedSkillCount-${stepNum}">${step.skills.filter(s=>s.selected).length}</span> 個技法
+                        </div>
+                    </div>
+                    
+                    <!-- 生成按鈕 -->
+                    <div style="text-align:center;padding:10px">
+                        <button class="btn btn-primary" onclick="generateNovelStep(${stepNum})" style="padding:14px 32px;font-size:15px">
+                            🚀 使用選定技法生成 <span style="opacity:.7;font-size:12px">(${step.cost}⚡)</span>
+                        </button>
+                        <div style="font-size:11px;color:var(--dim);margin-top:12px">
+                            ${getStepHint(stepNum)}
+                        </div>
+                    </div>
+                    ${stepNum > 1 ? `<div style="text-align:center;margin-top:12px"><button class="btn" onclick="showNovelWizardStep(${stepNum - 1})">← 返回上一步</button></div>` : ''}
+                `}
+            </div>
+            
+            <!-- 生成中的狀態 -->
+            <div id="novelWizardLoading" style="display:none;padding:20px;text-align:center">
+                <div class="loading-spinner" style="margin:0 auto 12px"></div>
+                <div id="novelWizardLoadingText" style="font-size:13px">生成中...</div>
+            </div>
+        </div>
+    `;
+}
+
+// 切換技能選擇
+function toggleNovelSkill(stepNum, skillIndex){
+    const step = NOVEL_STEPS[stepNum - 1];
+    step.skills[skillIndex].selected = !step.skills[skillIndex].selected;
+    
+    // 更新UI
+    const container = document.getElementById(`skillSelector-${stepNum}`);
+    if(container){
+        const options = container.querySelectorAll('.skill-option');
+        options.forEach((opt, i) => {
+            const sk = step.skills[i];
+            opt.style.borderColor = sk.selected ? 'var(--primary)' : 'var(--border)';
+            opt.style.background = sk.selected ? 'rgba(255,10,53,.1)' : 'var(--bg)';
+            opt.querySelector('span').textContent = sk.selected ? '✓' : '○';
+            opt.querySelector('span').style.color = sk.selected ? 'var(--primary)' : 'var(--dim)';
+        });
+    }
+    
+    // 更新計數
+    const countEl = document.getElementById(`selectedSkillCount-${stepNum}`);
+    if(countEl){
+        countEl.textContent = step.skills.filter(s => s.selected).length;
+    }
+}
+
+// 獲取選中的技能名稱
+function getSelectedSkills(stepNum){
+    const step = NOVEL_STEPS[stepNum - 1];
+    return step.skills.filter(s => s.selected).map(s => s.name);
+}
+
+function getStepHint(step){
+    const hints = {
+        1: '選擇敘事框架後生成故事結構',
+        2: '選擇章節風格後規劃每集大綱',
+        3: '選擇角色理論後設計人物',
+        4: '選擇視覺風格後列出場景',
+        5: '選擇寫作風格後撰寫正文'
+    };
+    return hints[step] || '';
+}
+
+async function generateNovelStep(stepNum){
+    const step = NOVEL_STEPS[stepNum - 1];
+    const loadingDiv = document.getElementById('novelWizardLoading');
+    const loadingText = document.getElementById('novelWizardLoadingText');
+    
+    // 顯示詳細的Loading狀態
+    loadingDiv.style.display = 'block';
+    loadingDiv.innerHTML = `
+        <div style="text-align:center">
+            <div class="loading-spinner" style="margin:0 auto 12px"></div>
+            <div id="novelWizardLoadingText" style="font-size:13px;margin-bottom:8px">正在生成${step.name}...</div>
+            <div id="novelWizardLoadingDetail" style="font-size:11px;color:var(--dim)"></div>
+            <div id="novelWizardTimer" style="font-size:10px;color:var(--primary);margin-top:8px">⏱️ 0 秒</div>
+        </div>
+    `;
+    
+    const detailEl = document.getElementById('novelWizardLoadingDetail');
+    const timerEl = document.getElementById('novelWizardTimer');
+    const loadingTextEl = document.getElementById('novelWizardLoadingText');
+    
+    // 計時器
+    let seconds = 0;
+    const timer = setInterval(() => {
+        seconds++;
+        if(timerEl) timerEl.textContent = `⏱️ ${seconds} 秒`;
+    }, 1000);
+    
+    // 進度提示
+    const tips = [
+        '連接 AI 智能體...',
+        '載入編劇技能...',
+        '分析故事結構...',
+        '生成創意內容...',
+        '優化輸出格式...',
+        '即將完成...'
+    ];
+    let tipIndex = 0;
+    const tipTimer = setInterval(() => {
+        if(detailEl && tipIndex < tips.length) {
+            detailEl.textContent = tips[tipIndex];
+            tipIndex++;
+        }
+    }, 3000);
+    
+    try {
+        if(detailEl) detailEl.textContent = '正在連接 AI 智能體...';
+        
+        const prompt = getNovelStepPrompt(stepNum);
+        
+        if(loadingTextEl) loadingTextEl.textContent = `🤖 AI 正在創作${step.name}...`;
+        if(detailEl) detailEl.textContent = '已連接，正在生成內容（約需 10-30 秒）...';
+        
+        const response = await callAgent('screenwriter', { content: prompt + '\n\n請輸出純文本，不要JSON格式！', timeout: 180000 });
+        
+        // 停止計時器
+        clearInterval(timer);
+        clearInterval(tipTimer);
+        
+        if (!response?.result) throw new Error('生成失敗');
+        
+        let result = response.result;
+        // 清理JSON格式
+        if (result.startsWith('{') || result.startsWith('[')) {
+            try {
+                const parsed = JSON.parse(result);
+                result = parsed.content || parsed.text || JSON.stringify(parsed, null, 2);
+            } catch(e) {}
+        }
+        
+        // 保存結果
+        switch(stepNum){
+            case 1: novelWizardState.structure = result; break;
+            case 2: novelWizardState.chapters = result; break;
+            case 3: novelWizardState.characters = result; break;
+            case 4: novelWizardState.scenes = result; break;
+            case 5: novelWizardState.content = result; break;
+        }
+        autoSave(`小說向導 ${step.name}`); // 🔒 自動保存
+        
+        // 扣費
+        FIZZIKS.deduct(step.cost, step.name);
+        
+        // 刷新顯示
+        showNovelWizardStep(stepNum);
+        
+    } catch(err) {
+        clearInterval(timer);
+        clearInterval(tipTimer);
+        loadingDiv.style.display = 'none';
+        alert('生成失敗: ' + err.message);
+    }
+}
+
+function getNovelStepPrompt(stepNum){
+    const { genre, idea, reference, episodes, duration } = novelWizardState;
+    const baseInfo = `【類型】${genre}\n【創意】${idea}\n${reference ? '【參考】' + reference : ''}\n【規模】${episodes}集×${duration}分鐘`;
+    const selectedSkills = getSelectedSkills(stepNum);
+    const skillsInfo = selectedSkills.length > 0 ? `\n【使用技法】${selectedSkills.join('、')}` : '';
+    
+    switch(stepNum){
+        case 1: // 故事結構
+            let structurePrompt = `你是專業編劇。請為以下故事設計結構：\n\n${baseInfo}${skillsInfo}\n\n`;
+            
+            // 根據選擇的技法調整輸出格式
+            if(selectedSkills.includes('三幕式')){
+                structurePrompt += `使用【三幕式結構】：
+【第一幕：建置】（佔25%）開場鉤子、世界觀、主角登場、激勵事件
+【第二幕：對抗】（佔50%）上升動作、中點轉折、下降動作、黑暗時刻
+【第三幕：解決】（佔25%）高潮、結局、餘韻\n\n`;
+            }
+            if(selectedSkills.includes('Save the Cat')){
+                structurePrompt += `使用【Save the Cat 15拍】：
+1.開場畫面 2.主題陳述 3.鋪墊 4.催化劑 5.爭論 6.進入第二幕 7.B故事 8.遊戲時間 9.中點 10.壞人逼近 11.一無所有 12.靈魂黑夜 13.進入第三幕 14.結局 15.終場畫面\n\n`;
+            }
+            if(selectedSkills.includes('英雄之旅')){
+                structurePrompt += `使用【英雄之旅12步】：
+1.平凡世界 2.冒險召喚 3.拒絕召喚 4.遇見導師 5.跨越門檻 6.試煉、盟友、敵人 7.接近最深洞穴 8.苦難折磨 9.獎賞 10.回程 11.復活 12.帶著萬靈丹歸返\n\n`;
+            }
+            if(selectedSkills.includes('起承轉合')){
+                structurePrompt += `使用【起承轉合】：
+【起】引入世界觀和角色，設置初始衝突
+【承】發展情節，深化角色關係，累積張力
+【轉】突發轉折，顛覆觀眾預期，推向高潮
+【合】收束故事線，給出結局，留下餘韻\n\n`;
+            }
+            
+            return structurePrompt + `直接輸出結構內容：`;
+
+        case 2: // 章節規劃
+            let chapterPrompt = `你是專業編劇。規劃${episodes}集大綱：\n\n${baseInfo}${skillsInfo}\n\n【故事結構】\n${novelWizardState.structure || '(未生成)'}\n\n`;
+            
+            if(selectedSkills.includes('連續劇式')){
+                chapterPrompt += `【連續劇式】每集緊密銜接，強調故事連貫性，觀眾必須從頭看。\n`;
+            }
+            if(selectedSkills.includes('單元劇式')){
+                chapterPrompt += `【單元劇式】每集有獨立故事，但有貫穿主線。\n`;
+            }
+            if(selectedSkills.includes('懸念大師')){
+                chapterPrompt += `【懸念大師】每集結尾必須有強力鉤子，讓觀眾無法停止觀看！鉤子類型：懸念型/反轉型/情感型/危機型\n`;
+            }
+            if(selectedSkills.includes('慢熱鋪墊')){
+                chapterPrompt += `【慢熱鋪墊】漸進式揭露信息，前期大量埋伏筆，後期集中爆發。\n`;
+            }
+            
+            return chapterPrompt + `\n為每集輸出：標題、摘要(50字)、關鍵衝突、🎣結尾鉤子、階段(起/承/轉/合)\n\n直接輸出：`;
+
+        case 3: // 角色設計
+            let charPrompt = `你是專業編劇。設計主要角色：\n\n${baseInfo}${skillsInfo}\n\n【故事結構】\n${novelWizardState.structure || '(未生成)'}\n\n`;
+            
+            if(selectedSkills.includes('Lajos Egri三維')){
+                charPrompt += `【Lajos Egri三維理論】每個角色需要：
+- 生理維度：年齡、外貌、健康、特徵
+- 社會維度：職業、階級、教育、家庭
+- 心理維度：性格、態度、情結、氣質\n\n`;
+            }
+            if(selectedSkills.includes('Want/Need/Wound')){
+                charPrompt += `【Want/Need/Wound框架】
+- Want(表面慾望)：角色以為自己想要什麼
+- Need(真正需求)：角色真正需要什麼才能成長
+- Wound(心理創傷)：過去什麼事件造成了心理傷痕\n\n`;
+            }
+            if(selectedSkills.includes('榮格原型')){
+                charPrompt += `【榮格12原型】為每個角色選擇原型：
+天真者/探險家/智者/英雄/反叛者/魔術師/普通人/愛人/小丑/照顧者/統治者/創造者\n\n`;
+            }
+            if(selectedSkills.includes('九型人格')){
+                charPrompt += `【九型人格】為角色定義人格類型(1-9)及其翅膀、壓力點、成長點\n\n`;
+            }
+            
+            return charPrompt + `設計3-5個主要角色，直接輸出：`;
+
+        case 4: // 場景列表
+            let scenePrompt = `你是專業美術指導。列出關鍵場景：\n\n${baseInfo}${skillsInfo}\n\n【章節大綱】\n${novelWizardState.chapters || '(未生成)'}\n\n`;
+            
+            if(selectedSkills.includes('電影感')){
+                scenePrompt += `【電影感】大銀幕視覺，史詩級構圖，注重景深和光影。\n`;
+            }
+            if(selectedSkills.includes('親密感')){
+                scenePrompt += `【親密感】角色特寫為主，注重微表情和情感細節。\n`;
+            }
+            if(selectedSkills.includes('動作場景')){
+                scenePrompt += `【動作場景】快節奏剪輯，動態構圖，衝擊力視覺。\n`;
+            }
+            if(selectedSkills.includes('氛圍營造')){
+                scenePrompt += `【氛圍營造】環境敘事，用場景表達情緒，注重色彩心理學。\n`;
+            }
+            
+            return scenePrompt + `\n列出15-20個關鍵場景，包含：位置、時間、氛圍、視覺重點、出現集數\n\n直接輸出：`;
+
+        case 5: // 正文撰寫
+            let writePrompt = `你是專業小說作家。撰寫正文：\n\n${baseInfo}${skillsInfo}\n\n【章節大綱】\n${novelWizardState.chapters || '(未生成)'}\n\n【角色設定】\n${novelWizardState.characters || '(未生成)'}\n\n`;
+            
+            if(selectedSkills.includes('對白驅動')){
+                writePrompt += `【對白驅動】以對話推進劇情，對白要有個性，潛台詞豐富。\n`;
+            }
+            if(selectedSkills.includes('動作描寫')){
+                writePrompt += `【動作描寫】視覺化敘述，像電影分鏡一樣描寫動作。\n`;
+            }
+            if(selectedSkills.includes('內心獨白')){
+                writePrompt += `【內心獨白】深入角色心理，展現思想和情感波動。\n`;
+            }
+            if(selectedSkills.includes('詩意散文')){
+                writePrompt += `【詩意散文】文學性語言，注重意象和節奏感。\n`;
+            }
+            
+            return writePrompt + `\n撰寫前3集，每集約${parseInt(duration) * 200}字，格式：【第X集 標題】正文...\n\n直接開始：`;
+    }
+}
+
+function confirmNovelStep(stepNum){
+    // 保存編輯後的內容
+    const textarea = document.getElementById('novelWizardResult');
+    if(textarea){
+        const editedContent = textarea.value;
+        switch(stepNum){
+            case 1: novelWizardState.structure = editedContent; break;
+            case 2: novelWizardState.chapters = editedContent; break;
+            case 3: novelWizardState.characters = editedContent; break;
+            case 4: novelWizardState.scenes = editedContent; break;
+            case 5: novelWizardState.content = editedContent; break;
+        }
+    }
+    
+    // 進入下一步
+    showNovelWizardStep(stepNum + 1);
+}
+
+function regenerateNovelStep(stepNum){
+    // 清除當前步驟結果
+    switch(stepNum){
+        case 1: novelWizardState.structure = null; break;
+        case 2: novelWizardState.chapters = null; break;
+        case 3: novelWizardState.characters = null; break;
+        case 4: novelWizardState.scenes = null; break;
+        case 5: novelWizardState.content = ''; break;
+    }
+    showNovelWizardStep(stepNum);
+}
+
+// ==================== 逐集編寫模式 ====================
+function startEpisodeByEpisodeMode(){
+    const ebe = novelWizardState.episodeByEpisode;
+    ebe.enabled = true;
+    ebe.currentEpisode = 1;
+    ebe.completedEpisodes = [];
+    ebe.isPaused = false;
+    
+    // 解析已有的章節大綱，提取每集簡介
+    const chapters = novelWizardState.chapters || '';
+    const episodeMatches = chapters.match(/第\d+集[：:].+/g) || [];
+    ebe.outlines = episodeMatches.map((line, i) => {
+        const match = line.match(/第(\d+)集[：:](.+)/);
+        return {
+            ep: match ? parseInt(match[1]) : i + 1,
+            title: match ? match[2].trim() : line
+        };
+    });
+    
+    // 如果沒有解析到，用集數創建空大綱
+    if (ebe.outlines.length === 0) {
+        for (let i = 1; i <= novelWizardState.episodes; i++) {
+            ebe.outlines.push({ ep: i, title: `第${i}集劇本待生成` });
+        }
+    }
+    
+    renderEpisodeByEpisodeUI();
+}
+
+function renderEpisodeByEpisodeUI(){
+    const ebe = novelWizardState.episodeByEpisode;
+    const currentEp = ebe.currentEpisode;
+    const totalEps = novelWizardState.episodes;
+    const progress = Math.round((ebe.completedEpisodes.length / totalEps) * 100);
+    const currentOutline = ebe.outlines?.find(o => o.ep === currentEp) || { title: '' };
+    const currentScript = ebe.completedEpisodes.find(e => e.ep === currentEp);
+    
+    const contentArea = document.getElementById('contentArea');
+    contentArea.innerHTML = `
+        <div class="content-card">
+            <h3><span class="icon">📝</span> 逐集編寫模式</h3>
+            
+            <!-- 進度條 -->
+            <div style="background:var(--surface2);border-radius:8px;padding:16px;margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                    <span style="font-weight:600">📊 整體進度</span>
+                    <span style="color:var(--primary);font-family:Orbitron">${ebe.completedEpisodes.length} / ${totalEps} 集</span>
+                </div>
+                <div style="background:var(--bg);border-radius:4px;height:8px;overflow:hidden">
+                    <div style="background:var(--primary);height:100%;width:${progress}%;transition:width .3s"></div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:12px">
+                    ${Array.from({length: totalEps}, (_, i) => {
+                        const ep = i + 1;
+                        const completed = ebe.completedEpisodes.find(e => e.ep === ep);
+                        const isCurrent = ep === currentEp;
+                        return `<div onclick="jumpToEpisode(${ep})" style="
+                            width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+                            font-size:10px;cursor:pointer;
+                            background:${completed ? 'var(--success)' : isCurrent ? 'var(--primary)' : 'var(--bg)'};
+                            color:${completed || isCurrent ? '#fff' : 'var(--dim)'};
+                            border:${isCurrent ? '2px solid #fff' : 'none'};
+                        ">${ep}</div>`;
+                    }).join('')}
+                </div>
+            </div>
+            
+            <!-- 當前集數 -->
+            <div style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:20px;border-radius:8px;margin-bottom:20px">
+                <div style="font-size:12px;opacity:.8">正在編寫</div>
+                <div style="font-size:24px;font-weight:700;font-family:Orbitron;margin:8px 0">第 ${currentEp} 集</div>
+                <div style="font-size:13px;opacity:.9">${currentOutline.title}</div>
+            </div>
+            
+            <!-- 劇本內容 -->
+            <div style="margin-bottom:20px">
+                <label style="display:block;margin-bottom:8px;font-weight:600">
+                    ${currentScript ? '✅ 劇本內容（可編輯）' : '⏳ 待生成劇本'}
+                </label>
+                <textarea id="episodeScriptArea" rows="15" style="
+                    width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;
+                    padding:16px;font-size:13px;line-height:1.8;color:var(--text);resize:vertical;
+                " placeholder="點擊「生成本集」開始編寫...">${currentScript?.script || ''}</textarea>
+            </div>
+            
+            <!-- 操作按鈕 -->
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                ${!currentScript ? `
+                    <button class="btn btn-primary" onclick="generateCurrentEpisode()" style="flex:1;padding:14px">
+                        🚀 生成第 ${currentEp} 集劇本
+                    </button>
+                ` : `
+                    <button class="btn btn-primary" onclick="confirmAndNextEpisode()" style="flex:1;padding:14px">
+                        ✅ 確認並寫下一集
+                    </button>
+                    <button class="btn" onclick="regenerateCurrentEpisode()" style="padding:14px">
+                        🔄 重新生成
+                    </button>
+                `}
+                <button class="btn" onclick="pauseEpisodeMode()" style="padding:14px">
+                    ⏸️ 暫停
+                </button>
+            </div>
+            
+            <!-- 生成狀態 -->
+            <div id="episodeGenStatus" style="margin-top:16px;display:none">
+                <div style="background:var(--surface2);padding:16px;border-radius:8px">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                        <div class="loading-spinner"></div>
+                        <span id="episodeGenText">正在使用 DeepSeek Reasoner 生成高質量劇本...</span>
+                    </div>
+                    <div id="episodeGenTimer" style="font-size:11px;color:var(--dim)">⏱️ 0 秒</div>
+                </div>
+            </div>
+            
+            <!-- 返回 -->
+            <div style="margin-top:20px;text-align:center">
+                <button class="btn" onclick="exitEpisodeMode()">← 退出逐集模式</button>
+            </div>
+        </div>
+    `;
+}
+
+function jumpToEpisode(ep){
+    novelWizardState.episodeByEpisode.currentEpisode = ep;
+    renderEpisodeByEpisodeUI();
+}
+
+async function generateCurrentEpisode(){
+    const ebe = novelWizardState.episodeByEpisode;
+    const currentEp = ebe.currentEpisode;
+    const outline = ebe.outlines?.find(o => o.ep === currentEp) || { title: '' };
+    
+    // 顯示加載狀態
+    const statusDiv = document.getElementById('episodeGenStatus');
+    const statusText = document.getElementById('episodeGenText');
+    const timerEl = document.getElementById('episodeGenTimer');
+    statusDiv.style.display = 'block';
+    
+    let seconds = 0;
+    const timer = setInterval(() => {
+        seconds++;
+        timerEl.textContent = `⏱️ ${seconds} 秒 - Reasoner模式需要1-3分鐘，請耐心等待`;
+    }, 1000);
+    
+    try {
+        const { genre, idea, reference, duration } = novelWizardState;
+        
+        // 組合前幾集的摘要作為上下文
+        const previousContext = ebe.completedEpisodes
+            .filter(e => e.ep < currentEp)
+            .slice(-3) // 只取最近3集
+            .map(e => `【第${e.ep}集】${e.title}\n${e.script?.substring(0, 500)}...`)
+            .join('\n\n');
+        
+        const prompt = `你是專業短劇編劇。請為第${currentEp}集撰寫完整劇本。
+
+【故事信息】
+類型：${genre}
+創意：${idea}
+每集時長：${duration}分鐘
+${reference ? '參考：' + reference : ''}
+
+【整體結構】
+${novelWizardState.structure?.substring(0, 1000) || '(無)'}
+
+【角色設定】
+${novelWizardState.characters?.substring(0, 1000) || '(無)'}
+
+【本集大綱】
+${outline.title}
+
+${previousContext ? `【前情回顧】\n${previousContext}\n` : ''}
+
+【輸出要求】
+1. 完整的第${currentEp}集劇本（約${parseInt(duration) * 200}字）
+2. 包含場景描述、對話、動作指示
+3. 開頭承接上集，結尾設置懸念鉤子
+4. 格式：分場景編寫，每場景標明地點和時間
+
+直接輸出劇本內容：`;
+
+        statusText.textContent = `🤖 DeepSeek Reasoner 正在生成第 ${currentEp} 集...`;
+        
+        // 使用reasoner模式獲得更高質量輸出
+        const response = await callAgent('screenwriter', { 
+            content: prompt,
+            useReasoner: true,  // 啟用reasoner模式
+            timeout: 180000     // 3分鐘超時
+        });
+        
+        clearInterval(timer);
+        
+        if (!response?.result) throw new Error('生成失敗');
+        
+        // 保存結果
+        const script = response.result;
+        const existingIndex = ebe.completedEpisodes.findIndex(e => e.ep === currentEp);
+        const episodeData = {
+            ep: currentEp,
+            title: outline.title,
+            script: script,
+            confirmed: false,
+            generatedAt: new Date().toISOString()
+        };
+        
+        if (existingIndex >= 0) {
+            ebe.completedEpisodes[existingIndex] = episodeData;
+        } else {
+            ebe.completedEpisodes.push(episodeData);
+        }
+        
+        autoSave(`第${currentEp}集劇本`);
+        renderEpisodeByEpisodeUI();
+        
+    } catch(err) {
+        clearInterval(timer);
+        statusDiv.innerHTML = `<div style="color:var(--primary);padding:10px">❌ 生成失敗: ${err.message}</div>`;
+    }
+}
+
+function regenerateCurrentEpisode(){
+    const ebe = novelWizardState.episodeByEpisode;
+    const currentEp = ebe.currentEpisode;
+    const idx = ebe.completedEpisodes.findIndex(e => e.ep === currentEp);
+    if (idx >= 0) {
+        ebe.completedEpisodes.splice(idx, 1);
+    }
+    renderEpisodeByEpisodeUI();
+}
+
+function confirmAndNextEpisode(){
+    const ebe = novelWizardState.episodeByEpisode;
+    const currentEp = ebe.currentEpisode;
+    
+    // 保存編輯
+    const textarea = document.getElementById('episodeScriptArea');
+    const epData = ebe.completedEpisodes.find(e => e.ep === currentEp);
+    if (epData && textarea) {
+        epData.script = textarea.value;
+        epData.confirmed = true;
+    }
+    
+    autoSave(`確認第${currentEp}集`);
+    
+    // 進入下一集
+    if (currentEp < novelWizardState.episodes) {
+        ebe.currentEpisode = currentEp + 1;
+        renderEpisodeByEpisodeUI();
+    } else {
+        // 全部完成
+        alert('🎉 恭喜！全部劇本編寫完成！');
+        finishEpisodeMode();
+    }
+}
+
+function pauseEpisodeMode(){
+    novelWizardState.episodeByEpisode.isPaused = true;
+    autoSave('暫停逐集編寫');
+    alert('已暫停，進度已保存。下次可繼續編寫。');
+    showNovelWizardStep(2);
+}
+
+function exitEpisodeMode(){
+    if (novelWizardState.episodeByEpisode.completedEpisodes.length > 0) {
+        if (!confirm('確定退出？已完成的集數會保留。')) return;
+    }
+    novelWizardState.episodeByEpisode.enabled = false;
+    showNovelWizardStep(2);
+}
+
+function finishEpisodeMode(){
+    // 組合所有劇本
+    const ebe = novelWizardState.episodeByEpisode;
+    const allScripts = ebe.completedEpisodes
+        .sort((a, b) => a.ep - b.ep)
+        .map(e => `\n${'='.repeat(40)}\n【第${e.ep}集】${e.title}\n${'='.repeat(40)}\n\n${e.script}`)
+        .join('\n\n');
+    
+    novelWizardState.content = allScripts;
+    novelWizardState.episodeByEpisode.enabled = false;
+    autoSave('完成全部劇本');
+    
+    // 跳轉到完成步驟
+    showNovelWizardStep(5);
+}
+
+function resumeEpisodeMode(){
+    const ebe = novelWizardState.episodeByEpisode;
+    ebe.isPaused = false;
+    ebe.enabled = true;
+    renderEpisodeByEpisodeUI();
+}
+
+function finishNovelWizard(){
+    // 組合最終小說
+    const titleMatch = novelWizardState.structure?.match(/《([^》]+)》/) || ['', '新故事'];
+    const title = titleMatch[1] || '新故事';
+    
+    const fullContent = `《${title}》
+
+【故事結構】
+${novelWizardState.structure || ''}
+
+【章節規劃】
+${novelWizardState.chapters || ''}
+
+【角色設計】
+${novelWizardState.characters || ''}
+
+【場景列表】
+${novelWizardState.scenes || ''}
+
+【正文】
+${novelWizardState.content || ''}
+`;
+    
+    // 設置到 state
+    state.novel = {
+        text: fullContent,
+        title: title,
+        wordCount: fullContent.length,
+        chapters: []
+    };
+    
+    showToast('✅ 小說創作完成！');
+    
+    // 顯示完成界面
+    const statusDiv = document.getElementById('generateStatus');
+    statusDiv.innerHTML = `
+        <div style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:12px;padding:24px;text-align:center;color:#fff">
+            <div style="font-size:48px;margin-bottom:12px">🎉</div>
+            <h3 style="margin-bottom:8px">小說創作完成！</h3>
+            <p style="opacity:.8;margin-bottom:16px">《${escapeHtml(title)}》 共 ${fullContent.length.toLocaleString()} 字</p>
+            <div style="display:flex;gap:12px;justify-content:center">
+                <button class="btn" style="background:#fff;color:var(--primary)" onclick="copyNovelToClipboard()">📋 複製全文</button>
+                <button class="btn btn-primary" style="border:1px solid #fff" onclick="nextStep()">繼續製作 →</button>
+            </div>
         </div>
     `;
 }
@@ -2924,7 +4022,7 @@ ${reference ? '【參考風格】' + reference : ''}
 第2章：XXX
 ...`;
 
-        const outlineResponse = await callAgent('screenwriter', { content: outlinePrompt + '\n\n請輸出純文本，不要JSON格式！' });
+        const outlineResponse = await callAgent('screenwriter', { content: outlinePrompt + '\n\n請輸出純文本，不要JSON格式！', timeout: 180000 });
         if (!outlineResponse?.result) throw new Error('大綱生成失敗');
         
         // 清理可能的JSON格式
@@ -3015,7 +4113,7 @@ ${fullContent.length > 0 ? fullContent.slice(-2000) + '...(以上為前文)' : '
                 }
             } catch(streamErr) {
                 console.warn('流式失敗，fallback到普通API:', streamErr);
-                const segResponse = await callAgent('screenwriter', { content: segmentPrompt + '\n\n請輸出純文本小說正文，不要JSON格式！' });
+                const segResponse = await callAgent('screenwriter', { content: segmentPrompt + '\n\n請輸出純文本小說正文，不要JSON格式！', timeout: 180000 });
                 if (!segResponse?.result) throw new Error(`第${startCh}-${endCh}章生成失敗`);
                 segmentContent = jsonToNovelText(segResponse.result);
             }
@@ -3174,7 +4272,7 @@ async function generateScript(){
                     }
                 }
             } catch(streamErr) {
-                const resp = await callAgent('screenwriter', { content: prompt });
+                const resp = await callAgent('screenwriter', { content: prompt, timeout: 180000 });
                 episodeContent = resp?.result || '(生成失敗)';
             }
             
@@ -3431,8 +4529,8 @@ function renderStep2(){
                     <div style="font-size:14px;color:var(--dim);margin-bottom:16px">
                         基於訪談回答，生成Logline和故事定位
                     </div>
-                    <button class="btn btn-primary" onclick="runConceptAgent()" style="padding:12px 32px">
-                        🚀 生成高概念
+                    <button class="btn btn-primary" onclick="confirmFizziksDeduction(20, '💡 高概念提煉', runConceptAgent)" style="padding:12px 32px">
+                        🚀 生成高概念 <span style="opacity:.7;font-size:12px">(20⚡)</span>
                     </button>
                 </div>
             </div>
@@ -3525,7 +4623,8 @@ async function runConceptAgent(){
         
         const apiResponse = await callAgent('concept', {
             analysis: state.aiAnalysis,
-            interview: state.interview
+            interview: state.interview,
+            timeout: 300000  // 5分鐘
         });
         
         // 停止倒計時
@@ -3553,6 +4652,7 @@ async function runConceptAgent(){
         addStep('✅', 'Logline 生成完成！');
         
         state.concept = concept;
+        autoSave('高概念'); // 🔒 自動保存
         statusText.textContent = '✅ 高概念生成完成！';
         subStatus.textContent = '';
         
@@ -3718,16 +4818,17 @@ function renderStep3(){
                 
                 <!-- 配置確認 -->
                 <div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center">
-                    <div style="font-size:13px">
+                    <div style="font-size:13px" id="configSummary">
                         您的配置：<strong>${chapterConfig.episodes}集 × ${chapterConfig.durationPerEpisode}分鐘 = ${userDuration}分鐘</strong>
                     </div>
+                    <div style="font-size:12px;margin-top:6px" id="configMatchStatus"></div>
                 </div>
             </div>
             
             <div id="chapterAgentUI">
                 <div style="text-align:center;padding:20px">
-                    <button class="btn btn-primary" onclick="runChapterAgent()" style="padding:16px 40px;font-size:16px">
-                        🚀 開始AI章節分析
+                    <button class="btn btn-primary" onclick="confirmFizziksDeduction(50, '📑 章節智能規劃', runChapterAgent)" style="padding:16px 40px;font-size:16px">
+                        🚀 開始AI章節分析 <span style="opacity:.7;font-size:13px">(50⚡)</span>
                     </button>
                     <div style="font-size:12px;color:var(--dim);margin-top:12px">
                         智能體會根據配置給出專業建議（刪減/擴充）
@@ -3818,6 +4919,13 @@ function updateChapterConfig(){
         matchColor = 'var(--error)';
     }
     
+    // 更新配置摘要
+    const summaryEl = document.getElementById('configSummary');
+    if(summaryEl){
+        summaryEl.innerHTML = `您的配置：<strong>${chapterConfig.episodes}集 × ${chapterConfig.durationPerEpisode}分鐘 = ${userDuration}分鐘</strong>`;
+    }
+    
+    // 更新匹配状态
     const statusEl = document.getElementById('configMatchStatus');
     if(statusEl){
         statusEl.innerHTML = matchStatus;
@@ -3894,7 +5002,7 @@ async function runChapterAgentBatch(totalEpisodes, batchSize = 25) {
             
             // 構建分批請求
             const requestData = {
-                novel: state.novel.text.substring(0, 8000),
+                novel: state.novel.text.substring(0, 6000),  // 減少內容
                 title: state.novel.title,
                 config: {
                     batchMode: true,
@@ -3904,7 +5012,8 @@ async function runChapterAgentBatch(totalEpisodes, batchSize = 25) {
                     previousHook: batchState.allEpisodes.length > 0 
                         ? batchState.allEpisodes[batchState.allEpisodes.length - 1].hook 
                         : null
-                }
+                },
+                timeout: 300000  // 5分鐘
             };
             
             const response = await callAgent('chapters', requestData);
@@ -3965,6 +5074,7 @@ async function runChapterAgentBatch(totalEpisodes, batchSize = 25) {
         
         // 完成：更新state.chapters
         state.chapters = batchState.allEpisodes;
+        autoSave('章節規劃'); // 🔒 自動保存
         progressBar.style.width = '100%';
         statusText.textContent = '✅ 長篇章節規劃完成！';
         subStatus.textContent = `共 ${state.chapters.length} 集`;
@@ -4269,26 +5379,62 @@ function renderChaptersResult(){
             ` : ''}
             
             <div class="report">
-                <h4>📖 章節列表 <span style="font-size:11px;color:var(--dim);margin-left:8px">${state.selectedVersion ? '(版本'+state.selectedVersion+')' : ''}</span></h4>
+                <h4>📖 章節大綱 <span style="font-size:11px;color:var(--dim);margin-left:8px">${state.selectedVersion ? '(版本'+state.selectedVersion+')' : ''}</span></h4>
+                
+                <!-- 可編輯提示 -->
+                <div style="background:linear-gradient(135deg,var(--primary)15,var(--surface2));border:1px solid var(--primary);border-radius:8px;padding:16px;margin-bottom:16px">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <span style="font-size:28px">✏️</span>
+                        <div>
+                            <div style="font-weight:600;color:var(--primary)">可修改大綱</div>
+                            <div style="font-size:12px;color:var(--dim)">點擊任意章節展開編輯，修改標題、摘要、鉤子後再繼續</div>
+                        </div>
+                    </div>
+                </div>
+                
                 ${state.chapters.map((ch, i) => `
-                    <div class="item-card" style="cursor:pointer" onclick="toggleChapter(${i})" id="chapter-card-${i}">
-                        <h5 style="display:flex;justify-content:space-between">
-                            <span><span style="color:var(--primary)">E${String(i+1).padStart(2,'0')}</span> ${ch.title}</span>
-                            <span id="chapter-arrow-${i}" style="color:var(--dim)">▼</span>
-                        </h5>
-                        <p style="color:var(--dim);font-size:12px;margin:8px 0">${ch.summary || '(待分析)'}</p>
-                        <p>
-                            <span class="tag">📝 ${ch.wordCount}字</span>
-                            <span class="tag">🎬 ${ch.estimatedShots||80}鏡頭</span>
-                            ${ch.phase ? `<span class="phase-badge phase-${getPhaseType(ch.phase)}">${ch.phase}</span>` : ''}
-                            ${ch.hook ? `<span class="tag" style="background:var(--primary);color:#fff">🎣 ${ch.hook}</span>` : ''}
-                        </p>
-                        <div id="chapter-detail-${i}" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
-                            <div style="background:var(--surface);padding:12px;border-radius:6px;font-size:12px;line-height:1.8;max-height:400px;overflow-y:auto;white-space:pre-wrap">${(ch.content||'').substring(0,3000)}${ch.content?.length > 3000 ? '\n\n...（共'+ch.content.length+'字，點擊展開更多）' : ''}</div>
-                            <!-- 手動調整 -->
-                            <div style="margin-top:12px;display:flex;gap:8px">
-                                <button class="btn" style="padding:6px 12px;font-size:10px" onclick="event.stopPropagation();mergeWithNext(${i})">合併下一章</button>
-                                <button class="btn" style="padding:6px 12px;font-size:10px" onclick="event.stopPropagation();splitChapter(${i})">拆分本章</button>
+                    <div class="item-card" id="chapter-card-${i}" style="margin-bottom:12px">
+                        <div style="cursor:pointer" onclick="toggleChapterEdit(${i})">
+                            <h5 style="display:flex;justify-content:space-between">
+                                <span><span style="color:var(--primary)">E${String(i+1).padStart(2,'0')}</span> <span id="chapter-title-display-${i}">${ch.title}</span></span>
+                                <span id="chapter-arrow-${i}" style="color:var(--dim)">▼ 編輯</span>
+                            </h5>
+                            <p style="color:var(--dim);font-size:12px;margin:8px 0" id="chapter-summary-display-${i}">${ch.summary || '(待分析)'}</p>
+                            <p>
+                                <span class="tag">📝 ${ch.wordCount}字</span>
+                                <span class="tag">🎬 ${ch.estimatedShots||80}鏡頭</span>
+                                ${ch.phase ? `<span class="phase-badge phase-${getPhaseType(ch.phase)}">${ch.phase}</span>` : ''}
+                                ${ch.hook ? `<span class="tag" style="background:var(--primary);color:#fff" id="chapter-hook-display-${i}">🎣 ${ch.hook}</span>` : `<span class="tag" id="chapter-hook-display-${i}">🎣 (無鉤子)</span>`}
+                            </p>
+                        </div>
+                        
+                        <!-- 編輯區域 -->
+                        <div id="chapter-edit-${i}" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+                            <div style="display:grid;gap:12px">
+                                <div>
+                                    <label style="font-size:11px;color:var(--dim);display:block;margin-bottom:4px">📌 標題</label>
+                                    <input type="text" id="chapter-title-input-${i}" value="${ch.title.replace(/"/g, '&quot;')}" 
+                                        style="width:100%;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px"
+                                        onclick="event.stopPropagation()" />
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:var(--dim);display:block;margin-bottom:4px">📝 摘要</label>
+                                    <textarea id="chapter-summary-input-${i}" rows="3"
+                                        style="width:100%;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;resize:vertical"
+                                        onclick="event.stopPropagation()">${ch.summary || ''}</textarea>
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:var(--dim);display:block;margin-bottom:4px">🎣 懸念鉤子 <span style="color:var(--primary)">(讓觀眾想看下一集)</span></label>
+                                    <input type="text" id="chapter-hook-input-${i}" value="${(ch.hook || '').replace(/"/g, '&quot;')}" 
+                                        placeholder="例：她究竟會選擇誰？真相即將揭曉..."
+                                        style="width:100%;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px"
+                                        onclick="event.stopPropagation()" />
+                                </div>
+                                <div style="display:flex;gap:8px;justify-content:flex-end">
+                                    <button class="btn" style="padding:8px 16px;font-size:12px" onclick="event.stopPropagation();mergeWithNext(${i})">🔗 合併下一章</button>
+                                    <button class="btn" style="padding:8px 16px;font-size:12px" onclick="event.stopPropagation();splitChapter(${i})">✂️ 拆分本章</button>
+                                    <button class="btn btn-primary" style="padding:8px 20px;font-size:12px" onclick="event.stopPropagation();saveChapterEdit(${i})">💾 保存修改</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4298,8 +5444,10 @@ function renderChaptersResult(){
             <div class="btn-group">
                 <button class="btn btn-back" onclick="prevStep()">← 返回</button>
                 <button class="btn" onclick="state.chapters=[];showStep(4)">🔄 重新分析</button>
-                <button class="btn" onclick="showManualAdjustDialog()">✏️ 手動調整集數</button>
-                <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+                <button class="btn" onclick="showManualAdjustDialog()">⚙️ 調整集數</button>
+                <button class="btn btn-primary" onclick="nextStep()" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:12px 24px">
+                    ✅ 確認大綱，繼續 →
+                </button>
             </div>
         </div>
     `;
@@ -4779,6 +5927,191 @@ function toggleChapter(index){
     }
 }
 
+// 展開/收起章節編輯（新版可編輯）
+function toggleChapterEdit(index){
+    const editArea = document.getElementById(`chapter-edit-${index}`);
+    const arrow = document.getElementById(`chapter-arrow-${index}`);
+    const card = document.getElementById(`chapter-card-${index}`);
+    
+    if(editArea.style.display === 'none'){
+        // 展開編輯
+        editArea.style.display = 'block';
+        arrow.innerHTML = '▲ 收起';
+        card.style.background = 'var(--surface2)';
+        card.style.borderColor = 'var(--primary)';
+        card.style.boxShadow = '0 0 20px rgba(255,10,53,0.2)';
+    } else {
+        // 收起
+        editArea.style.display = 'none';
+        arrow.innerHTML = '▼ 編輯';
+        card.style.background = '';
+        card.style.borderColor = '';
+        card.style.boxShadow = '';
+    }
+}
+
+// 保存章節編輯
+function saveChapterEdit(index){
+    const titleInput = document.getElementById(`chapter-title-input-${index}`);
+    const summaryInput = document.getElementById(`chapter-summary-input-${index}`);
+    const hookInput = document.getElementById(`chapter-hook-input-${index}`);
+    
+    if(!titleInput || !summaryInput) return;
+    
+    // 更新state
+    state.chapters[index].title = titleInput.value.trim() || state.chapters[index].title;
+    state.chapters[index].summary = summaryInput.value.trim();
+    state.chapters[index].hook = hookInput.value.trim();
+    
+    // 更新顯示
+    const titleDisplay = document.getElementById(`chapter-title-display-${index}`);
+    const summaryDisplay = document.getElementById(`chapter-summary-display-${index}`);
+    const hookDisplay = document.getElementById(`chapter-hook-display-${index}`);
+    
+    if(titleDisplay) titleDisplay.textContent = state.chapters[index].title;
+    if(summaryDisplay) summaryDisplay.textContent = state.chapters[index].summary || '(待分析)';
+    if(hookDisplay) {
+        if(state.chapters[index].hook){
+            hookDisplay.textContent = '🎣 ' + state.chapters[index].hook;
+            hookDisplay.style.background = 'var(--primary)';
+            hookDisplay.style.color = '#fff';
+        } else {
+            hookDisplay.textContent = '🎣 (無鉤子)';
+            hookDisplay.style.background = '';
+            hookDisplay.style.color = '';
+        }
+    }
+    
+    // 收起編輯區
+    toggleChapterEdit(index);
+    
+    // 顯示保存成功提示
+    showToast(`✅ 第${index+1}集已保存`);
+}
+
+// Toast提示
+function showToast(message, duration = 2000){
+    // 移除已有toast
+    const existing = document.querySelector('.toast-message');
+    if(existing) existing.remove();
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-message';
+    toast.textContent = message;
+    toast.style.cssText = `
+        position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+        background:var(--primary);color:#fff;padding:12px 24px;border-radius:8px;
+        font-size:14px;font-weight:500;z-index:10000;
+        animation:fadeInUp .3s ease;box-shadow:0 4px 20px rgba(255,10,53,0.4);
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'fadeOut .3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+// ==================== FIZZIKS 積分面板 ====================
+function showFizziksPanel(){
+    const overlay = document.createElement('div');
+    overlay.className = 'fizziks-overlay';
+    overlay.style.cssText = `
+        position:fixed;top:0;left:0;width:100%;height:100%;
+        background:rgba(0,0,0,.8);z-index:10000;
+        display:flex;align-items:center;justify-content:center;
+    `;
+    overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+    
+    overlay.innerHTML = `
+        <div style="background:var(--surface);border:1px solid var(--primary);border-radius:16px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 0 60px rgba(255,10,53,0.3)">
+            <div style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:20px;text-align:center;position:relative">
+                <button onclick="this.closest('.fizziks-overlay').remove()" style="position:absolute;top:12px;right:12px;background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
+                <div style="font-size:48px;margin-bottom:8px">⚡</div>
+                <div style="font-family:'Orbitron',monospace;font-size:32px;font-weight:800">${FIZZIKS.balance}</div>
+                <div style="font-size:12px;opacity:.8">FIZZIKS BALANCE</div>
+            </div>
+            
+            <div style="padding:20px">
+                <h4 style="margin-bottom:16px;color:var(--primary)">💰 定價表</h4>
+                <table style="width:100%;font-size:12px;border-collapse:collapse">
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:8px">🎤 創意訪談</td>
+                        <td style="text-align:right;color:var(--success)">免費</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:8px">💡 高概念提煉</td>
+                        <td style="text-align:right">20 ⚡</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:8px">📑 章節智能規劃</td>
+                        <td style="text-align:right">50 ⚡</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:8px">👥 角色深度設計</td>
+                        <td style="text-align:right">50 ⚡</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:8px">🎨 畫風選擇</td>
+                        <td style="text-align:right;color:var(--success)">免費</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:8px">👔 服化道設計</td>
+                        <td style="text-align:right">30 ⚡</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid var(--border)">
+                        <td style="padding:8px">✍️ 劇本生成</td>
+                        <td style="text-align:right">20 ⚡ <span style="color:var(--dim)">/集</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding:8px">🎬 分鏡設計</td>
+                        <td style="text-align:right">30 ⚡ <span style="color:var(--dim)">/集</span></td>
+                    </tr>
+                </table>
+                
+                <h4 style="margin:20px 0 16px;color:var(--primary)">💎 充值套餐</h4>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+                    <button class="btn" style="padding:16px 8px;text-align:center" onclick="alert('連接支付中...')">
+                        <div style="font-size:18px;font-weight:600">$10</div>
+                        <div style="font-size:12px;color:var(--dim)">1,200 ⚡</div>
+                        <div style="font-size:10px;color:var(--success)">+20%</div>
+                    </button>
+                    <button class="btn" style="padding:16px 8px;text-align:center;border-color:var(--primary)" onclick="alert('連接支付中...')">
+                        <div style="font-size:18px;font-weight:600">$50</div>
+                        <div style="font-size:12px;color:var(--dim)">7,000 ⚡</div>
+                        <div style="font-size:10px;color:var(--success)">+40%</div>
+                    </button>
+                    <button class="btn" style="padding:16px 8px;text-align:center" onclick="alert('連接支付中...')">
+                        <div style="font-size:18px;font-weight:600">$100</div>
+                        <div style="font-size:12px;color:var(--dim)">16,000 ⚡</div>
+                        <div style="font-size:10px;color:var(--success)">+60%</div>
+                    </button>
+                </div>
+                
+                <div style="margin-top:20px;padding:12px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--dim)">
+                    💡 示例：24集番劇總費用 ≈ 1,350 ⚡ ($13.5)
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+}
+
+// 直接扣費（不彈窗確認）
+function confirmFizziksDeduction(cost, stepName, onConfirm){
+    if(cost > 0 && !FIZZIKS.canAfford(cost)){
+        showToast(`❌ 餘額不足！需要 ${cost} ⚡，當前 ${FIZZIKS.balance} ⚡`);
+        showFizziksPanel();
+        return;
+    }
+    
+    // 直接扣費並執行
+    if(cost > 0){
+        FIZZIKS.deduct(cost, stepName);
+    }
+    onConfirm();
+}
+
 // 編輯章節
 function editChapter(index){
     const ch = state.chapters[index];
@@ -4848,8 +6181,8 @@ function renderStep4(){
             
             <div id="characterAgentUI">
                 <div style="text-align:center;padding:20px">
-                    <button class="btn btn-primary" onclick="runCharacterAgent()" style="padding:16px 40px;font-size:16px">
-                        🚀 開始AI角色設計
+                    <button class="btn btn-primary" onclick="confirmFizziksDeduction(50, '👥 角色深度設計', runCharacterAgent)" style="padding:16px 40px;font-size:16px">
+                        🚀 開始AI角色設計 <span style="opacity:.7;font-size:13px">(50⚡)</span>
                     </button>
                     <div style="font-size:12px;color:var(--dim);margin-top:12px">
                         運用 Lajos Egri 三維理論 + 榮格原型 + 視覺設計
@@ -4908,12 +6241,13 @@ async function runCharacterAgent(){
         startCountdown('characters', stepsEl);
         
         const apiResponse = await callAgent('character', {
-            novel: state.novel.text.substring(0, 8000),  // 縮減以加快速度
+            novel: state.novel.text.substring(0, 4000),  // 再縮減以防超時
             title: state.novel.title,
             analysis: state.aiAnalysis,
             concept: state.concept,
             chapters: state.chapters,
-            interview: state.interview || {}  // 傳遞訪談創意方向
+            interview: state.interview || {},  // 傳遞訪談創意方向
+            timeout: 300000  // 5分鐘超時
         });
         
         // 停止倒計時
@@ -4938,6 +6272,7 @@ async function runCharacterAgent(){
         
         // 適配不同格式的API返回
         state.characters = normalizeCharacters(result);
+        autoSave('角色設計'); // 🔒 自動保存
         const totalChars = (state.characters.main?.length||0) + (state.characters.supporting?.length||0);
         
         console.log('[角色] 最終state.characters:', state.characters);
@@ -5207,7 +6542,7 @@ function normalizeOneCharacter(c){
     const body = c.body_proportions || {};
     const ageRep = c.age_representation || {};
     
-    return {
+    const normalized = {
         name: c.name || c.character_name || c.角色名 || '未命名',
         role: c.role || c.type || c.角色類型 || '',
         archetype: c.archetype || {},  // 新增：原型
@@ -5247,29 +6582,138 @@ function normalizeOneCharacter(c){
             costume: c.costume || c.服裝,
             appearance_prompt: c.appearance_prompt  // 新增：AI繪圖prompt
         },
-        // 生成AI繪圖prompt
-        prompt: c.prompt || c.appearance_prompt || c.visual?.appearance_prompt || generateCharacterPrompt(c)
+        // prompt先設為null，後面再生成
+        prompt: null
     };
+    
+    // 使用normalized數據生成AI繪圖prompt
+    normalized.prompt = c.prompt || c.appearance_prompt || c.visual?.appearance_prompt || generateCharacterPrompt(normalized);
+    
+    return normalized;
 }
 
-// 從角色數據生成AI繪圖prompt
+// 從角色數據生成AI繪圖prompt（專業版150-200字英文）
 function generateCharacterPrompt(c){
-    const parts = [];
-    const name = c.name || c.character_name || '';
-    const age = c.age || c.physiology?.age || c.age_representation?.apparent_age || '';
+    // 提取各維度數據
+    const name = c.name || c.character_name || 'Character';
+    const age = c.age || c.physiology?.age || c.age_representation?.apparent_age || '30s';
     const gender = c.gender || c.physiology?.gender || '';
-    const appearance = c.appearance || c.physiology?.appearance || c.description || '';
-    const costume = c.costume || c.visual?.costume || '';
-    const features = c.features || c.physiology?.features || '';
+    const genderEn = gender.includes('女') ? 'female' : (gender.includes('男') ? 'male' : 'person');
     
-    if(name) parts.push(name);
-    if(age) parts.push(`${age}歲`);
-    if(gender) parts.push(gender);
-    if(appearance) parts.push(appearance);
-    if(features) parts.push(features);
-    if(costume) parts.push(`服裝：${costume}`);
+    // 外貌特徵
+    const physiology = c.physiology || {};
+    const build = physiology.build || physiology.體型 || c.build || 'medium build';
+    const eyes = physiology.eyes || physiology.眼睛 || c.eyes || '';
+    const hair = physiology.hair || c.hair || '';
+    const skin = physiology.skin || c.skin || '';
+    const posture = physiology.posture || physiology.姿態 || c.posture || '';
+    const expression = physiology.expression || physiology.描述 || c.expression || 'neutral expression';
     
-    return parts.length > 0 ? parts.join('，') : '（待生成）';
+    // 服裝
+    const costume = c.costume || c.visual?.costume || c.服裝 || '';
+    
+    // 心理維度（用於表情和氛圍）
+    const psychology = c.psychology || {};
+    const want = psychology.want || psychology.渴望 || c.want || '';
+    const fear = psychology.fear || psychology.恐懼 || c.fear || '';
+    const flaw = psychology.flaw || psychology.缺陷 || c.flaw || '';
+    
+    // 輪廓/剪影特徵
+    const silhouette = c.silhouette || c.visual?.silhouette || '';
+    
+    // 顏色調性
+    const colors = c.colors || c.color_palette || c.visual?.colors || '';
+    
+    // 構建英文prompt
+    const promptParts = [];
+    
+    // 1. Subject核心
+    promptParts.push(`${name}, ${age} year old ${genderEn}`);
+    
+    // 2. Face/Expression
+    if(eyes || expression){
+        const facePart = [];
+        if(eyes) facePart.push(translateToEnglish(eyes));
+        if(expression) facePart.push(translateToEnglish(expression));
+        promptParts.push(facePart.join(', '));
+    }
+    
+    // 3. Hair
+    if(hair){
+        promptParts.push(translateToEnglish(hair));
+    }
+    
+    // 4. Build/Posture
+    if(build || posture){
+        const bodyPart = [];
+        if(build) bodyPart.push(translateToEnglish(build));
+        if(posture) bodyPart.push(translateToEnglish(posture));
+        promptParts.push(bodyPart.join(', '));
+    }
+    
+    // 5. Costume
+    if(costume){
+        promptParts.push(`wearing ${translateToEnglish(costume)}`);
+    }
+    
+    // 6. Mood/Atmosphere（基於心理特徵）
+    if(want || fear || flaw){
+        const moodKeywords = [];
+        if(fear && fear.includes('孤')) moodKeywords.push('melancholic');
+        if(fear && fear.includes('抛弃')) moodKeywords.push('vulnerable');
+        if(flaw && flaw.includes('逃避')) moodKeywords.push('distant gaze');
+        if(want && want.includes('温暖')) moodKeywords.push('longing expression');
+        if(moodKeywords.length > 0){
+            promptParts.push(moodKeywords.join(', '));
+        }
+    }
+    
+    // 7. Silhouette特徵
+    if(silhouette){
+        promptParts.push(`distinctive silhouette: ${translateToEnglish(silhouette)}`);
+    }
+    
+    // 8. Color palette
+    if(colors){
+        promptParts.push(`color palette: ${translateToEnglish(colors)}`);
+    }
+    
+    // 9. Technical/Style
+    promptParts.push('cinematic lighting, detailed portrait, high quality, anime style');
+    
+    // 組合並確保長度
+    let finalPrompt = promptParts.filter(p => p && p.trim()).join(', ');
+    
+    // 如果太短，添加更多細節
+    if(finalPrompt.length < 100){
+        finalPrompt += ', soft shadows, atmospheric, character design, full body visible, clean background';
+    }
+    
+    return finalPrompt || '(Prompt pending generation)';
+}
+
+// 簡單中英翻譯（常用詞）
+function translateToEnglish(text){
+    if(!text) return '';
+    // 確保是字符串
+    if(typeof text !== 'string') {
+        text = JSON.stringify(text);
+    }
+    const dict = {
+        '中等': 'medium', '高大': 'tall', '矮小': 'short', '瘦': 'slim', '胖': 'heavy',
+        '疲惫': 'weary', '疏离': 'distant', '温和': 'gentle', '压抑': 'repressed',
+        '前倾': 'slightly leaning forward', '心事重重': 'contemplative',
+        '长发': 'long hair', '短发': 'short hair', '黑发': 'black hair', '白发': 'white hair',
+        '大眼': 'large eyes', '小眼': 'narrow eyes', '锐利': 'sharp',
+        '西装': 'suit', '和服': 'kimono', '便服': 'casual clothes', '制服': 'uniform',
+        '忧郁': 'melancholic', '开朗': 'cheerful', '冷漠': 'cold', '热情': 'passionate'
+    };
+    let result = text;
+    for(const [cn, en] of Object.entries(dict)){
+        result = result.replace(new RegExp(cn, 'g'), en);
+    }
+    // 如果還有中文，保留原文（AI模型通常能理解）
+    return result;
 }
 
 // HTML轉義函數
@@ -5727,65 +7171,285 @@ function applyCharacterEdit(type, index) {
     const char = state.characters[type][index];
     const historyDiv = document.getElementById('charEditHistory');
     
-    // 解析并应用修改（简单的关键词匹配）
+    // 智能解析自然语言修改（大幅扩展）
     let applied = [];
+    const inp = input.toLowerCase();
     
-    // 年龄
-    const ageMatch = input.match(/年[齡龄]\s*[改為为成：:]*\s*(\d+)/);
-    if (ageMatch && char.physiology) {
-        char.physiology.age = parseInt(ageMatch[1]);
-        applied.push(`年齡 → ${ageMatch[1]}歲`);
+    // ========== 年龄 ==========
+    const agePatterns = [
+        /年[齡龄]\s*[改為为成是：:]*\s*(\d+)/,
+        /(\d+)\s*[歲岁]/,
+        /(\d+)多[歲岁]/,
+        /[是为為]?\s*(\d+)\s*[歲岁]的?[男女人]/
+    ];
+    for (const p of agePatterns) {
+        const m = input.match(p);
+        if (m && char.physiology) {
+            char.physiology.age = m[1].includes('多') ? m[1] : parseInt(m[1]);
+            applied.push(`年齡 → ${m[1]}歲`);
+            break;
+        }
     }
     
-    // 身高
-    const heightMatch = input.match(/身高\s*[改為为成：:]*\s*(\d+)/);
+    // ========== 身高/体型 ==========
+    const heightMatch = input.match(/身高\s*[改為为成是：:]*\s*(\d+)/);
     if (heightMatch && char.physiology) {
         char.physiology.height = heightMatch[1] + 'cm';
         applied.push(`身高 → ${heightMatch[1]}cm`);
     }
     
-    // 性别
-    if (/性[別别]\s*[改為为成：:]*\s*[男女]/.test(input)) {
-        const gender = input.includes('男') ? '男' : '女';
+    // 体型描述（更灵活）
+    const buildKeywords = {
+        '瘦': 'slim', '纤细': 'slim', '苗条': 'slim', '削瘦': 'thin',
+        '胖': 'heavy', '微胖': 'slightly heavy', '丰满': 'curvy',
+        '高大': 'tall and strong', '矮小': 'short', '魁梧': 'muscular',
+        '中等': 'medium build', '普通': 'average build', '健壮': 'athletic'
+    };
+    for (const [cn, en] of Object.entries(buildKeywords)) {
+        if (input.includes(cn) && char.physiology) {
+            char.physiology.build = cn;
+            applied.push(`體型 → ${cn}`);
+            break;
+        }
+    }
+    
+    // ========== 性别 ==========
+    if (/[是为為]?[男女]性?/.test(input) && !input.includes('男女')) {
+        const gender = input.includes('女') ? '女' : '男';
         if (char.physiology) {
             char.physiology.gender = gender;
             applied.push(`性別 → ${gender}`);
         }
     }
     
-    // 外貌
-    const appearMatch = input.match(/外[貌表].*[改為为成：:]\s*(.+)/);
-    if (appearMatch && char.physiology) {
-        char.physiology.appearance = appearMatch[1].trim();
-        applied.push(`外貌 → ${appearMatch[1].trim()}`);
+    // ========== 外貌特征（更灵活） ==========
+    // 头发
+    const hairPatterns = [
+        /[头頭][发發髮]\s*[是为為：:]*\s*(.{2,20})/,
+        /(.{2,10})[的頭头][发發髮]/,
+        /(黑|白|金|红|棕|灰|银|蓝|绿|紫|粉)[色]?[的]?[长長短卷直][发發髮]/,
+        /(长|短|卷|直|披肩|马尾|双马尾|丸子头|寸头|光头)[发發髮]?/
+    ];
+    for (const p of hairPatterns) {
+        const m = input.match(p);
+        if (m && char.physiology && !applied.some(a => a.includes('髮'))) {
+            char.physiology.hair = m[1] || m[0];
+            applied.push(`髮型 → ${m[1] || m[0]}`);
+            break;
+        }
     }
     
-    // Want
-    const wantMatch = input.match(/[Ww]ant.*[改為为成：:]\s*(.+)/);
-    if (wantMatch && char.psychology) {
-        char.psychology.want = wantMatch[1].trim();
-        applied.push(`Want → ${wantMatch[1].trim()}`);
+    // 眼睛
+    const eyePatterns = [
+        /眼[睛神]\s*[是为為：:]*\s*(.{2,20})/,
+        /(.{2,10})的?眼[睛神]/,
+        /(大|小|圆|细长|锐利|温柔|冷漠|疲惫|明亮|深邃)[的]?眼/
+    ];
+    for (const p of eyePatterns) {
+        const m = input.match(p);
+        if (m && char.physiology && !applied.some(a => a.includes('眼'))) {
+            char.physiology.eyes = m[1] || m[0];
+            applied.push(`眼睛 → ${m[1] || m[0]}`);
+            break;
+        }
     }
     
-    // Need  
-    const needMatch = input.match(/[Nn]eed.*[改為为成：:]\s*(.+)/);
-    if (needMatch && char.psychology) {
-        char.psychology.need = needMatch[1].trim();
-        applied.push(`Need → ${needMatch[1].trim()}`);
+    // 整体外貌描述
+    const appearKeywords = ['冷艳', '冷豔', '温柔', '阳光', '忧郁', '憂鬱', '成熟', '稚嫩', 
+        '英俊', '帅气', '美丽', '可爱', '清秀', '粗犷', '精致', '普通', '平凡', '出众'];
+    for (const kw of appearKeywords) {
+        if (input.includes(kw) && char.physiology) {
+            const existing = char.physiology.appearance || '';
+            char.physiology.appearance = existing ? `${existing}，${kw}` : kw;
+            applied.push(`外貌 → ${kw}`);
+        }
     }
     
-    // 創傷/Wound
-    const woundMatch = input.match(/[創创]傷|[Ww]ound.*[改為为成是：:]\s*(.+)/);
-    if (woundMatch && char.psychology) {
-        char.psychology.wound = woundMatch[1]?.trim() || input.replace(/.*[是：:]/, '').trim();
-        applied.push(`Wound → ${char.psychology.wound}`);
+    // ========== 心理维度（Want/Need/Wound） ==========
+    // 渴望/Want
+    const wantPatterns = [
+        /渴望\s*[：:是为為]?\s*(.+)/,
+        /想要\s*[：:是为為]?\s*(.+)/,
+        /[Ww]ant\s*[：:是为為]?\s*(.+)/,
+        /追求\s*[：:是为為]?\s*(.+)/,
+        /梦想\s*[：:是为為]?\s*(.+)/
+    ];
+    for (const p of wantPatterns) {
+        const m = input.match(p);
+        if (m && char.psychology) {
+            char.psychology.desire = m[1].trim();
+            char.psychology.want = m[1].trim();
+            applied.push(`渴望(Want) → ${m[1].trim()}`);
+            break;
+        }
     }
     
-    // 习惯
-    const habitMatch = input.match(/[習习][慣惯].*[加上添].*[：:「]?\s*(.+?)[」]?$/);
-    if (habitMatch && char.physiology?.habits) {
-        char.physiology.habits.push(habitMatch[1].trim());
-        applied.push(`新增習慣：${habitMatch[1].trim()}`);
+    // 需要/Need
+    const needPatterns = [
+        /需要\s*[：:是为為]?\s*(.+)/,
+        /[Nn]eed\s*[：:是为為]?\s*(.+)/,
+        /内心[真正]*需要\s*[：:是为為]?\s*(.+)/,
+        /真正[想需]要\s*[：:是为為]?\s*(.+)/
+    ];
+    for (const p of needPatterns) {
+        const m = input.match(p);
+        if (m && char.psychology) {
+            char.psychology.need = m[1].trim();
+            applied.push(`需要(Need) → ${m[1].trim()}`);
+            break;
+        }
+    }
+    
+    // 创伤/Wound
+    const woundPatterns = [
+        /[創创][傷伤]\s*[：:是为為]?\s*(.+)/,
+        /[Ww]ound\s*[：:是为為]?\s*(.+)/,
+        /童年[陰阴]影\s*[：:是为為]?\s*(.+)/,
+        /心理[創创][傷伤]\s*[：:是为為]?\s*(.+)/,
+        /失去了?\s*(.{2,10})/,
+        /被\s*(.{2,10})\s*抛弃/,
+        /经历过?\s*(.{2,10})\s*的?[痛苦创伤]/
+    ];
+    for (const p of woundPatterns) {
+        const m = input.match(p);
+        if (m && char.psychology && (input.includes('创伤') || input.includes('創傷') || 
+            input.includes('失去') || input.includes('抛弃') || input.includes('wound') ||
+            input.includes('阴影') || input.includes('陰影'))) {
+            char.psychology.wound = m[1].trim();
+            char.psychology.fear = char.psychology.fear || m[1].trim();
+            applied.push(`創傷(Wound) → ${m[1].trim()}`);
+            break;
+        }
+    }
+    
+    // 恐惧
+    const fearPatterns = [
+        /害怕\s*[：:是为為]?\s*(.+)/,
+        /恐[惧懼]\s*[：:是为為]?\s*(.+)/,
+        /[Ff]ear\s*[：:是为為]?\s*(.+)/,
+        /担心\s*[：:是为為]?\s*(.+)/
+    ];
+    for (const p of fearPatterns) {
+        const m = input.match(p);
+        if (m && char.psychology) {
+            char.psychology.fear = m[1].trim();
+            applied.push(`恐懼(Fear) → ${m[1].trim()}`);
+            break;
+        }
+    }
+    
+    // 缺陷/Flaw
+    const flawPatterns = [
+        /缺[陷点點]\s*[：:是为為]?\s*(.+)/,
+        /[Ff]law\s*[：:是为為]?\s*(.+)/,
+        /性格[缺陷问题]\s*[：:是为為]?\s*(.+)/,
+        /[太过过于]?\s*(自私|懦弱|冷漠|傲慢|固执|冲动|优柔寡断|逃避|自卑|自负)/
+    ];
+    for (const p of flawPatterns) {
+        const m = input.match(p);
+        if (m && char.psychology) {
+            char.psychology.flaw = m[1].trim();
+            applied.push(`缺陷(Flaw) → ${m[1].trim()}`);
+            break;
+        }
+    }
+    
+    // ========== 习惯/爱好 ==========
+    const habitPatterns = [
+        /[習习][慣惯]\s*[：:是为為]?\s*(.+)/,
+        /有[个個一].*[習习][慣惯]\s*[：:，,是就]?\s*(.+)/,
+        /[習习][慣惯]性?\s*[的地]?\s*(.{2,20})/
+    ];
+    for (const p of habitPatterns) {
+        const m = input.match(p);
+        if (m && char.physiology) {
+            if (!char.physiology.habits) char.physiology.habits = [];
+            const h = (m[2] || m[1]).trim().replace(/[」」。]$/, '');
+            char.physiology.habits.push(h);
+            applied.push(`新增習慣：${h}`);
+            break;
+        }
+    }
+    
+    const hobbyPatterns = [
+        /[愛爱]好\s*[：:是为為]?\s*(.+)/,
+        /喜[歡欢]\s*[：:是为為]?\s*(.+)/,
+        /[興兴][趣趣]\s*[：:是为為]?\s*(.+)/,
+        /热[愛爱]\s*[：:是为為]?\s*(.+)/
+    ];
+    for (const p of hobbyPatterns) {
+        const m = input.match(p);
+        if (m && char.physiology) {
+            if (!char.physiology.hobbies) char.physiology.hobbies = [];
+            const h = m[1].trim().replace(/[」」。]$/, '');
+            char.physiology.hobbies.push(h);
+            applied.push(`新增愛好：${h}`);
+            break;
+        }
+    }
+    
+    // ========== 服装 ==========
+    const costumePatterns = [
+        /[服衣]装?\s*[：:是为為]?\s*(.+)/,
+        /穿[着著]?\s*[：:是为為]?\s*(.+)/,
+        /打扮\s*[：:是为為]?\s*(.+)/
+    ];
+    for (const p of costumePatterns) {
+        const m = input.match(p);
+        if (m && char.visual) {
+            char.visual.costume = m[1].trim();
+            applied.push(`服裝 → ${m[1].trim()}`);
+            break;
+        }
+    }
+    
+    // ========== 职业/背景 ==========
+    const occupationPatterns = [
+        /[職职][業业]\s*[：:是为為]?\s*(.+)/,
+        /[是为為][个個一]?\s*(.{2,10})/,
+        /身份\s*[：:是为為]?\s*(.+)/
+    ];
+    for (const p of occupationPatterns) {
+        const m = input.match(p);
+        if (m && char.sociology && (input.includes('职业') || input.includes('職業') || 
+            input.includes('身份') || input.includes('是个') || input.includes('是一个'))) {
+            char.sociology.occupation = m[1].trim();
+            applied.push(`職業 → ${m[1].trim()}`);
+            break;
+        }
+    }
+    
+    // ========== 通用"加上"兜底 ==========
+    if (applied.length === 0) {
+        const addPatterns = [
+            /加[上个個一]?\s*[：:，,]?\s*(.+)/,
+            /添加\s*[：:，,]?\s*(.+)/,
+            /新增\s*[：:，,]?\s*(.+)/,
+            /补充\s*[：:，,]?\s*(.+)/
+        ];
+        for (const p of addPatterns) {
+            const m = input.match(p);
+            if (m) {
+                const content = m[1].trim();
+                if (!char.physiology.notes) char.physiology.notes = [];
+                char.physiology.notes.push(content);
+                applied.push(`新增特點：${content}`);
+                break;
+            }
+        }
+    }
+    
+    // ========== 最后兜底：直接作为描述附加 ==========
+    if (applied.length === 0 && input.length > 5 && input.length < 200) {
+        // 如果是一段描述性文字，直接附加到appearance
+        if (!char.physiology.notes) char.physiology.notes = [];
+        char.physiology.notes.push(input);
+        applied.push(`新增描述：${input.substring(0, 30)}...`);
+    }
+    
+    // 重新生成AI Prompt
+    if (applied.length > 0) {
+        char.prompt = generateCharacterPrompt(char);
     }
     
     // 显示结果
@@ -5804,7 +7468,16 @@ function applyCharacterEdit(type, index) {
         historyDiv.innerHTML += `
             <div style="background:rgba(128,128,128,.1);border:1px solid rgba(128,128,128,.3);padding:10px;margin-bottom:8px;font-size:12px">
                 <div style="color:var(--dim);font-weight:600;margin-bottom:4px">⚠️ 無法識別修改意圖</div>
-                <div style="color:var(--dim)">請嘗試更明確的描述，如：「年齡改成18歲」</div>
+                <div style="color:var(--dim)">嘗試這些格式：</div>
+                <div style="color:var(--dim);font-size:11px;margin-top:4px">
+                    • 「年齡18歲」「身高175」<br>
+                    • 「黑色長髮」「銳利的眼神」<br>
+                    • 「外貌更冷艷」「性格孤僻」<br>
+                    • 「創傷是失去母親」「害怕被拋棄」<br>
+                    • 「渴望被認可」「需要安全感」<br>
+                    • 「愛好看海」「習慣獨處」<br>
+                    • 「職業是醫生」「穿著黑色西裝」
+                </div>
             </div>
         `;
     }
@@ -5964,10 +7637,11 @@ async function runArtStyleAnalysis(){
     
     try {
         const response = await callAgent('artstyle', {
-            novel: state.novel?.text?.substring(0, 8000) || '',
+            novel: state.novel?.text?.substring(0, 4000) || '',
             title: state.novel?.title || '',
             concept: state.concept || {},
-            interview: state.interview || {}
+            interview: state.interview || {},
+            timeout: 300000  // 5分鐘
         });
         
         if(response?.result){
@@ -6028,8 +7702,8 @@ function renderPresetStyleMode(categories, selectedId){
                     ${ART_STYLES.filter(s => s.category === cat).map(style => `
                         <div onclick="selectArtStyle('${style.id}')"
                              style="background:var(--surface2);border:2px solid ${selectedId === style.id ? 'var(--primary)' : 'var(--border)'};border-radius:6px;padding:8px;cursor:pointer;text-align:center;transition:all .15s;${selectedId === style.id ? 'box-shadow:0 0 10px var(--primary)' : ''}">
-                            <div style="font-size:24px">${style.preview}</div>
-                            <div style="font-size:10px;font-weight:600;margin-top:4px">${style.name}</div>
+                            <div style="width:100%;height:36px;border-radius:4px;background:${style.color || 'var(--surface)'};margin-bottom:4px"></div>
+                            <div style="font-size:10px;font-weight:600">${style.name}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -6040,7 +7714,7 @@ function renderPresetStyleMode(categories, selectedId){
         ${state.artStyle && !state.artStyle.isCustom ? `
             <div style="margin-top:16px;padding:14px;background:rgba(255,10,53,.1);border:1px solid var(--primary);border-radius:8px">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                    <span style="font-size:28px">${state.artStyle.preview}</span>
+                    <div style="width:48px;height:48px;border-radius:6px;background:${state.artStyle.color || 'var(--surface)'};flex-shrink:0"></div>
                     <div>
                         <div style="font-weight:600">${state.artStyle.name}</div>
                         <div style="color:var(--dim);font-size:11px">${state.artStyle.category}</div>
@@ -6155,6 +7829,7 @@ function applyMoodboard(){
         isCustom: true,
         elements: [...selectedMoodElements]
     };
+    autoSave('畫風選擇'); // 🔒 自動保存
     document.getElementById('contentArea').innerHTML = renderArtStyleStep();
 }
 
@@ -6172,34 +7847,50 @@ async function generateMoodboardTestImage(){
     
     const btn = event.target;
     const originalText = btn.innerHTML;
-    btn.innerHTML = '⏳ 生成中...';
+    btn.innerHTML = '⏳ 生成中 (免費API)...';
     btn.disabled = true;
     
     try {
         // 添加測試場景
-        const fullPrompt = `${prompt}, cinematic scene, beautiful lighting, masterpiece quality, 8k`;
+        const fullPrompt = `${prompt}, cinematic scene, beautiful lighting, masterpiece quality`;
         
-        const resp = await fetch(`${API_BASE}/moodboard/generate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: fullPrompt })
-        });
+        // 方案1: 使用 Pollinations.ai 免費API (無需key)
+        const encodedPrompt = encodeURIComponent(fullPrompt);
+        const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=512&model=flux&nologo=true&seed=${Date.now()}`;
         
-        if(!resp.ok) {
-            throw new Error(`API錯誤 ${resp.status}: ${resp.statusText}`);
-        }
-        
-        const data = await resp.json();
-        if(data.error){
-            throw new Error(data.error);
-        }
-        
-        moodboardTestImage = data.url;
-        document.getElementById('contentArea').innerHTML = renderArtStyleStep();
+        // 預加載圖片確認成功
+        const img = new Image();
+        img.onload = () => {
+            moodboardTestImage = pollinationsUrl;
+            document.getElementById('contentArea').innerHTML = renderArtStyleStep();
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        };
+        img.onerror = async () => {
+            // 備選方案: 使用後端API (需要TOGETHER_API_KEY)
+            try {
+                const resp = await fetch(`${API_BASE}/moodboard/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: fullPrompt })
+                });
+                if(resp.ok) {
+                    const data = await resp.json();
+                    if(data.url) {
+                        moodboardTestImage = data.url;
+                        document.getElementById('contentArea').innerHTML = renderArtStyleStep();
+                    }
+                }
+            } catch(e) {
+                alert('圖片生成失敗，請稍後重試');
+            }
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        };
+        img.src = pollinationsUrl;
         
     } catch(err) {
-        alert('生成失敗: ' + err.message + '\n\n提示: 需要在 .env 中配置 TOGETHER_API_KEY');
-    } finally {
+        alert('生成失敗: ' + err.message);
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
@@ -6300,7 +7991,7 @@ function renderMoodboardExtras(){
             <button onclick="generateMoodboardTestImage()" class="btn" style="width:100%;font-size:12px">
                 ${moodboardTestImage ? '🔄 重新生成' : '🎨 生成測試圖預覽'}
             </button>
-            <div style="font-size:10px;color:var(--dim);margin-top:6px;text-align:center">需要配置 TOGETHER_API_KEY</div>
+            <div style="font-size:10px;color:var(--dim);margin-top:6px;text-align:center">使用 Pollinations.ai 免費生成</div>
         </div>
         
         <!-- 圖片反推畫風 -->
@@ -6332,6 +8023,7 @@ function selectArtStyle(styleId){
     const style = ART_STYLES.find(s => s.id === styleId);
     if(style){
         state.artStyle = {...style, isCustom: false};
+        autoSave('畫風選擇'); // 🔒 自動保存
         moodboardMode = false;
         document.getElementById('contentArea').innerHTML = renderArtStyleStep();
         console.log('選擇畫風:', style.name, style.prompt);
@@ -6354,8 +8046,8 @@ function renderStep5(){
             
             <div id="designAgentUI">
                 <div style="text-align:center;padding:20px">
-                    <button class="btn btn-primary" onclick="runDesignAgent()" style="padding:16px 40px;font-size:16px">
-                        🚀 開始AI服化道設計
+                    <button class="btn btn-primary" onclick="confirmFizziksDeduction(30, '👔 服化道設計', runDesignAgent)" style="padding:16px 40px;font-size:16px">
+                        🚀 開始AI服化道設計 <span style="opacity:.7;font-size:13px">(30⚡)</span>
                     </button>
                     <div style="font-size:12px;color:var(--dim);margin-top:12px">
                         場景設計 + 服裝設計 + 道具設計 + 色彩系統
@@ -6409,14 +8101,15 @@ async function runDesignAgent(){
         progressBar.style.width = '60%';
         
         startCountdown('design', stepsEl);
-        const apiResponse = await callAgent('artdirector', {
-            novel: state.novel.text.substring(0, 20000),
+        const apiResponse = await callAgent('production_design', {
+            novel: state.novel.text.substring(0, 6000),  // 減少內容防超時
             title: state.novel.title,
             analysis: state.aiAnalysis,
             concept: state.concept,
             chapters: state.chapters,
             characters: state.characters,
-            interview: state.interview || {}  // 傳遞訪談創意方向
+            interview: state.interview || {},  // 傳遞訪談創意方向
+            timeout: 300000  // 5分鐘
         });
         stopCountdown();
         
@@ -6460,199 +8153,130 @@ async function runDesignAgent(){
     }
 }
 
-// 移除舊的手動UI代碼，保留結果顯示部分
-
+// 服化道結果渲染 - 簡潔版，專注於服裝/場景/道具的AI Prompt
 function renderDesignResult(){
     const result = state.designResult || {};
-    const scenes = state.scenes || [];
-    const costumes = state.costumes || [];
-    const props = state.props || [];
     
-    // 適配多種API返回格式
-    const visualStyle = state.visualStyle || result.visual_style || result.visual_style_definition || result.visualStyle || {};
-    const lighting = result.lighting_design || result.lighting || result.ten_cinematic_lighting_applications || result.lighting_types || [];
-    const lightingMatrix = result.lighting_emotion_matrix || result.lighting_emotion_mapping || [];
-    const masterStyle = result.master_style_integration || result.master_style_references || {};
-    const colorDesign = result.color_emotion_design || result.color_emotion_mapping_design || result.color_palette || {};
+    // 兼容多種格式提取數據
+    const costumesData = result.costumes || result.costume_design?.characters || result.costume_design || state.costumes || [];
+    const scenesData = result.scenes || result.scene_design?.scenes || result.scene_design || state.scenes || [];
+    const propsData = result.props || result.prop_design?.key_items || result.prop_design || state.props || [];
     
-    // 調試：記錄實際數據結構
-    console.log('[服化道] 渲染結果，數據結構:', Object.keys(result));
-    console.log('[服化道] visualStyle:', visualStyle);
-    console.log('[服化道] lighting:', lighting);
+    console.log('[服化道] 解析結果:', { costumes: costumesData?.length, scenes: scenesData?.length, props: propsData?.length });
     
-    // 檢查是否有任何可顯示的內容 - 更寬鬆的檢查
-    const hasVisualStyle = visualStyle && (visualStyle.overall_tone || visualStyle.art_style_reference || visualStyle.description || visualStyle.core_philosophy || Object.keys(visualStyle).length > 0);
-    const hasLighting = (Array.isArray(lighting) && lighting.length > 0) || (lighting && typeof lighting === 'object' && Object.keys(lighting).length > 0);
-    const hasLightingMatrix = Array.isArray(lightingMatrix) && lightingMatrix.length > 0;
-    const hasSceneDesign = result.scene_design || result.scenes || result.key_locations;
-    const hasCostumeDesign = result.costume_design || result.costumes || result.character_costumes;
-    const hasPropDesign = result.prop_design || result.props || result.key_items;
-    const hasMasterStyle = masterStyle && Object.keys(masterStyle).length > 0;
-    const hasColorDesign = colorDesign && (colorDesign.overall_palette || colorDesign.emotional_mapping || Object.keys(colorDesign).length > 0);
-    
-    const hasAnyContent = hasVisualStyle || hasLighting || hasLightingMatrix || hasSceneDesign || hasCostumeDesign || hasPropDesign || hasMasterStyle || hasColorDesign;
+    const hasCostumes = Array.isArray(costumesData) && costumesData.length > 0;
+    const hasScenes = Array.isArray(scenesData) && scenesData.length > 0;
+    const hasProps = Array.isArray(propsData) && propsData.length > 0;
+    const hasAnyContent = hasCostumes || hasScenes || hasProps;
     
     return `
         <div class="content-card">
-            <h3><span class="icon">🎨</span> 服化道 + 場景設計完成</h3>
+            <h3><span class="icon">🎨</span> 服化道設計完成</h3>
+            
+            <!-- 統計概覽 -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+                <div style="background:var(--surface2);padding:16px;border-radius:8px;text-align:center">
+                    <div style="font-size:28px;color:var(--primary)">${costumesData?.length || 0}</div>
+                    <div style="font-size:12px;color:var(--dim)">👔 角色服裝</div>
+                </div>
+                <div style="background:var(--surface2);padding:16px;border-radius:8px;text-align:center">
+                    <div style="font-size:28px;color:var(--primary)">${scenesData?.length || 0}</div>
+                    <div style="font-size:12px;color:var(--dim)">🏛️ 場景設計</div>
+                </div>
+                <div style="background:var(--surface2);padding:16px;border-radius:8px;text-align:center">
+                    <div style="font-size:28px;color:var(--primary)">${propsData?.length || 0}</div>
+                    <div style="font-size:12px;color:var(--dim)">🏺 道具設計</div>
+                </div>
+            </div>
             
             ${!hasAnyContent ? `
-            <!-- 原始數據展示（當結構不匹配時） -->
-            <div class="report" style="margin-bottom:16px">
-                <h4>📋 設計結果（原始數據）</h4>
-                <div style="background:var(--bg);padding:12px;border-radius:8px;max-height:400px;overflow-y:auto">
-                    <pre style="white-space:pre-wrap;word-break:break-word;font-size:11px;color:var(--text-secondary)">${JSON.stringify(result, null, 2)}</pre>
-                </div>
-                <div style="font-size:11px;color:var(--dim);margin-top:8px">
-                    ⚠️ 數據結構不匹配預期格式，顯示原始JSON
+            <div class="report">
+                <h4>📋 原始數據</h4>
+                <div style="background:var(--bg);padding:12px;border-radius:8px;max-height:300px;overflow-y:auto">
+                    <pre style="white-space:pre-wrap;font-size:11px">${JSON.stringify(result, null, 2)}</pre>
                 </div>
             </div>
             ` : ''}
             
-            ${hasVisualStyle ? `
-            <div class="report">
-                <h4>🎨 視覺風格</h4>
-                <div class="item-card">
-                    ${visualStyle.overall_tone ? `<p><strong>整體基調：</strong>${visualStyle.overall_tone}</p>` : ''}
-                    ${visualStyle.core_philosophy ? `<p><strong>核心理念：</strong>${visualStyle.core_philosophy}</p>` : ''}
-                    ${visualStyle.art_style_reference ? `<p><strong>風格參考：</strong>${visualStyle.art_style_reference}</p>` : ''}
-                    ${visualStyle.description ? `<p><strong>描述：</strong>${visualStyle.description}</p>` : ''}
-                    ${visualStyle.key_visual_elements ? `<p><strong>視覺元素：</strong>${Array.isArray(visualStyle.key_visual_elements) ? visualStyle.key_visual_elements.join('、') : visualStyle.key_visual_elements}</p>` : ''}
-                </div>
-            </div>
-            ` : ''}
-            
-            ${hasLighting ? `
-            <div class="report">
-                <h4>💡 電影光影設計</h4>
-                ${Array.isArray(lighting) ? `
-                    <div style="display:grid;gap:8px">
-                        ${lighting.slice(0, 6).map(light => `
-                            <div class="item-card">
-                                <h5 style="color:var(--primary)">${light.type || light.name || '光效'}</h5>
-                                <p style="font-size:12px">${light.application || light.description || ''}</p>
-                                ${light.emotion ? `<p style="font-size:11px;color:var(--dim)">🎭 情緒：${light.emotion}</p>` : ''}
-                                ${light.color_temp || light.color_temperature ? `<p style="font-size:11px;color:var(--dim)">🌡️ 色溫：${light.color_temp || light.color_temperature}</p>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                    ${lighting.length > 6 ? `<div style="font-size:11px;color:var(--dim);margin-top:8px">... 還有 ${lighting.length - 6} 種光效</div>` : ''}
-                ` : `
-                    <div class="item-card">
-                        ${lighting.primary_lighting_type ? `<p><strong>主光類型：</strong>${lighting.primary_lighting_type}</p>` : ''}
-                        ${lighting.lighting_description ? `<p style="font-size:12px;color:var(--dim)">${lighting.lighting_description}</p>` : ''}
-                    </div>
-                `}
-            </div>
-            ` : ''}
-            
-            ${hasLightingMatrix ? `
-            <div class="report">
-                <h4>🎭 光影情緒矩陣</h4>
-                <div style="display:grid;gap:6px">
-                    ${lightingMatrix.slice(0, 5).map(item => `
-                        <div style="background:var(--bg);padding:10px;border-radius:6px;border-left:3px solid var(--primary)">
-                            <strong>${item.emotion || item.mood || '情緒'}</strong>
-                            <span style="color:var(--dim);font-size:11px;margin-left:8px">${item.lighting || item.light_type || ''}</span>
-                            ${item.description ? `<p style="font-size:11px;color:var(--text-secondary);margin-top:4px">${item.description}</p>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            ` : ''}
-            
-            ${result.scene_design ? `
-            <div class="report">
-                <h4>🏛️ 場景設計</h4>
-                ${typeof result.scene_design === 'object' ? `
-                    <div class="item-card">
-                        ${result.scene_design.architecture ? `<p><strong>建築：</strong>${result.scene_design.architecture}</p>` : ''}
-                        ${result.scene_design.street_layout ? `<p><strong>街道：</strong>${result.scene_design.street_layout}</p>` : ''}
-                        ${result.scene_design.key_locations ? `<p><strong>關鍵地點：</strong>${JSON.stringify(result.scene_design.key_locations).substring(0,200)}...</p>` : ''}
-                    </div>
-                ` : `<div class="item-card"><p>${JSON.stringify(result.scene_design).substring(0,500)}</p></div>`}
-            </div>
-            ` : ''}
-            
-            ${result.costume_design ? `
+            ${hasCostumes ? `
             <div class="report">
                 <h4>👔 服裝設計</h4>
-                ${Array.isArray(result.costume_design.characters) ? 
-                    result.costume_design.characters.map(c => `
-                        <div class="item-card">
-                            <h5>${c.role || c.character || '角色'}</h5>
-                            <p><strong>服飾：</strong>${c.garments || c.description || ''}</p>
-                            ${c.fabrics_patterns ? `<p><strong>面料紋樣：</strong>${c.fabrics_patterns}</p>` : ''}
-                            ${c.accessories ? `<p><strong>配飾：</strong>${c.accessories}</p>` : ''}
+                ${costumesData.map((costume, ci) => `
+                    <div class="item-card" style="margin-bottom:16px">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                            <h5 style="color:var(--primary);margin:0">${costume.character || costume.name || '角色' + (ci+1)}</h5>
+                            <span class="tag">${costume.role || ''}</span>
                         </div>
-                    `).join('') : 
-                    `<div class="item-card"><p>${JSON.stringify(result.costume_design).substring(0,500)}</p></div>`
-                }
+                        
+                        ${costume.hairstyle ? `<p style="font-size:12px"><strong>💇 髮型：</strong>${costume.hairstyle}</p>` : ''}
+                        ${costume.makeup ? `<p style="font-size:12px"><strong>💄 妝容：</strong>${costume.makeup}</p>` : ''}
+                        
+                        ${Array.isArray(costume.outfits) ? `
+                            <div style="margin-top:12px">
+                                <div style="font-size:11px;color:var(--dim);margin-bottom:8px">服裝造型 (${costume.outfits.length}套)</div>
+                                ${costume.outfits.map((outfit, oi) => `
+                                    <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--primary)">
+                                        <div style="font-weight:600;margin-bottom:6px">${outfit.name || '造型' + (oi+1)} <span style="font-size:11px;color:var(--dim);font-weight:normal">${outfit.occasion || ''}</span></div>
+                                        <p style="font-size:12px;margin-bottom:8px">${outfit.description || ''}</p>
+                                        ${outfit.colors ? `<p style="font-size:11px"><strong>🎨 色彩：</strong>${Array.isArray(outfit.colors) ? outfit.colors.join('、') : outfit.colors}</p>` : ''}
+                                        ${outfit.materials ? `<p style="font-size:11px"><strong>🧵 材質：</strong>${Array.isArray(outfit.materials) ? outfit.materials.join('、') : outfit.materials}</p>` : ''}
+                                        ${outfit.accessories ? `<p style="font-size:11px"><strong>💎 配飾：</strong>${Array.isArray(outfit.accessories) ? outfit.accessories.join('、') : outfit.accessories}</p>` : ''}
+                                        
+                                        ${outfit.ai_prompt ? `
+                                            <div style="margin-top:10px;background:linear-gradient(135deg,rgba(255,10,53,.05),var(--surface2));border:1px solid var(--primary);border-radius:6px;padding:10px">
+                                                <div style="font-size:10px;color:var(--primary);font-weight:600;margin-bottom:4px">🖼️ AI Prompt</div>
+                                                <div style="font-size:11px;line-height:1.6;color:var(--text)">${outfit.ai_prompt}</div>
+                                                <button onclick="navigator.clipboard.writeText('${outfit.ai_prompt.replace(/'/g, "\\'")}');showToast('✅ 已複製Prompt')" 
+                                                    style="margin-top:8px;padding:4px 12px;font-size:10px;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer">
+                                                    📋 複製Prompt
+                                                </button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <p style="font-size:12px">${costume.description || costume.garments || JSON.stringify(costume).substring(0,200)}</p>
+                        `}
+                    </div>
+                `).join('')}
             </div>
             ` : ''}
             
-            ${result.prop_design ? `
+            ${hasScenes ? `
             <div class="report">
-                <h4>🏺 道具設計</h4>
-                ${Array.isArray(result.prop_design.key_items) ? 
-                    result.prop_design.key_items.map(p => `
+                <h4>🏛️ 場景設計</h4>
+                <div style="display:grid;gap:12px">
+                    ${scenesData.slice(0, 10).map((scene, si) => `
                         <div class="item-card">
-                            <h5>${p.category || p.name || '道具'}</h5>
-                            <p><strong>物品：</strong>${Array.isArray(p.items) ? p.items.join('、') : p.items || ''}</p>
-                            ${p.details ? `<p style="font-size:12px;color:var(--dim)">${p.details}</p>` : ''}
-                        </div>
-                    `).join('') : 
-                    `<div class="item-card"><p>${JSON.stringify(result.prop_design).substring(0,500)}</p></div>`
-                }
-            </div>
-            ` : ''}
-            
-            ${hasMasterStyle ? `
-            <div class="report">
-                <h4>🎬 大師風格融合</h4>
-                <div style="display:grid;gap:8px">
-                    ${Object.entries(masterStyle).map(([k,v]) => `
-                        <div class="item-card">
-                            <h5 style="color:var(--primary)">${k.replace(/_/g, ' ')}</h5>
-                            <p style="font-size:12px">${typeof v === 'string' ? v : JSON.stringify(v)}</p>
+                            <h5 style="color:var(--primary)">${scene.icon || '📍'} ${scene.name || scene.location || '場景' + (si+1)}</h5>
+                            <p style="font-size:12px;margin:8px 0">${scene.brief || scene.description || scene.atmosphere || ''}</p>
+                            ${scene.structure ? `<p style="font-size:11px"><strong>🏗️ 結構：</strong>${scene.structure}</p>` : ''}
+                            ${scene.lighting ? `<p style="font-size:11px"><strong>💡 光線：</strong>${scene.lighting}</p>` : ''}
+                            ${scene.props ? `<p style="font-size:11px"><strong>🎭 道具：</strong>${Array.isArray(scene.props) ? scene.props.join('、') : scene.props}</p>` : ''}
+                            ${scene.ai_prompt ? `
+                                <div style="margin-top:8px;background:var(--bg);padding:8px;border-radius:4px">
+                                    <div style="font-size:10px;color:var(--primary)">🖼️ AI Prompt</div>
+                                    <div style="font-size:11px">${scene.ai_prompt}</div>
+                                </div>
+                            ` : ''}
                         </div>
                     `).join('')}
                 </div>
+                ${scenesData.length > 10 ? `<div style="font-size:11px;color:var(--dim);margin-top:8px">... 還有 ${scenesData.length - 10} 個場景</div>` : ''}
             </div>
             ` : ''}
             
-            ${hasColorDesign ? `
+            ${hasProps ? `
             <div class="report">
-                <h4>🌈 色彩情緒設計</h4>
-                <div class="item-card">
-                    ${colorDesign.overall_palette ? `<p><strong>整體調色：</strong>${colorDesign.overall_palette}</p>` : ''}
-                    ${colorDesign.contrast_design ? `<p><strong>對比設計：</strong>${colorDesign.contrast_design}</p>` : ''}
-                </div>
-                ${colorDesign.emotional_mapping && Array.isArray(colorDesign.emotional_mapping) ? `
-                    <div style="margin-top:10px;display:grid;gap:6px">
-                        ${colorDesign.emotional_mapping.map(em => `
-                            <div style="background:var(--bg);padding:10px;border-radius:6px;display:flex;align-items:center;gap:10px">
-                                <span style="font-size:20px">${em.dominant_color || '🎨'}</span>
-                                <div>
-                                    <strong>${em.phase || em.emotion || '階段'}</strong>
-                                    <p style="font-size:11px;color:var(--dim);margin:0">${em.emotion || em.mood || ''} ${em.source ? '- ' + em.source : ''}</p>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
-            </div>
-            ` : ''}
-            
-            ${Array.isArray(result.ten_cinematic_lighting_applications) ? `
-            <div class="report">
-                <h4>💡 電影光影應用</h4>
-                <div style="display:grid;gap:8px">
-                    ${result.ten_cinematic_lighting_applications.slice(0, 5).map(light => `
+                <h4>🏺 道具設計</h4>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+                    ${propsData.slice(0, 8).map((prop, pi) => `
                         <div class="item-card">
-                            <h5>${light.type || light.name || '光效'}</h5>
-                            <p style="font-size:12px">${light.application || light.description || ''}</p>
-                            ${light.emotion ? `<p style="font-size:11px;color:var(--primary)">情緒：${light.emotion}</p>` : ''}
+                            <h5>${prop.name || prop.category || '道具' + (pi+1)}</h5>
+                            <p style="font-size:12px">${prop.description || prop.details || ''}</p>
+                            ${prop.significance ? `<p style="font-size:11px;color:var(--dim)">📖 ${prop.significance}</p>` : ''}
+                            ${prop.items ? `<p style="font-size:11px"><strong>物品：</strong>${Array.isArray(prop.items) ? prop.items.join('、') : prop.items}</p>` : ''}
                         </div>
                     `).join('')}
                 </div>
@@ -6661,8 +8285,8 @@ function renderDesignResult(){
             
             <div class="btn-group">
                 <button class="btn btn-back" onclick="prevStep()">← 返回</button>
-                <button class="btn" onclick="state.designResult=null;state.scenes=[];state.costumes=[];state.props=[];showStep(7)">🔄 重新設計</button>
-                <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+                <button class="btn" onclick="state.designResult=null;state.costumes=[];state.scenes=[];state.props=[];showStep(7)">🔄 重新生成</button>
+                <button class="btn btn-primary" onclick="nextStep()">✅ 確認，繼續 →</button>
             </div>
         </div>
     `;
@@ -6764,8 +8388,8 @@ function renderStep6(){
             
             <div id="scriptAgentUI">
                 <div style="text-align:center;padding:20px">
-                    <button class="btn btn-primary" onclick="runScriptAgent()" style="padding:16px 40px;font-size:16px">
-                        🚀 開始AI劇本生成
+                    <button class="btn btn-primary" onclick="confirmFizziksDeduction(20, '✍️ 劇本生成 (1集)', runScriptAgent)" style="padding:16px 40px;font-size:16px">
+                        🚀 開始AI劇本生成 <span style="opacity:.7;font-size:13px">(20⚡/集)</span>
                     </button>
                 </div>
             </div>
@@ -6823,7 +8447,8 @@ async function runScriptAgent(){
             novel: state.novel.title,
             concept: state.concept,
             characters: state.characters,
-            interview: state.interview || {}  // 傳遞訪談創意方向
+            interview: state.interview || {},  // 傳遞訪談創意方向
+            timeout: 300000  // 5分鐘
         });
         stopCountdown();
         
@@ -6867,21 +8492,69 @@ function renderScriptsResult(){
         <div class="content-card">
             <h3><span class="icon">✍️</span> 章節劇本</h3>
             
+            <!-- 可編輯提示 -->
+            <div style="background:linear-gradient(135deg,var(--primary)15,var(--surface2));border:1px solid var(--primary);border-radius:8px;padding:16px;margin-bottom:16px">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <span style="font-size:28px">✏️</span>
+                    <div>
+                        <div style="font-weight:600;color:var(--primary)">可修改劇本</div>
+                        <div style="font-size:12px;color:var(--dim)">直接在文本框中編輯劇本內容，修改對話、場景後再生成分鏡</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="tabs">
                 ${scripts.map((s,i) => `<div class="tab ${i===0?'active':''}" onclick="showScriptTab(${i})">第${s.chapter}章</div>`).join('')}
             </div>
             
             <div id="scriptDisplay">
-                ${scripts[0] ? renderScriptDetail(scripts[0]) : '<p>暫無劇本</p>'}
+                ${scripts[0] ? renderScriptDetailEditable(scripts[0], 0) : '<p>暫無劇本</p>'}
             </div>
             
             <div class="btn-group">
                 <button class="btn btn-back" onclick="prevStep()">← 返回</button>
                 <button class="btn" onclick="state.scripts=[];showStep(8)">+ 繼續生成其他章節</button>
-                <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+                <button class="btn btn-primary" onclick="nextStep()" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:12px 24px">
+                    ✅ 確認劇本，生成分鏡 →
+                </button>
             </div>
         </div>
     `;
+}
+
+// 可編輯版本的劇本詳情
+function renderScriptDetailEditable(script, index){
+    const text = script.rawText || script.text || script.content || '';
+    return `
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px">
+            <div style="background:var(--primary);padding:10px 16px;color:#fff;display:flex;justify-content:space-between;align-items:center">
+                <span>📜 第${script.chapter}章 劇本</span>
+                <div style="display:flex;gap:8px">
+                    <button onclick="copyScriptToClipboard(${index})" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px">📋 複製</button>
+                    <button onclick="saveScriptEdit(${index})" style="background:#fff;border:none;color:var(--primary);padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600">💾 保存</button>
+                </div>
+            </div>
+            <textarea id="script-textarea-${index}" 
+                style="width:100%;min-height:400px;max-height:600px;padding:20px;font-size:13px;line-height:2;font-family:monospace;background:var(--bg);color:var(--text);border:none;resize:vertical"
+                placeholder="在此編輯劇本內容...">${escapeHtml(text)}</textarea>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--dim)">
+            💡 提示：可直接修改對話、動作描述、場景設定，修改後點擊「保存」
+        </div>
+    `;
+}
+
+// 保存劇本編輯
+function saveScriptEdit(index){
+    const textarea = document.getElementById(`script-textarea-${index}`);
+    if(!textarea || !state.scripts?.[index]) return;
+    
+    const newText = textarea.value;
+    state.scripts[index].rawText = newText;
+    state.scripts[index].text = newText;
+    state.scripts[index].content = newText;
+    
+    showToast(`✅ 第${state.scripts[index].chapter}章劇本已保存`);
 }
 
 function renderScriptDetail(script){
@@ -6928,7 +8601,7 @@ function copyScriptToClipboard(index){
 function showScriptTab(i){
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     event.target.classList.add('active');
-    document.getElementById('scriptDisplay').innerHTML = renderScriptDetail(state.scripts[i]);
+    document.getElementById('scriptDisplay').innerHTML = renderScriptDetailEditable(state.scripts[i], i);
 }
 
 function generateScriptsPrompt(){
@@ -7004,17 +8677,136 @@ function renderStep7(){
             
             <div id="storyboardAgentUI">
                 <div style="text-align:center;padding:20px">
-                    <button class="btn btn-primary" onclick="runStoryboardAgent()" style="padding:16px 40px;font-size:16px">
-                        🚀 開始AI分鏡設計
+                    <button class="btn btn-primary" onclick="startStoryboardWithFizziks()" style="padding:16px 40px;font-size:16px">
+                        🚀 開始AI分鏡設計 <span style="opacity:.7;font-size:13px">(30⚡×集數)</span>
                     </button>
                     <div style="font-size:12px;color:var(--dim);margin-top:12px">
                         生成分鏡表 + AI繪圖Prompt (MJ/SD/Flux)
                     </div>
+                    <div style="font-size:11px;color:var(--primary);margin-top:8px" id="storyboardCostPreview"></div>
                 </div>
             </div>
         </div>
     `;
 }
+
+// 分鏡扣費包裝函數
+function startStoryboardWithFizziks(){
+    const episodes = chapterConfig.episodes || state.seriesConfig?.episodes || 10;
+    const totalCost = 30 * episodes;
+    confirmFizziksDeduction(totalCost, `🎬 分鏡設計 (${episodes}集)`, runStoryboardAgent);
+}
+
+// 分鏡Agent調用的專業Skills及來源書籍
+const STORYBOARD_SKILL_SOURCES = [
+    { skill: 'cinematography', name: '電影攝影術', book: 'Cinematography: Theory and Practice (Brown)', icon: '📷' },
+    { skill: 'shot_composition', name: '鏡頭構圖', book: 'Shot by Shot (Steven Katz)', icon: '🖼️' },
+    { skill: 'visual_storytelling', name: '視覺敘事', book: 'Framed Ink (Marcos Mateu-Mestre)', icon: '📖' },
+    { skill: 'camera_movement', name: '運鏡技法', book: 'Film Directing Shot by Shot', icon: '🎥' },
+    { skill: 'lighting_design', name: '燈光設計', book: 'Painting with Light (John Alton)', icon: '💡' },
+    { skill: 'color_theory', name: '色彩理論', book: 'Color and Light (James Gurney)', icon: '🎨' },
+    { skill: 'ai_prompt', name: 'AI Prompt生成', book: 'Midjourney/Stable Diffusion 最佳實踐', icon: '🤖' }
+];
+
+// 分鏡表格彈窗
+function showStoryboardTable(episodeNum, shots) {
+    const artStyleName = state.artStyle?.name || '默認動畫';
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal" style="max-width:95vw;width:1200px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)">
+                <div>
+                    <h3 style="margin:0">🎬 第${episodeNum}集 分鏡表</h3>
+                    <div style="font-size:12px;color:var(--dim);margin-top:4px">共 ${shots.length} 鏡頭</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <span style="background:var(--primary);color:#fff;padding:4px 12px;border-radius:4px;font-size:12px">🎨 ${artStyleName}</span>
+                    <button class="btn" onclick="downloadEpisodeExcel(${episodeNum})" style="font-size:12px">📥 下載Excel</button>
+                    <button onclick="this.closest('.modal-overlay').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text)">✕</button>
+                </div>
+            </div>
+            <div style="flex:1;overflow:auto;padding:0">
+                <table style="width:100%;border-collapse:collapse;font-size:12px">
+                    <thead style="position:sticky;top:0;background:var(--surface);z-index:1">
+                        <tr style="border-bottom:2px solid var(--primary)">
+                            <th style="padding:10px;text-align:left;width:60px">#</th>
+                            <th style="padding:10px;text-align:left;width:60px">景別</th>
+                            <th style="padding:10px;text-align:left;width:200px">畫面描述</th>
+                            <th style="padding:10px;text-align:left;width:80px">燈光</th>
+                            <th style="padding:10px;text-align:left;width:80px">運鏡</th>
+                            <th style="padding:10px;text-align:left">Image Prompt</th>
+                            <th style="padding:10px;text-align:left">Video Prompt</th>
+                            <th style="padding:10px;text-align:center;width:50px">時長</th>
+                            <th style="padding:10px;text-align:center;width:50px">HERO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${shots.map((shot, i) => {
+                            // 統一字段獲取（兼容千與千尋格式）
+                            const shotId = shot.shot_id || '';
+                            const shotType = shot.shot_type || shot.shotSize || 'MS';
+                            const desc = shot.画面描述 || shot.description || '';
+                            const angle = shot.camera_angle || shot.angle || '-';
+                            const movement = shot.camera_movement || shot.movement || '固定';
+                            const imgPrompt = shot.Image_Prompt || shot.imagePrompt || shot.aiPrompt || '';
+                            const vidPrompt = shot.Video_Prompt || shot.videoPrompt || '';
+                            const duration = shot.duration_sec || shot.duration || 4;
+                            const importance = shot.importance || shot.hero || 'C';
+                            
+                            return `
+                            <tr style="border-bottom:1px solid var(--border);${importance === 'S' ? 'background:rgba(255,10,53,.15)' : importance === 'A' ? 'background:rgba(255,153,0,.1)' : ''}">
+                                <td style="padding:10px;font-family:Orbitron;color:var(--primary);font-size:11px">${shotId || String(i+1).padStart(3,'0')}</td>
+                                <td style="padding:10px"><span class="tag">${shotType}</span></td>
+                                <td style="padding:10px;color:var(--text);max-width:250px;font-size:12px;line-height:1.5">${desc.substring(0,150)}${desc.length>150?'...':''}</td>
+                                <td style="padding:10px;color:var(--dim);font-size:11px">${angle}</td>
+                                <td style="padding:10px;color:var(--dim);font-size:11px">${movement}</td>
+                                <td style="padding:10px;max-width:350px">
+                                    <div style="font-size:10px;color:var(--text);max-height:80px;overflow:hidden;line-height:1.5;background:var(--bg);padding:6px;border-radius:4px">${imgPrompt ? imgPrompt.substring(0, 250) + (imgPrompt.length > 250 ? '...' : '') : '<span style="color:var(--dim)">無</span>'}</div>
+                                    ${imgPrompt ? `<button onclick="navigator.clipboard.writeText(\`${imgPrompt.replace(/`/g, "'").replace(/\\/g, '\\\\').replace(/\n/g, ' ')}\`);showSaveToast('✅ Image Prompt已複製')" style="margin-top:4px;font-size:9px;padding:3px 8px;background:var(--primary);color:#fff;border:none;border-radius:3px;cursor:pointer">📋 複製圖片Prompt</button>` : ''}
+                                </td>
+                                <td style="padding:10px;max-width:300px">
+                                    <div style="font-size:10px;color:var(--text);max-height:80px;overflow:hidden;line-height:1.5;background:var(--bg);padding:6px;border-radius:4px">${vidPrompt ? vidPrompt.substring(0, 180) + (vidPrompt.length > 180 ? '...' : '') : '<span style="color:var(--dim)">無</span>'}</div>
+                                    ${vidPrompt ? `<button onclick="navigator.clipboard.writeText(\`${vidPrompt.replace(/`/g, "'").replace(/\\/g, '\\\\').replace(/\n/g, ' ')}\`);showSaveToast('✅ Video Prompt已複製')" style="margin-top:4px;font-size:9px;padding:3px 8px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:3px;cursor:pointer">📋 複製視頻Prompt</button>` : ''}
+                                </td>
+                                <td style="padding:10px;text-align:center">${duration}s</td>
+                                <td style="padding:10px;text-align:center"><span style="font-weight:700;color:${importance === 'S' ? 'var(--primary)' : importance === 'A' ? '#f90' : 'var(--dim)'}">${importance}</span></td>
+                            </tr>
+                        `}).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.onclick = e => { if(e.target === modal) modal.remove(); };
+}
+
+// 下載單集Excel
+function downloadEpisodeExcel(episodeNum) {
+    const shots = state.episodeShots?.[episodeNum] || [];
+    if(!shots.length) return alert('無分鏡數據');
+    
+    const data = shots.map((s, i) => ({
+        '鏡頭ID': s.shot_id || `E${String(episodeNum).padStart(3,'0')}_S${String(i+1).padStart(3,'0')}`,
+        '重要性': s.importance || s.hero || 'C',
+        '時長秒': s.duration_sec || s.duration || 4,
+        '景別': s.shot_type || s.shotSize || s.shot_size || 'MS',
+        '角度': s.camera_angle || s.angle || '',
+        '運鏡': s.camera_movement || s.movement || s.運鏡 || '固定',
+        '画面描述': s.画面描述 || s.description || '',
+        'Image_Prompt': s.Image_Prompt || s.imagePrompt || s.aiPrompt || '',
+        'Video_Prompt': s.Video_Prompt || s.videoPrompt || ''
+    }));
+    
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `第${episodeNum}集`);
+    XLSX.writeFile(wb, `分鏡_第${episodeNum}集_${state.novel?.title || 'project'}.xlsx`);
+}
+
+// 初始化分集存儲
+if(!state.episodeShots) state.episodeShots = {};
 
 async function runStoryboardAgent(){
     const ui = document.getElementById('storyboardAgentUI');
@@ -7025,8 +8817,13 @@ async function runStoryboardAgent(){
     const shotsPerMinute = 10; // 每分鐘10個鏡頭
     const shotsPerEpisode = durationPerEp * shotsPerMinute;
     const totalShots = episodes * shotsPerEpisode;
-    const batchSize = 1; // 每批處理1集（確保每集都有足夠鏡頭）
-    const totalBatches = Math.ceil(episodes / batchSize);
+    const shotsPerCall = 10; // 🔧 每次API只請求10鏡頭，避免超時
+    const callsPerEpisode = Math.ceil(shotsPerEpisode / shotsPerCall);
+    const totalBatches = episodes; // 每集一個大批次
+    
+    // 🎨 畫風信息
+    const artStyleName = state.artStyle?.name || '默認動畫';
+    const artStylePromptDisplay = state.artStyle?.prompt || '';
     
     ui.innerHTML = `
         <div style="background:var(--surface2);border-radius:8px;padding:20px">
@@ -7037,11 +8834,40 @@ async function runStoryboardAgent(){
                     <div style="font-size:12px;color:var(--dim)" id="sbSubStatus">準備設計 ${episodes}集 × ${shotsPerEpisode}鏡頭 = ${totalShots}鏡頭</div>
                 </div>
             </div>
+            
+            <!-- 🎨 畫風展示 (醒目) -->
+            <div style="background:linear-gradient(135deg,rgba(255,10,53,.15),rgba(255,10,53,.05));border:2px solid var(--primary);border-radius:8px;padding:14px;margin-bottom:16px">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                    <span style="font-size:24px">🎨</span>
+                    <div>
+                        <div style="color:var(--primary);font-weight:700;font-size:14px">當前畫風：${artStyleName}</div>
+                        <div style="color:var(--dim);font-size:11px;margin-top:2px">所有分鏡將使用此畫風生成</div>
+                    </div>
+                </div>
+                ${artStylePromptDisplay ? `<div style="font-size:10px;color:var(--dim);background:var(--bg);padding:8px;border-radius:4px;font-family:monospace;max-height:60px;overflow:hidden">${artStylePromptDisplay.substring(0, 200)}...</div>` : ''}
+            </div>
+            
+            <!-- 專業提示 -->
+            <div style="background:rgba(255,10,53,.1);border:1px solid rgba(255,10,53,.3);border-radius:6px;padding:12px;margin-bottom:16px">
+                <div style="font-size:11px;color:var(--primary);font-weight:600;margin-bottom:6px">⏱️ 智能分批生成</div>
+                <div style="font-size:10px;color:var(--dim)">
+                    共 ${episodes} 集，每集 ${shotsPerEpisode} 鏡頭，分 ${callsPerEpisode} 次生成（每次${shotsPerCall}鏡）<br>
+                    <strong>每集完成即可預覽下載</strong>，無需等待全部完成
+                </div>
+            </div>
+            
             <div style="background:var(--bg);border-radius:4px;height:8px;overflow:hidden">
                 <div id="sbProgressBar" style="background:var(--primary);height:100%;width:0%;transition:width .3s"></div>
             </div>
             <div id="sbBatchInfo" style="margin-top:8px;font-size:11px;color:var(--primary)"></div>
-            <div id="sbSteps" style="margin-top:12px;font-size:12px;color:var(--dim);max-height:200px;overflow-y:auto"></div>
+            
+            <!-- 已完成集數列表 -->
+            <div id="sbCompletedList" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px"></div>
+            
+            <!-- Skill載入狀態 -->
+            <div id="sbSkillStatus" style="margin-top:12px;background:var(--bg);border-radius:6px;padding:10px;font-size:10px"></div>
+            
+            <div id="sbSteps" style="margin-top:12px;font-size:12px;color:var(--dim);max-height:180px;overflow-y:auto"></div>
         </div>
     `;
     
@@ -7049,17 +8875,43 @@ async function runStoryboardAgent(){
     const statusText = document.getElementById('sbStatusText');
     const batchInfo = document.getElementById('sbBatchInfo');
     const stepsEl = document.getElementById('sbSteps');
+    const skillStatusEl = document.getElementById('sbSkillStatus');
     
     const addStep = (icon, text) => {
         stepsEl.insertAdjacentHTML('beforeend', `<div style="padding:4px 0">${icon} ${text}</div>`);
         stepsEl.scrollTop = stepsEl.scrollHeight;
     };
     
+    // 顯示正在載入的Skill
+    const showSkillLoading = async (skillIndex) => {
+        if(skillIndex >= STORYBOARD_SKILL_SOURCES.length) return;
+        const skill = STORYBOARD_SKILL_SOURCES[skillIndex];
+        skillStatusEl.innerHTML = `
+            <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:16px">${skill.icon}</span>
+                <div>
+                    <div style="color:var(--primary);font-weight:600">📚 正在調用: ${skill.name}</div>
+                    <div style="color:var(--dim)">來源：${skill.book}</div>
+                </div>
+            </div>
+        `;
+        await sleep(800); // 給用戶時間看到
+    };
+    
     try {
-        addStep('🔗', '正在喚醒智能體...');
+        addStep('🔗', '正在喚醒分鏡智能體...');
         const apiOk = await checkApiHealth();
         if (!apiOk) throw new Error('FizzDragon 智能體連接失敗，請稍後重試');
         addStep('✅', '智能體已就緒');
+        
+        // 逐個顯示載入的Skills
+        addStep('📚', '正在載入專業技能...');
+        for(let i = 0; i < STORYBOARD_SKILL_SOURCES.length; i++){
+            await showSkillLoading(i);
+            const skill = STORYBOARD_SKILL_SOURCES[i];
+            addStep(skill.icon, `載入 ${skill.name} (${skill.book})`);
+        }
+        skillStatusEl.innerHTML = `<div style="color:var(--success)">✅ 已載入 ${STORYBOARD_SKILL_SOURCES.length} 個專業技能</div>`;
         
         // 獲取畫風信息
         const artStylePrompt = state.artStyle?.prompt || 'anime style, high quality';
@@ -7069,78 +8921,153 @@ async function runStoryboardAgent(){
         // 準備章節數據
         const chapters = state.chapters || [];
         
-        // 批量生成分鏡
+        // 批量生成分鏡 - 每集分多次小批量調用
         const allShots = [];
         let completedEpisodes = 0;
+        const completedListEl = document.getElementById('sbCompletedList');
         
-        for (let batch = 0; batch < totalBatches; batch++) {
-            const startEp = batch * batchSize + 1;
-            const endEp = Math.min((batch + 1) * batchSize, episodes);
-            const batchEpisodes = endEp - startEp + 1;
+        for (let ep = 1; ep <= episodes; ep++) {
+            const episodeShots = [];
             
             // 更新進度
-            const progress = Math.round((batch / totalBatches) * 80) + 10;
+            const progress = Math.round(((ep - 1) / episodes) * 80) + 10;
             progressBar.style.width = progress + '%';
-            statusText.textContent = `🎬 生成第 ${startEp}-${endEp} 集分鏡...`;
-            batchInfo.textContent = `批次 ${batch + 1}/${totalBatches} | 已完成 ${allShots.length} 鏡頭`;
+            statusText.textContent = `🎬 生成第 ${ep} 集分鏡...`;
+            batchInfo.textContent = `第 ${ep}/${episodes} 集 | 總計 ${allShots.length} 鏡頭`;
             
-            // 獲取這批集數的章節信息
-            const batchChapters = chapters.slice(startEp - 1, endEp);
-            const batchContent = batchChapters.map((ch, i) => {
-                const epNum = startEp + i;
-                return `【第${epNum}集】${ch.title || ''}\n${ch.summary || ch.content || ''}`;
-            }).join('\n\n');
+            // 獲取本集章節信息
+            const chapterInfo = chapters[ep - 1] || {};
+            const chapterContent = `【第${ep}集】${chapterInfo.title || ''}\n${chapterInfo.summary || chapterInfo.content || ''}`;
             
-            addStep('⏳', `生成第 ${startEp}-${endEp} 集 (${batchEpisodes * shotsPerEpisode} 鏡頭)...`);
+            addStep('⏳', `第 ${ep} 集開始 (${shotsPerEpisode}鏡頭，分${callsPerEpisode}次)...`);
             
-            try {
-                const apiResponse = await callAgent('storyboard', {
-                    content: `請為以下${batchEpisodes}集內容生成分鏡表，每集${durationPerEp}分鐘，每分鐘${shotsPerMinute}鏡頭，共${batchEpisodes * shotsPerEpisode}個鏡頭。\n\n${batchContent || state.scripts || state.novel}`,
-                    context: {
-                        startEpisode: startEp,
-                        endEpisode: endEp,
-                        shotsPerEpisode: shotsPerEpisode,
-                        totalShots: batchEpisodes * shotsPerEpisode,
-                        concept: state.concept,
-                        characters: state.characters,
-                        artStyle: artStylePrompt
-                    }
-                });
+            // 分多次小批量生成
+            for (let call = 0; call < callsPerEpisode; call++) {
+                const startShot = call * shotsPerCall + 1;
+                const endShot = Math.min((call + 1) * shotsPerCall, shotsPerEpisode);
+                const numShots = endShot - startShot + 1;
                 
-                // 解析結果
-                let batchResult = [];
-                try {
-                    const resultText = apiResponse.result || apiResponse;
-                    if(typeof resultText === 'string'){
-                        batchResult = JSON.parse(resultText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim());
-                    } else {
-                        batchResult = resultText;
+                addStep('🔄', `  第${ep}集 鏡頭${startShot}-${endShot}...`);
+                
+                // 重試機制
+                let retries = 2;
+                let success = false;
+                
+                while (retries > 0 && !success) {
+                    try {
+                        const apiResponse = await callAgent('storyboard', {
+                            content: `生成第${ep}集的第${startShot}-${endShot}號鏡頭（共${numShots}個）。
+
+【劇情摘要】
+${chapterContent}
+
+【畫風】${artStylePrompt}
+
+【輸出要求】嚴格按此JSON格式輸出數組，每個鏡頭：
+{
+  "shot_id": "E001_S001",
+  "importance": "B",
+  "duration_sec": 4.0,
+  "shot_type": "CU",
+  "camera_angle": "Eye-level",
+  "camera_movement": "Static",
+  "画面描述": "（50-100字中文）詳細描寫畫面內容、人物表情、動作、環境、光影、氛圍。要有電影感，讓人能『看到』這個畫面。",
+  "Image_Prompt": "（80-150詞英文）Cinematic [shot type] of [detailed subject description], [environment], [lighting style], [camera specs like 85mm f/2.8], [color palette], [style keywords like film grain, 8K], ${artStylePrompt}, --ar 16:9",
+  "Video_Prompt": "（50-80詞英文）[Subject] [action with verbs], [camera movement], [environment], [style], keep face consistent, 4 seconds"
+}
+
+【重要性等級】
+S = HERO SHOT（視覺衝擊最強，5%）
+A = KEY SHOT（劇情轉折，15%）
+B = 重要鏡頭（30%）
+C = 標準鏡頭（50%）
+
+【景別分配】使用多種：ECU特寫/CU近景/MS中景/LS全景/ELS大遠景
+
+【示例】
+{
+  "shot_id": "E001_S003",
+  "importance": "S",
+  "duration_sec": 5.0,
+  "shot_type": "CU to ECU",
+  "camera_angle": "Eye-level",
+  "camera_movement": "Slow push in",
+  "画面描述": "特寫鏡頭，小豆子蜷縮在角落，臉上滿是恐懼。他的眼睛緊緊盯著門外的方向，眼眶中閃爍著淚光。昏暗的燭光在他臉上投下搖曳的陰影，整個畫面籠罩在壓抑的灰藍色調中。鏡頭緩緩推進到他的面部特寫。",
+  "Image_Prompt": "Cinematic close-up to extreme close-up of a young Chinese opera boy (age 8) with shaved head crouching in corner, terrified expression, tears welling in eyes, looking towards door, 1920s Beijing opera school interior, dim candlelight casting flickering shadows on face, low-key dramatic lighting, 85mm f/2.8, shallow depth of field, desaturated blue-gray color palette, film grain, emotional, 8K, ${artStylePrompt}, --ar 16:9",
+  "Video_Prompt": "A terrified young Chinese opera boy with shaved head slowly turns his head towards the door, tears streaming down his cheeks, candlelight flickering on his face casting dancing shadows, camera slowly pushing in from medium shot to extreme close-up, 1920s Beijing opera school, low-key cinematic lighting, emotional, keep face consistent, high detail, 4 seconds"
+}
+
+直接輸出JSON數組，不要任何解釋或markdown：`,
+                            context: {
+                                episode: ep,
+                                startShot,
+                                endShot,
+                                numShots,
+                                artStyle: artStylePrompt,
+                                concept: state.concept,
+                                characters: state.characters
+                            },
+                            timeout: 180000 // 3分鐘超時
+                        });
+                        
+                        // 解析結果
+                        let batchResult = [];
+                        const resultText = apiResponse.result || apiResponse;
+                        if(typeof resultText === 'string'){
+                            const cleaned = resultText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+                            batchResult = JSON.parse(cleaned);
+                        } else {
+                            batchResult = resultText;
+                        }
+                        if(!Array.isArray(batchResult)) {
+                            batchResult = batchResult.shots || batchResult.storyboard || batchResult.data || [];
+                        }
+                        
+                        // 添加shot_id
+                        batchResult = batchResult.map((shot, idx) => ({
+                            ...shot,
+                            episode: ep,
+                            shot_id: `E${String(ep).padStart(3,'0')}_S${String(startShot + idx).padStart(3,'0')}`
+                        }));
+                        
+                        episodeShots.push(...batchResult);
+                        success = true;
+                        
+                    } catch (err) {
+                        retries--;
+                        if (retries > 0) {
+                            addStep('⚠️', `  重試中... (${err.message.substring(0, 30)})`);
+                            await sleep(1000);
+                        } else {
+                            addStep('❌', `  第${ep}集 鏡頭${startShot}-${endShot} 失敗`);
+                        }
                     }
-                    if(!Array.isArray(batchResult)) {
-                        batchResult = batchResult.shots || batchResult.storyboard || [];
-                    }
-                } catch(e){ 
-                    console.warn('解析批次結果失敗:', e);
-                    batchResult = []; 
                 }
                 
-                // 添加集數前綴到shot_id
-                batchResult = batchResult.map((shot, idx) => ({
-                    ...shot,
-                    shot_id: shot.shot_id || `E${String(startEp).padStart(3,'0')}_S${String(idx+1).padStart(3,'0')}`
-                }));
-                
-                allShots.push(...batchResult);
-                completedEpisodes = endEp;
-                addStep('✅', `第 ${startEp}-${endEp} 集完成，獲得 ${batchResult.length} 鏡頭`);
-                
-            } catch (batchErr) {
-                addStep('⚠️', `第 ${startEp}-${endEp} 集生成失敗: ${batchErr.message}`);
-                console.error('批次生成失敗:', batchErr);
+                // 短暫延遲避免過載
+                await sleep(300);
             }
             
-            // 短暫延遲避免API過載
-            if (batch < totalBatches - 1) {
+            // 本集完成
+            state.episodeShots[ep] = episodeShots;
+            allShots.push(...episodeShots);
+            completedEpisodes = ep;
+            autoSave(`第${ep}集分鏡`); // 🔒 每集完成自動保存
+            
+            addStep('✅', `第 ${ep} 集完成，獲得 ${episodeShots.length} 鏡頭`);
+            
+            // 添加預覽/下載按鈕
+            completedListEl.innerHTML += `
+                <div style="background:var(--success);color:#fff;padding:6px 10px;border-radius:4px;font-size:11px;display:flex;gap:6px;align-items:center">
+                    <span>第${ep}集</span>
+                    <span style="opacity:.7">${episodeShots.length}鏡</span>
+                    <button onclick="showStoryboardTable(${ep}, state.episodeShots[${ep}])" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:10px">👁️預覽</button>
+                    <button onclick="downloadEpisodeExcel(${ep})" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:10px">📥</button>
+                </div>
+            `;
+            
+            // 集間延遲
+            if (ep < episodes) {
                 await sleep(500);
             }
         }
@@ -7148,6 +9075,7 @@ async function runStoryboardAgent(){
         // 完成
         progressBar.style.width = '100%';
         state.storyboard = allShots;
+        autoSave('全部分鏡'); // 🔒 自動保存
         
         const actualMinutes = Math.round(allShots.length / shotsPerMinute);
         statusText.textContent = '✅ 分鏡設計完成！';
@@ -7211,10 +9139,85 @@ function renderStoryboardResult(){
             <div class="btn-group">
                 <button class="btn btn-back" onclick="prevStep()">← 返回</button>
                 <button class="btn" onclick="state.storyboard=[];showStep(9)">🔄 重新生成</button>
+                <button class="btn" onclick="optimizePrompts()" id="promptOptBtn">🖼️ Prompt優化</button>
                 <button class="btn btn-primary" onclick="nextStep()">完成 →</button>
             </div>
+            <div id="promptOptStatus" style="margin-top:12px;font-size:12px;color:var(--dim);text-align:center"></div>
         </div>
     `;
+}
+
+// Prompt優化功能 - 調用prompt智能體
+async function optimizePrompts(){
+    const shots = state.storyboard || [];
+    if(!shots.length) return alert('沒有分鏡數據');
+    
+    const btn = document.getElementById('promptOptBtn');
+    const statusEl = document.getElementById('promptOptStatus');
+    
+    btn.disabled = true;
+    btn.innerHTML = '⏳ 優化中...';
+    statusEl.innerHTML = '🖼️ Prompt師正在優化提示詞...';
+    
+    try {
+        // 批量處理（每次10個鏡頭）
+        const batchSize = 10;
+        const batches = Math.ceil(shots.length / batchSize);
+        
+        for(let i = 0; i < batches; i++){
+            const batchShots = shots.slice(i * batchSize, (i + 1) * batchSize);
+            statusEl.innerHTML = `🖼️ 優化中... 批次 ${i+1}/${batches}`;
+            
+            const resp = await callAgent('prompt', {
+                content: JSON.stringify(batchShots.map(s => ({
+                    shot_id: s.shot_id || s.id,
+                    description: s.description || s.画面描述,
+                    shotSize: s.shotSize || s.景别,
+                    angle: s.angle || s.角度,
+                    characters: s.characters || s.角色,
+                    scene: s.scene || s.场景
+                }))),
+                context: {
+                    artStyle: state.artStyle?.prompt || 'cinematic',
+                    visualStyle: state.visualStyle
+                }
+            });
+            
+            // 解析結果並更新
+            try {
+                let result = resp.result || resp;
+                if(typeof result === 'string'){
+                    result = JSON.parse(result.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim());
+                }
+                const optimized = result.shots || result;
+                
+                // 更新對應鏡頭的prompt
+                optimized.forEach(opt => {
+                    const idx = shots.findIndex(s => (s.shot_id || s.id) === opt.shot_id);
+                    if(idx >= 0){
+                        shots[idx].midjourney_prompt = opt.midjourney_prompt;
+                        shots[idx].sd_prompt = opt.stable_diffusion_prompt;
+                        shots[idx].flux_prompt = opt.flux_prompt;
+                        shots[idx].video_prompt = opt.video_prompt;
+                        shots[idx].negative_prompt = opt.negative_prompt;
+                        shots[idx].aiPrompt = opt.midjourney_prompt || shots[idx].aiPrompt;
+                    }
+                });
+            } catch(e){ console.warn('解析Prompt結果失敗:', e); }
+        }
+        
+        state.storyboard = shots;
+        statusEl.innerHTML = '✅ Prompt優化完成！已更新 MJ/SD/Flux/Video 格式';
+        btn.innerHTML = '✅ 已優化';
+        
+        // 刷新顯示
+        setTimeout(() => showStep(9), 1000);
+        
+    } catch(err){
+        statusEl.innerHTML = '❌ 優化失敗: ' + err.message;
+        btn.disabled = false;
+        btn.innerHTML = '🖼️ Prompt優化';
+    }
 }
 
 function generateStoryboardPrompt(){

@@ -1025,80 +1025,84 @@ const SUBJECT_TYPES = {
     none: {label:'空鏡', color:'dim', icon:'🏞️'}
 };
 
-// 畫風庫 - 完整版
+// 畫風庫 - 完整版 (使用漸變色塊預覽)
 const ART_STYLES = [
     // ========== 2D動畫 ==========
-    { id: '2d_anime', name: '2D動畫', category: '2D動畫', prompt: 'anime style, clean lines, vibrant colors, Japanese animation', preview: '🌸' },
-    { id: '2d_ghibli', name: '吉卜力', category: '2D動畫', prompt: 'Studio Ghibli style, hand-painted backgrounds, soft colors, whimsical', preview: '🏯' },
-    { id: '2d_makoto', name: '新海誠', category: '2D動畫', prompt: 'Makoto Shinkai style, detailed skies, lens flare, romantic atmosphere, hyper detailed backgrounds', preview: '☁️' },
-    { id: '2d_korean', name: '韓式動畫', category: '2D動畫', prompt: 'Korean webtoon style, clean lineart, soft shading, manhwa aesthetic', preview: '🇰🇷' },
-    { id: '2d_shonen', name: '熱血動畫', category: '2D動畫', prompt: 'shonen anime style, dynamic poses, action lines, intense expressions', preview: '🔥' },
-    { id: '2d_toriyama', name: '鳥山明', category: '2D動畫', prompt: 'Akira Toriyama style, Dragon Ball aesthetic, bold lines, dynamic action', preview: '💥' },
-    { id: '2d_vintage', name: '復古動畫', category: '2D動畫', prompt: 'vintage anime style, 80s aesthetic, soft gradients, nostalgic colors', preview: '📼' },
-    { id: '2d_chibi', name: 'Q版動畫', category: '2D動畫', prompt: 'chibi anime style, cute proportions, big eyes, kawaii aesthetic', preview: '🎀' },
+    { id: '2d_anime', name: '2D動畫', category: '2D動畫', prompt: 'anime style, clean lines, vibrant colors, Japanese animation', color: 'linear-gradient(135deg, #ff6b9d, #c44569)' },
+    { id: '2d_ghibli', name: '吉卜力', category: '2D動畫', prompt: 'Studio Ghibli style, hand-painted backgrounds, soft colors, whimsical', color: 'linear-gradient(135deg, #a8e6cf, #88d8b0)' },
+    { id: '2d_makoto', name: '新海誠', category: '2D動畫', prompt: 'Makoto Shinkai style, detailed skies, lens flare, romantic atmosphere, hyper detailed backgrounds', color: 'linear-gradient(135deg, #667eea, #f093fb)' },
+    { id: '2d_korean', name: '韓式動畫', category: '2D動畫', prompt: 'Korean webtoon style, clean lineart, soft shading, manhwa aesthetic', color: 'linear-gradient(135deg, #ffecd2, #fcb69f)' },
+    { id: '2d_shonen', name: '熱血動畫', category: '2D動畫', prompt: 'shonen anime style, dynamic poses, action lines, intense expressions', color: 'linear-gradient(135deg, #ff512f, #f09819)' },
+    { id: '2d_toriyama', name: '鳥山明', category: '2D動畫', prompt: 'Akira Toriyama style, Dragon Ball aesthetic, bold lines, dynamic action', color: 'linear-gradient(135deg, #f5af19, #f12711)' },
+    { id: '2d_vintage', name: '復古動畫', category: '2D動畫', prompt: 'vintage anime style, 80s aesthetic, soft gradients, nostalgic colors', color: 'linear-gradient(135deg, #d4a574, #c9a86c)' },
+    { id: '2d_chibi', name: 'Q版動畫', category: '2D動畫', prompt: 'chibi anime style, cute proportions, big eyes, kawaii aesthetic', color: 'linear-gradient(135deg, #ffb6c1, #ffc0cb)' },
     
     // ========== 3D風格 ==========
-    { id: '3d_fantasy', name: '3D玄幻', category: '3D風格', prompt: '3D render, fantasy style, magical lighting, detailed textures, cinematic', preview: '🔮' },
-    { id: '3d_pixar', name: '3D皮克斯', category: '3D風格', prompt: '3D animation, Pixar style, vibrant colors, expressive characters, subsurface scattering', preview: '🎬' },
-    { id: '3d_realistic', name: '3D寫實', category: '3D風格', prompt: '3D realistic render, photorealistic, detailed skin textures, ray tracing', preview: '📸' },
-    { id: '3d_game', name: '3D遊戲', category: '3D風格', prompt: '3D game cinematic, Unreal Engine 5, high fidelity, AAA quality', preview: '🎮' },
-    { id: '3d_stylized', name: '3D風格化', category: '3D風格', prompt: '3D stylized render, cel shading, cartoon textures, vibrant', preview: '🎨' },
+    { id: '3d_fantasy', name: '3D玄幻', category: '3D風格', prompt: '3D render, fantasy style, magical lighting, detailed textures, cinematic', color: 'linear-gradient(135deg, #8e44ad, #9b59b6)' },
+    { id: '3d_pixar', name: '3D皮克斯', category: '3D風格', prompt: '3D animation, Pixar style, vibrant colors, expressive characters, subsurface scattering', color: 'linear-gradient(135deg, #3498db, #2ecc71)' },
+    { id: '3d_realistic', name: '3D寫實', category: '3D風格', prompt: '3D realistic render, photorealistic, detailed skin textures, ray tracing', color: 'linear-gradient(135deg, #636e72, #2d3436)' },
+    { id: '3d_game', name: '3D遊戲', category: '3D風格', prompt: '3D game cinematic, Unreal Engine 5, high fidelity, AAA quality', color: 'linear-gradient(135deg, #00b894, #00cec9)' },
+    { id: '3d_stylized', name: '3D風格化', category: '3D風格', prompt: '3D stylized render, cel shading, cartoon textures, vibrant', color: 'linear-gradient(135deg, #fd79a8, #e84393)' },
     
-    // ========== 🎞️ 電影質感類 ==========
-    { id: 'film_doc', name: '紀實電影', category: '電影質感', prompt: 'documentary film style, natural lighting, handheld camera, authentic, 35mm film', preview: '📹' },
-    { id: 'film_art', name: '文藝片柔光', category: '電影質感', prompt: 'art house film, soft diffused lighting, shallow depth of field, melancholic mood, 35mm', preview: '🎭' },
-    { id: 'film_cyber', name: '賽博朋克暗調', category: '電影質感', prompt: 'cyberpunk cinematic, neon lights, dark atmosphere, rain, Blade Runner style, anamorphic lens', preview: '🌃' },
-    { id: 'film_scifi', name: '科幻冷色調', category: '電影質感', prompt: 'sci-fi film, cold blue tones, futuristic, clean aesthetic, volumetric lighting', preview: '🚀' },
-    { id: 'film_fantasy', name: '奇幻高飽和', category: '電影質感', prompt: 'fantasy film, high saturation, magical lighting, epic scale, Lord of the Rings style', preview: '⚔️' },
-    { id: 'film_vintage', name: '復古膠片顆粒', category: '電影質感', prompt: 'vintage film grain, 70s aesthetic, warm tones, Kodak film stock, nostalgic', preview: '📽️' },
-    { id: 'film_bw', name: '黑白膠片', category: '電影質感', prompt: 'black and white film, high contrast, dramatic shadows, film noir, classic cinema', preview: '🎬' },
-    { id: 'film_euro', name: '歐洲藝術電影', category: '電影質感', prompt: 'European art cinema, muted colors, contemplative, long takes, Tarkovsky style', preview: '🎥' },
+    // ========== 電影質感類 ==========
+    { id: 'film_doc', name: '紀實電影', category: '電影質感', prompt: 'documentary film style, natural lighting, handheld camera, authentic, 35mm film', color: 'linear-gradient(135deg, #bdc3c7, #95a5a6)' },
+    { id: 'film_art', name: '文藝片柔光', category: '電影質感', prompt: 'art house film, soft diffused lighting, shallow depth of field, melancholic mood, 35mm', color: 'linear-gradient(135deg, #dfe6e9, #b2bec3)' },
+    { id: 'film_cyber', name: '賽博朋克暗調', category: '電影質感', prompt: 'cyberpunk cinematic, neon lights, dark atmosphere, rain, Blade Runner style, anamorphic lens', color: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)' },
+    { id: 'film_scifi', name: '科幻冷色調', category: '電影質感', prompt: 'sci-fi film, cold blue tones, futuristic, clean aesthetic, volumetric lighting', color: 'linear-gradient(135deg, #4834d4, #686de0)' },
+    { id: 'film_fantasy', name: '奇幻高飽和', category: '電影質感', prompt: 'fantasy film, high saturation, magical lighting, epic scale, Lord of the Rings style', color: 'linear-gradient(135deg, #f39c12, #e74c3c)' },
+    { id: 'film_vintage', name: '復古膠片顆粒', category: '電影質感', prompt: 'vintage film grain, 70s aesthetic, warm tones, Kodak film stock, nostalgic', color: 'linear-gradient(135deg, #d35400, #e67e22)' },
+    { id: 'film_bw', name: '黑白膠片', category: '電影質感', prompt: 'black and white film, high contrast, dramatic shadows, film noir, classic cinema', color: 'linear-gradient(135deg, #2c3e50, #000000)' },
+    { id: 'film_euro', name: '歐洲藝術電影', category: '電影質感', prompt: 'European art cinema, muted colors, contemplative, long takes, Tarkovsky style', color: 'linear-gradient(135deg, #7f8c8d, #95a5a6)' },
     
-    // ========== 🧝 人物造型類 ==========
-    { id: 'char_ancient', name: '古裝史詩', category: '人物造型', prompt: 'ancient costume drama, elaborate traditional dress, palace setting, cinematic portrait', preview: '👑' },
-    { id: 'char_modern', name: '現代都市', category: '人物造型', prompt: 'modern urban style, contemporary fashion, city background, street photography', preview: '🏙️' },
-    { id: 'char_wasteland', name: '廢土流浪者', category: '人物造型', prompt: 'post-apocalyptic wasteland, rugged clothing, weathered face, Mad Max style', preview: '🏜️' },
-    { id: 'char_warrior', name: '奇幻戰士', category: '人物造型', prompt: 'fantasy warrior, armor and weapons, battle-ready, epic hero portrait', preview: '⚔️' },
-    { id: 'char_minguo', name: '民國風情', category: '人物造型', prompt: 'Republic of China era, 1920s-40s fashion, qipao, vintage Shanghai style', preview: '🎎' },
-    { id: 'char_future', name: '未來戰士', category: '人物造型', prompt: 'futuristic soldier, sci-fi armor, cybernetic enhancements, tactical gear', preview: '🤖' },
-    { id: 'char_ethnic', name: '異域民族風', category: '人物造型', prompt: 'exotic ethnic costume, traditional jewelry, cultural heritage, vibrant textiles', preview: '🌍' },
-    { id: 'char_royal', name: '宮廷華麗風', category: '人物造型', prompt: 'royal court luxury, ornate costume, gold embroidery, regal elegance, palace', preview: '👸' },
+    // ========== 人物造型類 ==========
+    { id: 'char_ancient', name: '古裝史詩', category: '人物造型', prompt: 'ancient costume drama, elaborate traditional dress, palace setting, cinematic portrait', color: 'linear-gradient(135deg, #c0392b, #8e44ad)' },
+    { id: 'char_modern', name: '現代都市', category: '人物造型', prompt: 'modern urban style, contemporary fashion, city background, street photography', color: 'linear-gradient(135deg, #34495e, #2c3e50)' },
+    { id: 'char_wasteland', name: '廢土流浪者', category: '人物造型', prompt: 'post-apocalyptic wasteland, rugged clothing, weathered face, Mad Max style', color: 'linear-gradient(135deg, #b8860b, #8b4513)' },
+    { id: 'char_warrior', name: '奇幻戰士', category: '人物造型', prompt: 'fantasy warrior, armor and weapons, battle-ready, epic hero portrait', color: 'linear-gradient(135deg, #7f8c8d, #c0c0c0)' },
+    { id: 'char_minguo', name: '民國風情', category: '人物造型', prompt: 'Republic of China era, 1920s-40s fashion, qipao, vintage Shanghai style', color: 'linear-gradient(135deg, #c9a86c, #8b7355)' },
+    { id: 'char_future', name: '未來戰士', category: '人物造型', prompt: 'futuristic soldier, sci-fi armor, cybernetic enhancements, tactical gear', color: 'linear-gradient(135deg, #1abc9c, #16a085)' },
+    { id: 'char_ethnic', name: '異域民族風', category: '人物造型', prompt: 'exotic ethnic costume, traditional jewelry, cultural heritage, vibrant textiles', color: 'linear-gradient(135deg, #e74c3c, #f1c40f)' },
+    { id: 'char_royal', name: '宮廷華麗風', category: '人物造型', prompt: 'royal court luxury, ornate costume, gold embroidery, regal elegance, palace', color: 'linear-gradient(135deg, #f1c40f, #d4af37)' },
     
-    // ========== 🎨 視覺風格類 ==========
-    { id: 'vis_oil', name: '油畫質感', category: '視覺風格', prompt: 'oil painting style, thick brushstrokes, rich colors, classical art, impasto texture', preview: '🖼️' },
-    { id: 'vis_watercolor', name: '水彩暈染', category: '視覺風格', prompt: 'watercolor painting, soft edges, transparent layers, wet-on-wet technique', preview: '🎨' },
-    { id: 'vis_sketch', name: '素描速寫', category: '視覺風格', prompt: 'pencil sketch style, rough lines, crosshatching, artistic drawing', preview: '✏️' },
-    { id: 'vis_woodcut', name: '版畫線條', category: '視覺風格', prompt: 'woodcut print style, bold lines, high contrast, graphic art, linocut', preview: '🪵' },
-    { id: 'vis_minimal', name: '光影極簡', category: '視覺風格', prompt: 'minimalist light and shadow, high contrast, silhouette, dramatic chiaroscuro', preview: '💡' },
-    { id: 'vis_contrast', name: '高對比黑白', category: '視覺風格', prompt: 'high contrast black and white, dramatic shadows, stark lighting, graphic', preview: '⬛' },
-    { id: 'vis_dreamy', name: '柔焦夢幻', category: '視覺風格', prompt: 'soft focus dreamy, gaussian blur, ethereal glow, romantic atmosphere', preview: '💭' },
-    { id: 'vis_neon', name: '霓虹夜影', category: '視覺風格', prompt: 'neon night aesthetic, colorful lights, urban night, glowing signs, cyberpunk vibes', preview: '🌆' },
+    // ========== 視覺風格類 ==========
+    { id: 'vis_oil', name: '油畫質感', category: '視覺風格', prompt: 'oil painting style, thick brushstrokes, rich colors, classical art, impasto texture', color: 'linear-gradient(135deg, #8b4513, #cd853f)' },
+    { id: 'vis_watercolor', name: '水彩暈染', category: '視覺風格', prompt: 'watercolor painting, soft edges, transparent layers, wet-on-wet technique', color: 'linear-gradient(135deg, #87ceeb, #add8e6)' },
+    { id: 'vis_sketch', name: '素描速寫', category: '視覺風格', prompt: 'pencil sketch style, rough lines, crosshatching, artistic drawing', color: 'linear-gradient(135deg, #696969, #a9a9a9)' },
+    { id: 'vis_woodcut', name: '版畫線條', category: '視覺風格', prompt: 'woodcut print style, bold lines, high contrast, graphic art, linocut', color: 'linear-gradient(135deg, #2c1810, #4a3728)' },
+    { id: 'vis_minimal', name: '光影極簡', category: '視覺風格', prompt: 'minimalist light and shadow, high contrast, silhouette, dramatic chiaroscuro', color: 'linear-gradient(135deg, #f5f5f5, #1a1a1a)' },
+    { id: 'vis_contrast', name: '高對比黑白', category: '視覺風格', prompt: 'high contrast black and white, dramatic shadows, stark lighting, graphic', color: 'linear-gradient(135deg, #000000, #ffffff)' },
+    { id: 'vis_dreamy', name: '柔焦夢幻', category: '視覺風格', prompt: 'soft focus dreamy, gaussian blur, ethereal glow, romantic atmosphere', color: 'linear-gradient(135deg, #fce4ec, #f8bbd9)' },
+    { id: 'vis_neon', name: '霓虹夜影', category: '視覺風格', prompt: 'neon night aesthetic, colorful lights, urban night, glowing signs, cyberpunk vibes', color: 'linear-gradient(135deg, #ff00ff, #00ffff)' },
     
-    // ========== 🧠 AI特效類 ==========
-    { id: 'ai_vangogh', name: '梵高風格遷移', category: 'AI特效', prompt: 'Van Gogh style transfer, swirling brushstrokes, Starry Night aesthetic, post-impressionist', preview: '🌻' },
-    { id: 'ai_monet', name: '莫奈風格遷移', category: 'AI特效', prompt: 'Monet style transfer, impressionist, soft colors, water lilies aesthetic, dappled light', preview: '🪷' },
-    { id: 'ai_surreal', name: '超現實融合', category: 'AI特效', prompt: 'surrealist composition, dreamlike fusion, impossible architecture, Dali inspired', preview: '🌀' },
-    { id: 'ai_glitch', name: 'AI故障美學', category: 'AI特效', prompt: 'AI glitch art, digital artifacts, data corruption aesthetic, vaporwave', preview: '📺' },
-    { id: 'ai_morph', name: '動態變形', category: 'AI特效', prompt: 'morphing transition, fluid transformation, seamless blend, AI interpolation', preview: '🔄' },
-    { id: 'ai_enhance', name: '超清增強', category: 'AI特效', prompt: 'AI enhanced, ultra high definition, sharp details, 8K resolution, pristine quality', preview: '✨' },
+    // ========== AI特效類 ==========
+    { id: 'ai_vangogh', name: '梵高風格遷移', category: 'AI特效', prompt: 'Van Gogh style transfer, swirling brushstrokes, Starry Night aesthetic, post-impressionist', color: 'linear-gradient(135deg, #1e3a5f, #f4d03f)' },
+    { id: 'ai_monet', name: '莫奈風格遷移', category: 'AI特效', prompt: 'Monet style transfer, impressionist, soft colors, water lilies aesthetic, dappled light', color: 'linear-gradient(135deg, #a8d8a8, #e8b4d8)' },
+    { id: 'ai_surreal', name: '超現實融合', category: 'AI特效', prompt: 'surrealist composition, dreamlike fusion, impossible architecture, Dali inspired', color: 'linear-gradient(135deg, #ff6b6b, #4ecdc4)' },
+    { id: 'ai_glitch', name: 'AI故障美學', category: 'AI特效', prompt: 'AI glitch art, digital artifacts, data corruption aesthetic, vaporwave', color: 'linear-gradient(135deg, #ff71ce, #01cdfe, #05ffa1)' },
+    { id: 'ai_morph', name: '動態變形', category: 'AI特效', prompt: 'morphing transition, fluid transformation, seamless blend, AI interpolation', color: 'linear-gradient(135deg, #667eea, #764ba2)' },
+    { id: 'ai_enhance', name: '超清增強', category: 'AI特效', prompt: 'AI enhanced, ultra high definition, sharp details, 8K resolution, pristine quality', color: 'linear-gradient(135deg, #00d2ff, #3a7bd5)' },
     
-    // ========== 🌍 地域美學類 ==========
-    { id: 'geo_chinese', name: '中式水墨真人', category: '地域美學', prompt: 'Chinese ink wash photography, traditional aesthetics, misty mountains, zen atmosphere', preview: '🏔️' },
-    { id: 'geo_japanese', name: '日系清新真人', category: '地域美學', prompt: 'Japanese aesthetic, clean and fresh, soft natural light, minimalist, wabi-sabi', preview: '🎌' },
-    { id: 'geo_korean', name: '韓式濾鏡劇情', category: '地域美學', prompt: 'Korean drama filter, soft skin tones, romantic lighting, K-drama aesthetic', preview: '🇰🇷' },
-    { id: 'geo_bollywood', name: '寶萊塢色彩', category: '地域美學', prompt: 'Bollywood style, vibrant saturated colors, dramatic, festive, Indian cinema', preview: '🇮🇳' },
-    { id: 'geo_nordic', name: '北歐極簡冷峻', category: '地域美學', prompt: 'Nordic minimalism, cold tones, stark landscapes, Scandinavian aesthetic, melancholic', preview: '🇸🇪' },
-    { id: 'geo_latam', name: '拉美魔幻現實', category: '地域美學', prompt: 'Latin American magical realism, vibrant colors, surreal elements, Gabriel Garcia Marquez inspired', preview: '🦜' },
-    { id: 'geo_desert', name: '中東沙漠史詩', category: '地域美學', prompt: 'Middle Eastern epic, desert landscape, golden hour, Arabian nights, Lawrence of Arabia', preview: '🏜️' },
-    { id: 'geo_african', name: '非洲部落紀實', category: '地域美學', prompt: 'African tribal documentary, earth tones, traditional culture, authentic portraits', preview: '🌍' },
+    // ========== 地域美學類 ==========
+    { id: 'geo_chinese', name: '中式水墨真人', category: '地域美學', prompt: 'Chinese ink wash photography, traditional aesthetics, misty mountains, zen atmosphere', color: 'linear-gradient(135deg, #2c3e50, #bdc3c7)' },
+    { id: 'geo_japanese', name: '日系清新真人', category: '地域美學', prompt: 'Japanese aesthetic, clean and fresh, soft natural light, minimalist, wabi-sabi', color: 'linear-gradient(135deg, #ffeaa7, #dfe6e9)' },
+    { id: 'geo_korean', name: '韓式濾鏡劇情', category: '地域美學', prompt: 'Korean drama filter, soft skin tones, romantic lighting, K-drama aesthetic', color: 'linear-gradient(135deg, #fab1a0, #ffeaa7)' },
+    { id: 'geo_bollywood', name: '寶萊塢色彩', category: '地域美學', prompt: 'Bollywood style, vibrant saturated colors, dramatic, festive, Indian cinema', color: 'linear-gradient(135deg, #ff9f43, #ee5a24, #f368e0)' },
+    { id: 'geo_nordic', name: '北歐極簡冷峻', category: '地域美學', prompt: 'Nordic minimalism, cold tones, stark landscapes, Scandinavian aesthetic, melancholic', color: 'linear-gradient(135deg, #a4b0be, #57606f)' },
+    { id: 'geo_latam', name: '拉美魔幻現實', category: '地域美學', prompt: 'Latin American magical realism, vibrant colors, surreal elements, Gabriel Garcia Marquez inspired', color: 'linear-gradient(135deg, #6c5ce7, #fd79a8)' },
+    { id: 'geo_desert', name: '中東沙漠史詩', category: '地域美學', prompt: 'Middle Eastern epic, desert landscape, golden hour, Arabian nights, Lawrence of Arabia', color: 'linear-gradient(135deg, #f39c12, #d68910)' },
+    { id: 'geo_african', name: '非洲部落紀實', category: '地域美學', prompt: 'African tribal documentary, earth tones, traditional culture, authentic portraits', color: 'linear-gradient(135deg, #784212, #a04000)' },
     
-    // ========== 🎬 導演風格 ==========
-    { id: 'dir_zhang', name: '張藝謀', category: '導演風格', prompt: 'Zhang Yimou style, high saturation red, epic composition, Chinese cinema, Hero aesthetic', preview: '🔴' },
-    { id: 'dir_wong', name: '王家衛', category: '導演風格', prompt: 'Wong Kar-wai style, neon lights, blur effects, In the Mood for Love, melancholic romance', preview: '🌃' },
-    { id: 'dir_nolan', name: '諾蘭', category: '導演風格', prompt: 'Christopher Nolan style, IMAX quality, practical effects, mind-bending, Inception aesthetic', preview: '🎯' },
-    { id: 'dir_wes', name: '乌德爾森', category: '導演風格', prompt: 'Wes Anderson style, symmetrical composition, pastel colors, whimsical, Grand Budapest aesthetic', preview: '🎀' },
-    { id: 'dir_kubrick', name: '庫布里克', category: '導演風格', prompt: 'Stanley Kubrick style, one-point perspective, cold precision, 2001 Space Odyssey aesthetic', preview: '🚀' },
-    { id: 'dir_tarantino', name: '塔倫蒂諾', category: '導演風格', prompt: 'Quentin Tarantino style, bold colors, dynamic angles, pulp aesthetic, stylized violence', preview: '🩸' }
+    // ========== 導演風格 ==========
+    { id: 'dir_zhang', name: '張藝謀', category: '導演風格', prompt: 'Zhang Yimou style, high saturation red, epic composition, Chinese cinema, Hero aesthetic', color: 'linear-gradient(135deg, #c0392b, #e74c3c)' },
+    { id: 'dir_wong', name: '王家衛', category: '導演風格', prompt: 'Wong Kar-wai style, neon lights, blur effects, In the Mood for Love, melancholic romance', color: 'linear-gradient(135deg, #16a085, #e74c3c)' },
+    { id: 'dir_nolan', name: '諾蘭', category: '導演風格', prompt: 'Christopher Nolan style, IMAX quality, practical effects, mind-bending, Inception aesthetic', color: 'linear-gradient(135deg, #2c3e50, #3498db)' },
+    { id: 'dir_wes', name: '乌德爾森', category: '導演風格', prompt: 'Wes Anderson style, symmetrical composition, pastel colors, whimsical, Grand Budapest aesthetic', color: 'linear-gradient(135deg, #fab1a0, #81ecec)' },
+    { id: 'dir_kubrick', name: '庫布里克', category: '導演風格', prompt: 'Stanley Kubrick style, one-point perspective, cold precision, 2001 Space Odyssey aesthetic', color: 'linear-gradient(135deg, #dfe6e9, #ff7675)' },
+    { id: 'dir_tarantino', name: '塔倫蒂諾', category: '導演風格', prompt: 'Quentin Tarantino style, bold colors, dynamic angles, pulp aesthetic, stylized violence', color: 'linear-gradient(135deg, #fdcb6e, #e74c3c)' },
+    { id: 'dir_villeneuve', name: '維倫紐瓦', category: '導演風格', prompt: 'Denis Villeneuve style, monumental scale, orange dust, fog, minimalist sci-fi, Dune aesthetic', color: 'linear-gradient(135deg, #d68910, #7f8c8d)' },
+    { id: 'dir_fincher', name: '大衛芬奇', category: '導演風格', prompt: 'David Fincher style, dark desaturated, green tint, meticulous framing, thriller aesthetic', color: 'linear-gradient(135deg, #1e272e, #2f3542)' },
+    { id: 'dir_miyazaki', name: '宮崎駿', category: '導演風格', prompt: 'Hayao Miyazaki style, hand-drawn animation, lush nature, flying scenes, Ghibli magic', color: 'linear-gradient(135deg, #55efc4, #81ecec)' },
+    { id: 'dir_tarkovsky', name: '塔可夫斯基', category: '導演風格', prompt: 'Andrei Tarkovsky style, long contemplative takes, water imagery, sepia tones, spiritual', color: 'linear-gradient(135deg, #6c5b4b, #8b7355)' }
 ];
 
 // 狀態
@@ -1244,7 +1248,7 @@ function showStep(step){
 
 // ==================== API 配置 ====================
 // 后端服务器地址 - 开发环境
-const API_BASE = 'http://34.58.33.115:3001/api';
+const API_BASE = '/api';
 let apiMode = 'auto'; // 全自動模式，不支持手動
 let currentProvider = 'deepseek'; // 當前Provider
 
@@ -3718,9 +3722,10 @@ function renderStep3(){
                 
                 <!-- 配置確認 -->
                 <div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center">
-                    <div style="font-size:13px">
+                    <div style="font-size:13px" id="configSummary">
                         您的配置：<strong>${chapterConfig.episodes}集 × ${chapterConfig.durationPerEpisode}分鐘 = ${userDuration}分鐘</strong>
                     </div>
+                    <div style="font-size:12px;margin-top:6px" id="configMatchStatus"></div>
                 </div>
             </div>
             
@@ -3818,6 +3823,13 @@ function updateChapterConfig(){
         matchColor = 'var(--error)';
     }
     
+    // 更新配置摘要
+    const summaryEl = document.getElementById('configSummary');
+    if(summaryEl){
+        summaryEl.innerHTML = `您的配置：<strong>${chapterConfig.episodes}集 × ${chapterConfig.durationPerEpisode}分鐘 = ${userDuration}分鐘</strong>`;
+    }
+    
+    // 更新匹配状态
     const statusEl = document.getElementById('configMatchStatus');
     if(statusEl){
         statusEl.innerHTML = matchStatus;
@@ -5781,11 +5793,51 @@ function applyCharacterEdit(type, index) {
         applied.push(`Wound → ${char.psychology.wound}`);
     }
     
-    // 习惯
-    const habitMatch = input.match(/[習习][慣惯].*[加上添].*[：:「]?\s*(.+?)[」]?$/);
-    if (habitMatch && char.physiology?.habits) {
-        char.physiology.habits.push(habitMatch[1].trim());
-        applied.push(`新增習慣：${habitMatch[1].trim()}`);
+    // 习惯 - 多种表达方式
+    const habitPatterns = [
+        /[習习][慣惯].*[加上添].*[：:「]?\s*(.+?)[」]?$/,
+        /加[上个個一].*[習习][慣惯].*[：:，,是就]\s*(.+)/,
+        /[習习][慣惯].*[是為为：:]\s*(.+)/
+    ];
+    for (const pattern of habitPatterns) {
+        const habitMatch = input.match(pattern);
+        if (habitMatch && char.physiology) {
+            if (!char.physiology.habits) char.physiology.habits = [];
+            const newHabit = habitMatch[1].trim().replace(/[」」]$/, '');
+            char.physiology.habits.push(newHabit);
+            applied.push(`新增習慣：${newHabit}`);
+            break;
+        }
+    }
+    
+    // 爱好/兴趣 - 灵活匹配
+    const hobbyPatterns = [
+        /[愛爱]好.*[加上添是為为：:，,就]\s*(.+)/,
+        /加[上个個一].*[愛爱]好.*[：:，,是就]\s*(.+)/,
+        /[興兴][趣趣].*[加上添是為为：:，,就]\s*(.+)/,
+        /喜[歡欢].*[：:，,是就]\s*(.+)/
+    ];
+    for (const pattern of hobbyPatterns) {
+        const hobbyMatch = input.match(pattern);
+        if (hobbyMatch && char.physiology) {
+            if (!char.physiology.hobbies) char.physiology.hobbies = [];
+            const newHobby = hobbyMatch[1].trim().replace(/[」」]$/, '');
+            char.physiology.hobbies.push(newHobby);
+            applied.push(`新增愛好：${newHobby}`);
+            break;
+        }
+    }
+    
+    // 通用"加上"语法 - 兜底解析
+    if (applied.length === 0) {
+        const genericAddMatch = input.match(/加[上个個一].*[：:，,是就]\s*(.+)/);
+        if (genericAddMatch && char.physiology) {
+            // 猜测是爱好或习惯
+            const content = genericAddMatch[1].trim();
+            if (!char.physiology.hobbies) char.physiology.hobbies = [];
+            char.physiology.hobbies.push(content);
+            applied.push(`新增特點：${content}`);
+        }
     }
     
     // 显示结果
@@ -6028,8 +6080,8 @@ function renderPresetStyleMode(categories, selectedId){
                     ${ART_STYLES.filter(s => s.category === cat).map(style => `
                         <div onclick="selectArtStyle('${style.id}')"
                              style="background:var(--surface2);border:2px solid ${selectedId === style.id ? 'var(--primary)' : 'var(--border)'};border-radius:6px;padding:8px;cursor:pointer;text-align:center;transition:all .15s;${selectedId === style.id ? 'box-shadow:0 0 10px var(--primary)' : ''}">
-                            <div style="font-size:24px">${style.preview}</div>
-                            <div style="font-size:10px;font-weight:600;margin-top:4px">${style.name}</div>
+                            <div style="width:100%;height:36px;border-radius:4px;background:${style.color || 'var(--surface)'};margin-bottom:4px"></div>
+                            <div style="font-size:10px;font-weight:600">${style.name}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -6040,7 +6092,7 @@ function renderPresetStyleMode(categories, selectedId){
         ${state.artStyle && !state.artStyle.isCustom ? `
             <div style="margin-top:16px;padding:14px;background:rgba(255,10,53,.1);border:1px solid var(--primary);border-radius:8px">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                    <span style="font-size:28px">${state.artStyle.preview}</span>
+                    <div style="width:48px;height:48px;border-radius:6px;background:${state.artStyle.color || 'var(--surface)'};flex-shrink:0"></div>
                     <div>
                         <div style="font-weight:600">${state.artStyle.name}</div>
                         <div style="color:var(--dim);font-size:11px">${state.artStyle.category}</div>
@@ -6172,34 +6224,50 @@ async function generateMoodboardTestImage(){
     
     const btn = event.target;
     const originalText = btn.innerHTML;
-    btn.innerHTML = '⏳ 生成中...';
+    btn.innerHTML = '⏳ 生成中 (免費API)...';
     btn.disabled = true;
     
     try {
         // 添加測試場景
-        const fullPrompt = `${prompt}, cinematic scene, beautiful lighting, masterpiece quality, 8k`;
+        const fullPrompt = `${prompt}, cinematic scene, beautiful lighting, masterpiece quality`;
         
-        const resp = await fetch(`${API_BASE}/moodboard/generate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: fullPrompt })
-        });
+        // 方案1: 使用 Pollinations.ai 免費API (無需key)
+        const encodedPrompt = encodeURIComponent(fullPrompt);
+        const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=512&model=flux&nologo=true&seed=${Date.now()}`;
         
-        if(!resp.ok) {
-            throw new Error(`API錯誤 ${resp.status}: ${resp.statusText}`);
-        }
-        
-        const data = await resp.json();
-        if(data.error){
-            throw new Error(data.error);
-        }
-        
-        moodboardTestImage = data.url;
-        document.getElementById('contentArea').innerHTML = renderArtStyleStep();
+        // 預加載圖片確認成功
+        const img = new Image();
+        img.onload = () => {
+            moodboardTestImage = pollinationsUrl;
+            document.getElementById('contentArea').innerHTML = renderArtStyleStep();
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        };
+        img.onerror = async () => {
+            // 備選方案: 使用後端API (需要TOGETHER_API_KEY)
+            try {
+                const resp = await fetch(`${API_BASE}/moodboard/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: fullPrompt })
+                });
+                if(resp.ok) {
+                    const data = await resp.json();
+                    if(data.url) {
+                        moodboardTestImage = data.url;
+                        document.getElementById('contentArea').innerHTML = renderArtStyleStep();
+                    }
+                }
+            } catch(e) {
+                alert('圖片生成失敗，請稍後重試');
+            }
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        };
+        img.src = pollinationsUrl;
         
     } catch(err) {
-        alert('生成失敗: ' + err.message + '\n\n提示: 需要在 .env 中配置 TOGETHER_API_KEY');
-    } finally {
+        alert('生成失敗: ' + err.message);
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
@@ -6300,7 +6368,7 @@ function renderMoodboardExtras(){
             <button onclick="generateMoodboardTestImage()" class="btn" style="width:100%;font-size:12px">
                 ${moodboardTestImage ? '🔄 重新生成' : '🎨 生成測試圖預覽'}
             </button>
-            <div style="font-size:10px;color:var(--dim);margin-top:6px;text-align:center">需要配置 TOGETHER_API_KEY</div>
+            <div style="font-size:10px;color:var(--dim);margin-top:6px;text-align:center">使用 Pollinations.ai 免費生成</div>
         </div>
         
         <!-- 圖片反推畫風 -->
@@ -6409,7 +6477,7 @@ async function runDesignAgent(){
         progressBar.style.width = '60%';
         
         startCountdown('design', stepsEl);
-        const apiResponse = await callAgent('artdirector', {
+        const apiResponse = await callAgent('production_design', {
             novel: state.novel.text.substring(0, 20000),
             title: state.novel.title,
             analysis: state.aiAnalysis,
@@ -7211,10 +7279,85 @@ function renderStoryboardResult(){
             <div class="btn-group">
                 <button class="btn btn-back" onclick="prevStep()">← 返回</button>
                 <button class="btn" onclick="state.storyboard=[];showStep(9)">🔄 重新生成</button>
+                <button class="btn" onclick="optimizePrompts()" id="promptOptBtn">🖼️ Prompt優化</button>
                 <button class="btn btn-primary" onclick="nextStep()">完成 →</button>
             </div>
+            <div id="promptOptStatus" style="margin-top:12px;font-size:12px;color:var(--dim);text-align:center"></div>
         </div>
     `;
+}
+
+// Prompt優化功能 - 調用prompt智能體
+async function optimizePrompts(){
+    const shots = state.storyboard || [];
+    if(!shots.length) return alert('沒有分鏡數據');
+    
+    const btn = document.getElementById('promptOptBtn');
+    const statusEl = document.getElementById('promptOptStatus');
+    
+    btn.disabled = true;
+    btn.innerHTML = '⏳ 優化中...';
+    statusEl.innerHTML = '🖼️ Prompt師正在優化提示詞...';
+    
+    try {
+        // 批量處理（每次10個鏡頭）
+        const batchSize = 10;
+        const batches = Math.ceil(shots.length / batchSize);
+        
+        for(let i = 0; i < batches; i++){
+            const batchShots = shots.slice(i * batchSize, (i + 1) * batchSize);
+            statusEl.innerHTML = `🖼️ 優化中... 批次 ${i+1}/${batches}`;
+            
+            const resp = await callAgent('prompt', {
+                content: JSON.stringify(batchShots.map(s => ({
+                    shot_id: s.shot_id || s.id,
+                    description: s.description || s.画面描述,
+                    shotSize: s.shotSize || s.景别,
+                    angle: s.angle || s.角度,
+                    characters: s.characters || s.角色,
+                    scene: s.scene || s.场景
+                }))),
+                context: {
+                    artStyle: state.artStyle?.prompt || 'cinematic',
+                    visualStyle: state.visualStyle
+                }
+            });
+            
+            // 解析結果並更新
+            try {
+                let result = resp.result || resp;
+                if(typeof result === 'string'){
+                    result = JSON.parse(result.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim());
+                }
+                const optimized = result.shots || result;
+                
+                // 更新對應鏡頭的prompt
+                optimized.forEach(opt => {
+                    const idx = shots.findIndex(s => (s.shot_id || s.id) === opt.shot_id);
+                    if(idx >= 0){
+                        shots[idx].midjourney_prompt = opt.midjourney_prompt;
+                        shots[idx].sd_prompt = opt.stable_diffusion_prompt;
+                        shots[idx].flux_prompt = opt.flux_prompt;
+                        shots[idx].video_prompt = opt.video_prompt;
+                        shots[idx].negative_prompt = opt.negative_prompt;
+                        shots[idx].aiPrompt = opt.midjourney_prompt || shots[idx].aiPrompt;
+                    }
+                });
+            } catch(e){ console.warn('解析Prompt結果失敗:', e); }
+        }
+        
+        state.storyboard = shots;
+        statusEl.innerHTML = '✅ Prompt優化完成！已更新 MJ/SD/Flux/Video 格式';
+        btn.innerHTML = '✅ 已優化';
+        
+        // 刷新顯示
+        setTimeout(() => showStep(9), 1000);
+        
+    } catch(err){
+        statusEl.innerHTML = '❌ 優化失敗: ' + err.message;
+        btn.disabled = false;
+        btn.innerHTML = '🖼️ Prompt優化';
+    }
 }
 
 function generateStoryboardPrompt(){
