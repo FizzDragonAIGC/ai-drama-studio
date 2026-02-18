@@ -86,7 +86,7 @@ function loadSkill(skillId) {
 
 // 动态配置 - maxSkills=5确保书籍方法论被加载
 // 新增turbo模式：maxSkills=2, contentLimit=2000 更快
-let runtimeConfig = { maxSkills: 2, contentLimit: 2000 };
+let runtimeConfig = { maxSkills: 3, contentLimit: 2500 };
 
 // 模式預設
 const MODE_PRESETS = {
@@ -131,6 +131,49 @@ function needsJsonOutput(agentId) {
     return false;  // 自然語言
   }
   return true;  // 默認JSON
+}
+
+// JSON修复函数 - 修复DeepSeek偶尔输出的格式问题
+function repairJSON(jsonStr) {
+  if (!jsonStr || typeof jsonStr !== 'string') return jsonStr;
+  
+  let fixed = jsonStr;
+  
+  // 模式1: "key":值" → "key":"值"  (缺少开始引号，有结束引号)
+  fixed = fixed.replace(/"(\w+)":\s*([^"\s\[\]{},][^"]*?)"/g, '"$1": "$2"');
+  
+  // 模式2: "key":值, → "key":"值",  (完全没引号，后跟逗号/括号)
+  fixed = fixed.replace(/"(\w+)":\s*([^"\s\[\]{},][^,}\]]*?)([,}\]])/g, (match, key, value, end) => {
+    // 跳过数字、布尔、null
+    if (/^(true|false|null|-?\d+\.?\d*)$/i.test(value.trim())) return match;
+    return `"${key}": "${value.trim()}"${end}`;
+  });
+  
+  // 清理末尾逗号: ,} → }
+  fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
+  
+  // 修复单引号: 'value' → "value"
+  fixed = fixed.replace(/'([^']+)'/g, '"$1"');
+  
+  return fixed;
+}
+
+// 安全JSON解析（带修复）
+function safeJSONParse(jsonStr, agentId = 'unknown') {
+  try {
+    return JSON.parse(jsonStr);
+  } catch (e1) {
+    console.log(`⚠️ ${agentId} JSON解析失败，尝试修复...`);
+    try {
+      const fixed = repairJSON(jsonStr);
+      const result = JSON.parse(fixed);
+      console.log(`✅ ${agentId} JSON修复成功`);
+      return result;
+    } catch (e2) {
+      console.error(`❌ ${agentId} JSON修复失败:`, e2.message);
+      throw e1; // 抛出原始错误
+    }
+  }
 }
 
 // 加载agent的所有skills内容（根据版本配置动态调整）
@@ -355,6 +398,7 @@ async function callOpenAICompatible(systemPrompt, userMessage, agentId = '', opt
     // DeepSeek-reasoner可能在reasoning_content中返回内容，content为空
     const message = data.choices?.[0]?.message;
     const text = message?.content || message?.reasoning_content || '';
+    const reasoning = message?.reasoning_content || null;  // 思考过程（reasoner模式）
     const inputTokens = data.usage?.prompt_tokens || 0;
     const outputTokens = data.usage?.completion_tokens || 0;
     
@@ -366,7 +410,8 @@ async function callOpenAICompatible(systemPrompt, userMessage, agentId = '', opt
     
     return {
       text: text.trim(),
-      tokens: { input: inputTokens, output: outputTokens }
+      tokens: { input: inputTokens, output: outputTokens },
+      reasoning: reasoning  // 返回思考过程供前端显示
     };
   } catch (err) {
     console.error(`${provider.name} API error:`, err.message);
@@ -597,14 +642,33 @@ app.post('/api/:legacy', async (req, res, next) => {
     runtimeConfig.contentLimit = preset.contentLimit;
   }
   
-  const { content, context, novel, title, analysis, interview, chapters, characters, concept } = req.body;
+  const { content, context, novel, title, analysis, interview, chapters, characters, concept, artStyle, artStyleName } = req.body;
   
   // 根據不同Agent類型構建內容
   let actualContent = content || novel || '';
   let contextData = context || {};
   
+  // 🎨 畫風信息（用於服化道等需要統一風格的Agent）
+  const styleInfo = artStyle ? `\n\n【🎨 畫風設置】\n用戶選擇的畫風：${artStyleName || '電影級'}\n畫風關鍵詞：${artStyle}\n**所有ai_prompt結尾必須加上這個畫風關鍵詞！**` : '';
+  
+  // 🎤 訪談Agent：特殊處理，確保小說內容被正確傳入
+  if (agentId === 'interview' && novel) {
+    // 傳入小說內容，讓AI閱讀後生成針對性問題
+    actualContent = novel.substring(0, 6000);  // 限制長度防超時
+    contextData = { 
+      type: 'interview_generation',
+      title: title || '未命名故事',
+      task: `請仔細閱讀以下故事內容，然後生成6-10個針對性採訪問題。
+
+🚨 重要規則：
+1. 問題必須包含故事中的【具體人物名字】和【具體情節】
+2. 不要問籠統問題如"主角為什麼..."
+3. 要問具體問題如"[角色名]在[具體場景]為什麼..."
+4. 必須返回JSON格式，必須包含 interview_questions 數組`
+    };
+  }
   // 高概念Agent：使用analysis和interview
-  if (agentId === 'concept' && (analysis || interview)) {
+  else if (agentId === 'concept' && (analysis || interview)) {
     actualContent = JSON.stringify({ analysis, interview }, null, 2);
     contextData = { type: 'concept_generation' };
   }
@@ -767,6 +831,64 @@ ${prevHook ? `【前集結尾】${prevHook}\n請確保與此銜接！\n` : '【�
     }, null, 2);
     contextData = { type: 'character_design' };
   }
+  // 🔗 劇本Agent：支持前後章節關聯 + 原文改編
+  else if (agentId === 'screenwriter') {
+    const { chapter, chapterIndex, novelContent, previousChapterEnding, nextChapterHint, totalChapters } = req.body;
+    
+    // 🆕 包含原文內容
+    actualContent = JSON.stringify({ 
+      chapter,
+      novelContent: novelContent?.substring(0, 4000),  // 限制長度防止超時
+      characters,
+      concept,
+      interview
+    }, null, 2);
+    
+    // 構建章節關聯的上下文
+    let linkageContext = '';
+    if (previousChapterEnding) {
+      linkageContext += `\n\n【🔗 前一章劇本結尾】\n${previousChapterEnding}\n**請確保劇本開頭與此自然銜接！**`;
+    }
+    if (nextChapterHint) {
+      linkageContext += `\n\n【🔮 下一章預告】\n${nextChapterHint}\n**請在結尾為此鋪墊伏筆！**`;
+    }
+    
+    contextData = { 
+      type: 'script_generation',
+      chapterIndex: chapterIndex,
+      totalChapters: totalChapters,
+      task: `請將第 ${(chapterIndex||0)+1} 章改編為專業劇本。
+
+${novelContent ? '【📖 本章原文】\n' + novelContent.substring(0, 3000) + '\n' : ''}
+${linkageContext}
+
+## ⚠️ 輸出要求（非常重要！）
+1. **直接輸出劇本正文**，不要任何開場白、分析、解釋
+2. **不要輸出JSON格式**，只輸出劇本文本
+3. **不要說"我將用XX方法"之類的話**，直接開始寫劇本！
+
+## 劇本格式
+【場景1】地點，時間
+（環境描寫：氛圍、光線、細節）
+
+角色A走進房間，目光掃過桌上的信封。
+
+角色A：（輕聲）你來了。
+角色B：（轉身，眼神閃躲）我...不知道該說什麼。
+
+---
+【場景2】...
+
+## 要點
+- 動作描寫要具體（不要"他很傷心"，要"他垂下眼睛，手指無意識地摳著桌角"）
+- 對白要有潛台詞和衝突
+- 忠實於原文內容
+${previousChapterEnding ? '\n- 開頭與前一章自然銜接' : ''}
+${nextChapterHint ? '\n- 結尾為下一章埋伏筆' : ''}
+
+**現在直接開始輸出劇本（從【場景1】開始）：**`
+    };
+  }
   
   if (!actualContent) {
     return res.status(400).json({ error: '缺少內容數據' });
@@ -805,13 +927,20 @@ ${skillsContent}
       : actualContent;
     
     const userMessage = Object.keys(contextData).length > 0
-      ? `背景：${JSON.stringify(contextData)}\n\n${title ? '標題：'+title+'\n\n' : ''}请深度分析以下内容：\n${truncatedContent}`
-      : `${title ? '標題：'+title+'\n\n' : ''}请深度分析以下内容：\n${truncatedContent}`;
+      ? `背景：${JSON.stringify(contextData)}${styleInfo}\n\n${title ? '標題：'+title+'\n\n' : ''}请深度分析以下内容：\n${truncatedContent}`
+      : `${title ? '標題：'+title+'\n\n' : ''}${styleInfo}\n\n请深度分析以下内容：\n${truncatedContent}`;
     
     const result = await callClaude(systemPrompt, userMessage, agentId);
     
     console.log(`[${agent.name}] Done!`);
-    res.json({ result: result.text, agent: agentId, skillsUsed: agent.skills, tokens: result.tokens, totalTokens });
+    res.json({ 
+      result: result.text, 
+      agent: agentId, 
+      skillsUsed: agent.skills, 
+      tokens: result.tokens, 
+      totalTokens,
+      reasoning: result.reasoning  // 思考过程（如果有）
+    });
   } catch (err) {
     console.error(`[${agent.name}] Error:`, err.message);
     res.status(500).json({ error: err.message });
@@ -1701,6 +1830,99 @@ app.get('/api/pipelines', (req, res) => {
 });
 
 console.log('✅ 完整Pipeline API (V4) 已启用');
+
+// ==================== 🖼️ 图像生成 API (Replicate) ====================
+const REPLICATE_API_KEY = process.env.REPLICATE_API_KEY;
+const REPLICATE_MODELS = {
+  sdxl: 'stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b',
+  flux_schnell: 'black-forest-labs/flux-schnell',
+  flux_dev: 'black-forest-labs/flux-dev',
+  sdxl_lightning: 'bytedance/sdxl-lightning-4step:5f24084160c9089501c1b3545d9be3c27883ae2239b6f412990e82d4a6210f8f'
+};
+
+// 生成图片
+app.post('/api/generate-image', async (req, res) => {
+  if (!REPLICATE_API_KEY) {
+    return res.status(500).json({ error: '未配置 REPLICATE_API_KEY' });
+  }
+  
+  const { prompt, model = 'flux_schnell', aspectRatio = '16:9' } = req.body;
+  
+  if (!prompt) {
+    return res.status(400).json({ error: '缺少 prompt 参数' });
+  }
+  
+  console.log(`🖼️ 生成图片: ${prompt.substring(0, 50)}...`);
+  
+  try {
+    // 创建预测
+    const createResponse = await fetch('https://api.replicate.com/v1/predictions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${REPLICATE_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        version: REPLICATE_MODELS[model] || REPLICATE_MODELS.flux_schnell,
+        input: {
+          prompt,
+          aspect_ratio: aspectRatio,
+          output_format: 'webp',
+          output_quality: 90
+        }
+      })
+    });
+    
+    const prediction = await createResponse.json();
+    
+    if (prediction.error) {
+      throw new Error(prediction.error);
+    }
+    
+    // 轮询等待结果 (最多60秒)
+    let result = prediction;
+    const startTime = Date.now();
+    while (result.status !== 'succeeded' && result.status !== 'failed') {
+      if (Date.now() - startTime > 60000) {
+        throw new Error('生成超时');
+      }
+      await new Promise(r => setTimeout(r, 1000));
+      
+      const pollResponse = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+        headers: { 'Authorization': `Token ${REPLICATE_API_KEY}` }
+      });
+      result = await pollResponse.json();
+    }
+    
+    if (result.status === 'failed') {
+      throw new Error(result.error || '生成失败');
+    }
+    
+    console.log(`✅ 图片生成成功: ${result.output}`);
+    
+    res.json({
+      success: true,
+      url: Array.isArray(result.output) ? result.output[0] : result.output,
+      model,
+      prompt: prompt.substring(0, 100)
+    });
+    
+  } catch (err) {
+    console.error('❌ 图片生成失败:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 检查生图服务状态
+app.get('/api/generate-image/status', (req, res) => {
+  res.json({
+    enabled: !!REPLICATE_API_KEY,
+    models: Object.keys(REPLICATE_MODELS),
+    defaultModel: 'flux_schnell'
+  });
+});
+
+console.log(`🖼️ 图像生成 API ${REPLICATE_API_KEY ? '已启用' : '未启用 (需要REPLICATE_API_KEY)'}`);
 
 app.listen(PORT, () => {
   const provider = PROVIDERS[currentProvider];

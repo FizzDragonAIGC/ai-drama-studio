@@ -2998,9 +2998,9 @@ async function runStoryboardStep() {
 • 分鏡鏡頭: ${shotCount} 個
 
 🎉 恭喜！你的AI番劇製作資料已完成！`, [
+            { text: '🖼️ 生成角色圖', action: () => generateCharacterImages() },
             { text: '📥 導出Excel', action: () => exportExcel() },
             { text: '📥 導出JSON', action: () => exportAll() },
-            { text: '🔄 重新生成', action: () => runStoryboardStep() },
             { text: '🏠 新項目', action: () => location.reload() }
         ]);
         
@@ -3282,6 +3282,90 @@ document.getElementById('userInput').addEventListener('input', function() {
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 150) + 'px';
 });
+
+// ==================== 🖼️ 图像生成 (Replicate) ====================
+async function generateImage(prompt, type = 'character') {
+    addTypingIndicator();
+    showAgentStatus('🖼️ 圖像生成', '正在生成...');
+    
+    try {
+        const response = await fetch(`${API_URL}/generate-image`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt,
+                model: 'flux_schnell',  // 快速模式
+                aspectRatio: type === 'character' ? '3:4' : '16:9'
+            })
+        });
+        
+        const result = await response.json();
+        
+        removeTypingIndicator();
+        hideAgentStatus();
+        
+        if (result.error) {
+            throw new Error(result.error);
+        }
+        
+        // 显示生成的图片
+        addAIMessage(`🖼️ **${type === 'character' ? '角色圖' : '場景圖'}生成完成！**
+
+<img src="${result.url}" style="max-width:100%;border-radius:12px;margin:10px 0;">
+
+**Prompt**: ${prompt.substring(0, 100)}...`, [
+            { text: '📥 下載圖片', action: () => window.open(result.url, '_blank') },
+            { text: '🔄 重新生成', action: () => generateImage(prompt, type) }
+        ]);
+        
+        return result.url;
+        
+    } catch (err) {
+        removeTypingIndicator();
+        hideAgentStatus();
+        addAIMessage(`❌ 圖片生成失敗: ${err.message}
+
+可能原因：
+• 未配置 REPLICATE_API_KEY
+• API 額度用完
+• 網絡問題`, [
+            { text: '🔄 重試', action: () => generateImage(prompt, type) }
+        ]);
+        return null;
+    }
+}
+
+// 批量生成角色图
+async function generateCharacterImages() {
+    const chars = state.characters?.characters || [];
+    if (chars.length === 0) {
+        addAIMessage('❌ 沒有角色數據，請先生成角色設計');
+        return;
+    }
+    
+    addAIMessage(`🖼️ **開始生成角色圖** (共 ${chars.length} 個)
+
+這可能需要幾分鐘...`);
+    
+    for (const char of chars.slice(0, 5)) {  // 最多生成5个
+        const prompt = char.ai_prompt || `${char.name}, ${char.appearance || ''}, portrait, cinematic lighting, detailed face`;
+        await generateImage(prompt, 'character');
+        await new Promise(r => setTimeout(r, 2000));  // 间隔2秒
+    }
+    
+    addAIMessage(`✅ **角色圖生成完成！**`);
+}
+
+// 检查生图服务状态
+async function checkImageGenStatus() {
+    try {
+        const response = await fetch(`${API_URL}/generate-image/status`);
+        const status = await response.json();
+        return status.enabled;
+    } catch {
+        return false;
+    }
+}
 
 // ==================== 导出 ====================
 function exportAll() {
