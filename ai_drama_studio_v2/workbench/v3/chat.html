@@ -1,0 +1,3284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FizzDragon AIGC番劇系統</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            /* FizzDragon 官网配色 */
+            --bg: #14141a;
+            --surface: #1a1a22;
+            --surface2: #22222c;
+            --border: #2d2d3a;
+            --text: #f0f0f5;
+            --text2: #8a8a9a;
+            --accent: #E31B23;      /* FizzDragon Logo红 */
+            --accent2: #E31B23;     /* 保持一致 */
+            --accent-gradient: linear-gradient(135deg, #E31B23, #C41920);
+            --user-bg: #1c1c24;
+            --ai-bg: transparent;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* 左侧边栏 */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #0d0d12;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+            position: absolute;
+        }
+        
+        .sidebar-header {
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--border);
+            background: #000;
+        }
+        
+        .sidebar-logo {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .sidebar-tagline {
+            font-size: 11px;
+            color: var(--text2);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .new-chat-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(232, 48, 48, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #E31B23;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .new-chat-btn:hover {
+            background: rgba(232, 48, 48, 0.2);
+            color: #E31B23;
+        }
+        
+        .sidebar-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+        
+        .sidebar-section-title {
+            font-size: 11px;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 12px;
+        }
+        
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .project-item {
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .project-item:hover {
+            background: var(--surface);
+        }
+        
+        .project-item.active {
+            background: var(--surface2);
+        }
+        
+        .project-item .icon {
+            font-size: 16px;
+        }
+        
+        .project-item .info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .project-item .title {
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .project-item .meta {
+            font-size: 11px;
+            color: var(--text2);
+        }
+        
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .beta-badge {
+            text-align: center;
+            padding: 10px;
+            background: rgba(227, 27, 35, 0.1);
+            border-radius: 8px;
+            color: #E31B23;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            display: none;
+        }
+        
+        .header-title {
+            font-size: 14px;
+            color: var(--text2);
+        }
+        
+        /* 768px 媒体查询移至底部统一管理 */
+        
+        /* 顶部栏 - FizzDragon风格 */
+        .header {
+            padding: 16px 24px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header img {
+            height: 24px;
+            filter: brightness(1.1);
+        }
+        
+        .logo {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text2);
+            letter-spacing: 0.5px;
+        }
+        
+        .status {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+        
+        .status-dot.offline { background: #ef4444; }
+        .status-dot.loading { background: #E31B23; animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* 聊天区域 */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .message {
+            max-width: 100%;
+            padding: 8px 0;
+            line-height: 1.7;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+        }
+        
+        .message.user {
+            padding-left: 20px;
+            border-left: 2px solid var(--accent);
+            margin-left: 20px;
+        }
+        
+        .message.ai {
+            padding-left: 0;
+        }
+        
+        .message .role {
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .message.user .role { color: var(--accent); }
+        .message.ai .role { color: #888; }
+        
+        .message .content { white-space: pre-wrap; }
+        
+        .message .content h3 {
+            font-size: 14px;
+            margin: 12px 0 8px;
+            color: var(--accent);
+        }
+        
+        .message .content ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+        
+        .message .content li { margin: 4px 0; }
+        
+        /* 快捷回复 - FizzDragon风格 */
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
+        .quick-reply {
+            padding: 10px 18px;
+            background: rgba(232, 48, 48, 0.08);
+            border: none;
+            border-radius: 20px;
+            color: #E31B23;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-reply:hover, .quick-reply:active {
+            background: rgba(232, 48, 48, 0.2);
+            color: #E31B23;
+        }
+        
+        .quick-reply:active {
+            transform: scale(0.97);
+        }
+        
+        /* 输入区域 */
+        .input-area {
+            padding: 16px 20px;
+            background: var(--bg);
+            border-top: none;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        #userInput {
+            width: 100%;
+            padding: 14px 16px;
+            padding-right: 100px;
+            background: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            resize: none;
+            min-height: 48px;
+            max-height: 150px;
+            font-family: inherit;
+        }
+        
+        #userInput:focus {
+            outline: none;
+            box-shadow: 0 0 0 1px #E31B23;
+        }
+        
+        .input-actions {
+            position: absolute;
+            right: 8px;
+            bottom: 8px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover { 
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .btn-upload {
+            background: transparent;
+            color: var(--text2);
+            border: none;
+        }
+        
+        .btn-upload:hover { color: var(--accent); }
+        
+        #fileInput { display: none; }
+        
+        /* 打字动画 */
+        .typing {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+        }
+        
+        .typing span {
+            width: 6px;
+            height: 6px;
+            background: #E31B23;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+        
+        /* 进度卡片 */
+        .progress-card {
+            background: transparent;
+            border: none;
+            border-left: 2px solid #E31B23;
+            border-radius: 0;
+            padding: 12px 16px;
+            margin-top: 12px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #E31B23;
+        }
+        
+        .progress-bar {
+            height: 3px;
+            background: #2d2d3a;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #E31B23;
+            transition: width 0.3s;
+        }
+        
+        /* 结果卡片 */
+        .result-card {
+            background: transparent;
+            border: none;
+            border-left: 2px solid #333;
+            border-radius: 0;
+            overflow: hidden;
+            margin-top: 12px;
+            padding-left: 16px;
+        }
+        
+        .result-header {
+            padding: 8px 0;
+            background: transparent;
+            border-bottom: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text2);
+        }
+        
+        .result-content {
+            padding: 8px 0;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* 用户助手浮动按钮 */
+        .help-fab {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E31B23, #B51820);
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(232, 48, 48, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .help-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(232, 48, 48, 0.6);
+        }
+        
+        .help-fab:active {
+            transform: scale(0.95);
+        }
+        
+        .help-fab.loading {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* ==================== 移动端适配 ==================== */
+        
+        /* 平板适配 */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                z-index: 1000;
+                transform: translateX(-100%);
+                box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .menu-toggle {
+                display: flex !important;
+            }
+            .header-title {
+                font-size: 14px;
+            }
+        }
+        
+        /* 手机适配 */
+        @media (max-width: 600px) {
+            body {
+                font-size: 15px;
+            }
+            
+            /* 头部 */
+            .header {
+                padding: 12px 16px;
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+            .header-title {
+                font-size: 13px;
+                flex: 1;
+                text-align: center;
+            }
+            .status {
+                font-size: 11px;
+            }
+            
+            /* 侧边栏 */
+            .sidebar {
+                width: 85vw;
+                max-width: 300px;
+            }
+            .sidebar-header {
+                padding: 16px;
+            }
+            .sidebar-logo {
+                max-width: 160px;
+            }
+            .sidebar-tagline {
+                font-size: 10px;
+            }
+            .new-chat-btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+            
+            /* 聊天区域 */
+            .chat-container {
+                padding: 12px;
+                gap: 12px;
+            }
+            .message {
+                max-width: 100%;
+                padding: 12px;
+                font-size: 14px;
+                border-radius: 16px;
+            }
+            .message .role {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+            .message .content {
+                line-height: 1.7;
+            }
+            
+            /* 快捷回复按钮 */
+            .quick-replies {
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 12px;
+            }
+            .quick-reply {
+                padding: 10px 14px;
+                font-size: 13px;
+                border-radius: 20px;
+                flex: 1 1 auto;
+                min-width: 45%;
+                text-align: center;
+            }
+            
+            /* 输入区域 */
+            .input-area {
+                padding: 12px;
+                position: sticky;
+                bottom: 0;
+                background: var(--bg);
+                border-top: 1px solid var(--border);
+            }
+            .input-wrapper {
+                flex-direction: column;
+                gap: 10px;
+            }
+            #userInput {
+                font-size: 16px; /* 防止iOS缩放 */
+                padding: 14px;
+                border-radius: 12px;
+                min-height: 48px;
+            }
+            .input-actions {
+                display: flex;
+                gap: 8px;
+                width: 100%;
+            }
+            .input-actions .btn {
+                flex: 1;
+                padding: 12px;
+                font-size: 14px;
+                border-radius: 10px;
+            }
+            .btn-primary {
+                flex: 2;
+            }
+            
+            /* 帮助按钮 */
+            .help-fab {
+                bottom: 90px;
+                right: 16px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            /* 进度卡片 */
+            .progress-card {
+                padding: 12px;
+            }
+            
+            /* Agent状态栏 */
+            #agentStatusBar {
+                top: auto !important;
+                bottom: 140px !important;
+                left: 16px !important;
+                right: 16px !important;
+                transform: none !important;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            
+            /* 侧边栏遮罩 */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+        
+        /* 超小屏幕 */
+        @media (max-width: 380px) {
+            .quick-reply {
+                min-width: 100%;
+                padding: 12px;
+            }
+            .header-title {
+                font-size: 12px;
+            }
+            .sidebar {
+                width: 100vw;
+                max-width: none;
+            }
+        }
+        
+        /* 横屏手机 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 8px 16px;
+            }
+            .chat-container {
+                padding: 8px 16px;
+            }
+            .input-area {
+                padding: 8px 16px;
+            }
+            .help-fab {
+                bottom: 70px;
+                width: 44px;
+                height: 44px;
+            }
+        }
+        
+        /* iOS安全区域 */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .input-area {
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏遮罩（手机端点击关闭） -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
+    <!-- 左侧边栏 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo.jpg" alt="FizzDragon" class="sidebar-logo">
+            <div class="sidebar-tagline">讓每個人都能拍自己的電影</div>
+            <button class="new-chat-btn" onclick="startNewProject()">+ 新建項目</button>
+        </div>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">我的項目</div>
+            <div class="project-list" id="projectList">
+                <!-- 项目列表动态生成 -->
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="beta-badge">🚀 創作革命 · 內測中</div>
+        </div>
+    </div>
+    
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <div class="header">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <div class="header-title" id="headerTitle">FizzDragon AIGC番劇系統</div>
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">連接中...</span>
+            </div>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <!-- 消息会动态添加到这里 -->
+        </div>
+    
+        <div class="input-area">
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <textarea id="userInput" placeholder="輸入消息..." rows="1"></textarea>
+                    <div class="input-actions">
+                        <input type="file" id="fileInput" accept=".txt,.docx,.pdf">
+                        <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()">📄 導入</button>
+                        <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()">發送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- 关闭 main-content -->
+
+    <!-- 用户助手浮动按钮 -->
+    <button class="help-fab" onclick="callHelpAgent()" title="遇到問題？點我求助">
+        🆘
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    
+    <script>
+// ==================== 配置 ====================
+const API_ENDPOINTS = [
+    '/api',
+    'https://dvds-hoping-consultancy-site.trycloudflare.com/api',
+    'http://34.58.33.115:3001/api'
+];
+let API_BASE = '/api';
+
+// ==================== 状态 ====================
+const state = {
+    novel: null,
+    novelTitle: '',
+    step: 0,  // 0=等待导入, 1=概念, 2=访谈, 3=章节, 4=角色, 5=分镜...
+    concept: null,
+    interview: {},
+    interviewQuestions: [],
+    currentQuestion: 0,
+    chapters: null,
+    characters: null,
+    storyboard: null
+};
+
+// 写作状态
+const writeState = {
+    idea: null,
+    interview: {},
+    outline: null,
+    chapters: [],
+    currentChapter: 0,
+    currentQuestion: null,  // null=未开始, -1=等待输入故事灵感, 0+=访谈问题编号
+    storyboard: null
+};
+
+// ==================== JSON解析（带自动修复）====================
+function safeJSONParse(text, context = 'unknown') {
+    if (!text || typeof text !== 'string') {
+        console.warn(`safeJSONParse [${context}]: 空输入`);
+        return {};
+    }
+    
+    // 清理常见问题
+    let cleaned = text
+        .replace(/```json\n?/g, '')
+        .replace(/```\n?/g, '')
+        .trim();
+    
+    // 尝试直接解析
+    try {
+        return JSON.parse(cleaned);
+    } catch (e) {
+        console.warn(`safeJSONParse [${context}]: 首次解析失败，尝试修复...`);
+    }
+    
+    // 修复1: 提取JSON对象/数组
+    const jsonMatch = cleaned.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+    if (jsonMatch) {
+        try {
+            return JSON.parse(jsonMatch[1]);
+        } catch (e) {}
+    }
+    
+    // 修复2: 移除尾部逗号
+    try {
+        const noTrailing = cleaned.replace(/,(\s*[\}\]])/g, '$1');
+        return JSON.parse(noTrailing);
+    } catch (e) {}
+    
+    // 修复3: 修复单引号
+    try {
+        const doubleQuotes = cleaned.replace(/'/g, '"');
+        return JSON.parse(doubleQuotes);
+    } catch (e) {}
+    
+    console.error(`safeJSONParse [${context}]: 所有修复尝试失败`);
+    return {};
+}
+
+// ==================== 流程定义 ====================
+const STEPS = [
+    { id: 0, name: '導入小說', agent: null },
+    { id: 1, name: '概念提取', agent: 'concept' },
+    { id: 2, name: '創意訪談', agent: 'interview' },
+    { id: 3, name: '章節規劃', agent: 'narrative' },
+    { id: 4, name: '角色設計', agent: 'character' },
+    { id: 5, name: '分鏡生成', agent: 'storyboard' }
+];
+
+// ==================== 内测模式（无积分系统）====================
+const MEMBERSHIP = {
+    free: { name: '內測版', maxProjects: 999, icon: '🎉' }
+};
+
+let currentUser = {
+    id: localStorage.getItem('user_id') || 'guest_' + Date.now(),
+    plan: 'free'
+};
+
+function initUser() {
+    localStorage.setItem('user_id', currentUser.id);
+}
+
+function updateUserUI() {
+    // 内测版不需要更新UI
+}
+
+// ==================== 侧边栏 ====================
+let currentProjectId = null;
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('show');
+    overlay.classList.toggle('show');
+}
+
+function renderProjectList() {
+    const projects = getProjects();
+    const list = Object.values(projects).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    const container = document.getElementById('projectList');
+    
+    if (list.length === 0) {
+        container.innerHTML = '<div style="padding:12px;color:var(--text2);font-size:12px;">還沒有項目</div>';
+        return;
+    }
+    
+    container.innerHTML = list.map((p) => {
+        const isActive = p.id === currentProjectId;
+        const chapters = p.chapters?.length || 0;
+        const icon = p.stage === 'write' ? '✍️' : '📄';
+        
+        return `
+            <div class="project-item ${isActive ? 'active' : ''}" 
+                 onclick="openProject('${p.id}')">
+                <div class="icon">${icon}</div>
+                <div class="info">
+                    <div class="title">${p.name || '未命名'}</div>
+                    <div class="meta">${chapters}章 · ${new Date(p.timestamp).toLocaleDateString()}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openProject(projectId) {
+    currentProjectId = projectId;
+    renderProjectList();
+    loadProject(projectId);
+    
+    // 更新标题
+    const projects = getProjects();
+    const p = projects[projectId];
+    if (p) {
+        document.getElementById('headerTitle').textContent = p.name || 'FizzDragon AIGC番劇系統';
+    }
+    
+    // 移动端关闭侧边栏
+    if (window.innerWidth <= 768) {
+        toggleSidebar();
+    }
+}
+
+function startNewProject() {
+    console.log('startNewProject called');
+    
+    // 清空当前状态
+    currentProjectId = null;
+    state.novel = null;
+    state.novelTitle = '';
+    state.step = 0;
+    state.mode = null;
+    writeState.idea = null;
+    writeState.outline = null;
+    writeState.chapters = [];
+    writeState.currentQuestion = null;
+    
+    // 清空聊天
+    document.getElementById('chatContainer').innerHTML = '';
+    document.getElementById('headerTitle').textContent = 'FizzDragon AIGC番劇系統';
+    
+    // 显示欢迎
+    showStartOptions();
+    renderProjectList();
+    
+    // 移动端关闭侧边栏
+    if (window.innerWidth <= 768) {
+        toggleSidebar();
+    }
+}
+
+// ==================== 初始化 ====================
+async function init() {
+    // 初始化用户和侧边栏
+    initUser();
+    renderProjectList();
+    
+    await detectAPI();
+    
+    // 检查是否有保存的进度
+    const saved = loadProgress();
+    if (saved && saved.outline) {
+        addAIMessage(`👋 歡迎回來！
+
+發現上次的創作進度：
+**《${saved.outline?.title || '未命名'}》**
+- 階段：${saved.stage}
+- 時間：${new Date(saved.timestamp).toLocaleString()}
+- 已完成：${saved.chapters?.length || 0} 章
+
+要繼續嗎？`, [
+            { text: '▶️ 繼續創作', action: () => resumeProgress(saved) },
+            { text: '🆕 開始新項目', action: () => showStartOptions() }
+        ]);
+        return;
+    }
+    
+    showStartOptions();
+}
+
+function showStartOptions() {
+    console.log('🏠 showStartOptions called, current state:', { mode: state.mode, step: state.step });
+    const projects = getProjects();
+    const projectCount = Object.keys(projects).length;
+    
+    let buttons = [
+        { text: '📄 導入小說', action: () => document.getElementById('fileInput').click() },
+        { text: '✍️ 創作小說', action: () => startWriteMode() }
+    ];
+    
+    if (projectCount > 0) {
+        buttons.push({ text: `📂 項目列表 (${projectCount})`, action: () => showProjectList() });
+    }
+    
+    buttons.push({ text: '📚 查看學習資源', action: () => showLearningResources() });
+    
+    addAIMessage(`✨ **歡迎來到 FizzDragon AIGC番劇系統**
+
+**讓每個人都能拍出自己的電影。**
+
+好萊塢用1億美元拍一部電影，
+我們讓你用一台電腦完成同樣的創作。
+
+> 🎬 100+本大師著作 | 電影級分鏡 | 一鍵AI生圖
+> 🌟 McKee×Campbell×Hitchcock 智慧注入
+> 🚀 從故事到分鏡，30分鐘完成
+
+**這不是工具，這是創作革命。**
+
+${projectCount > 0 ? `\n📂 已保存 **${projectCount}** 個項目` : ''}`, buttons);
+}
+
+function showLearningResources() {
+    addAIMessage(`📚 **FizzDragon 學習資源庫**
+
+**敘事結構大師**
+• Robert McKee《故事》- 價值轉換理論
+• John Truby《The Anatomy of Story》- 22步結構
+• Joseph Campbell《千面英雄》- 英雄之旅
+• Christopher Vogler《作家之路》- 12階段旅程
+• Blake Snyder《Save the Cat》- 15節拍表
+• Syd Field《Screenplay》- 三幕劇結構
+
+**角色設計理論**
+• K.M. Weiland《Creating Character Arcs》
+• Tom Bancroft《Creating Characters with Personality》
+• 心理學動機理論 - 欲望/創傷/弧線
+
+**視覺敘事**
+• Steven D. Katz《Film Directing Shot by Shot》
+• Gustavo Mercado《The Filmmaker's Eye》
+• Francis Glebas《Directing the Story》
+
+**大師訪談**
+• Hitchcock/Truffaut 電影訪談錄
+• Aaron Sorkin MasterClass
+• 宮崎駿創作筆記
+
+**文化風格**
+• 中國電影美學 - 王家衛、李安、侯孝賢
+• 日本動畫 - 宮崎駿、新海誠
+• 好萊塢經典 - Spielberg、Nolan
+• 歐洲藝術電影 - Fellini、Bergman
+
+共 **100+** 本專業書籍融入系統。`, [
+        { text: '🔙 返回', action: () => showStartOptions() }
+    ]);
+}
+
+function resumeProgress(saved) {
+    // 恢复状态
+    writeState.idea = saved.idea;
+    writeState.interview = saved.interview;
+    writeState.outline = saved.outline;
+    writeState.chapters = saved.chapters || [];
+    writeState.storyboard = saved.storyboard;
+    state.mode = 'write';
+    
+    const chs = saved.outline?.chapters || [];
+    const completed = saved.chapters?.length || 0;
+    
+    if (completed >= chs.length) {
+        addAIMessage(`✅ 小說已全部完成！
+
+**《${saved.outline?.title}》** - ${completed} 章
+
+接下來：`, [
+            { text: '🎬 轉換分鏡', action: () => convertToStoryboard() },
+            { text: '📥 導出小說', action: () => exportNovel() },
+            { text: '📥 導出Excel', action: () => exportExcel() }
+        ]);
+    } else {
+        writeState.currentChapter = completed;
+        addAIMessage(`▶️ 繼續創作《${saved.outline?.title}》
+
+**進度**: ${completed}/${chs.length} 章
+**下一章**: 第${completed + 1}章 ${chs[completed]?.title || ''}`, [
+            { text: `📝 繼續寫第${completed + 1}章`, action: () => writeNextChapter() },
+            { text: '📖 查看大綱', action: () => showOutline() },
+            { text: '📥 導出已完成', action: () => exportNovel() }
+        ]);
+    }
+}
+
+function showOutline() {
+    const o = writeState.outline;
+    const chs = o?.chapters || [];
+    
+    addAIMessage(`📝 **故事大綱**
+
+**《${o?.title || '未命名'}》**
+${o?.logline || ''}
+
+---
+
+${chs.map((c, i) => {
+    const done = writeState.chapters[i] ? '✅' : '⬜';
+    return `${done} 第${c.number}章 ${c.title}`;
+}).join('\n')}`);
+}
+
+// ==================== API检测 ====================
+async function detectAPI() {
+    setStatus('loading', '連接中...');
+    
+    for (const endpoint of API_ENDPOINTS) {
+        try {
+            const controller = new AbortController();
+            setTimeout(() => controller.abort(), 3000);
+            const res = await fetch(`${endpoint}/health`, { signal: controller.signal });
+            if (res.ok) {
+                API_BASE = endpoint;
+                setStatus('online', 'DeepSeek 已連接');
+                console.log('API:', endpoint);
+                return;
+            }
+        } catch (e) {}
+    }
+    setStatus('offline', '連接失敗');
+}
+
+function setStatus(status, text) {
+    const dot = document.getElementById('statusDot');
+    const txt = document.getElementById('statusText');
+    dot.className = 'status-dot ' + (status === 'online' ? '' : status === 'loading' ? 'loading' : 'offline');
+    txt.textContent = text;
+}
+
+// ==================== 創作模式 ====================
+// 写作访谈问题
+const WRITE_QUESTIONS = [
+    '這個故事想傳達什麼核心主題或情感？',
+    '主角是什麼樣的人？有什麼特點和弱點？',
+    '主角面臨的最大挑戰或衝突是什麼？',
+    '故事發生在什麼時代和地點？有什麼獨特氛圍？',
+    '你希望觀眾看完後有什麼感受？',
+    '故事大概要多長？（短篇10章/中篇30章/長篇50-100章）',
+    '有參考的作品風格嗎？（電影、劇集、小說）',
+    '有特別想加入的場景或情節嗎？',
+    '主要配角有哪些？和主角是什麼關係？',
+    '故事有什麼獨特的世界觀設定嗎？'
+];
+
+function startWriteMode() {
+    // 检查是否有进行中的工作
+    if (hasActiveWork()) {
+        confirmResetAndImport(() => {
+            document.getElementById('chatContainer').innerHTML = '';
+            doStartWriteMode();
+        });
+        return;
+    }
+    doStartWriteMode();
+}
+
+function doStartWriteMode() {
+    state.mode = 'write';
+    writeState.currentQuestion = -1;
+    
+    addAIMessage(`✍️ **創作模式**
+
+讓我們一起創作你的故事！
+
+首先，簡單描述你的**故事靈感**：
+- 可以是一句話概念
+- 可以是一個場景
+- 可以是一個角色
+
+比如：「一個香港紅Van司機，凌晨載客時遇到奇怪的乘客」`, [
+        { text: '🎲 幫我隨機生成', action: () => randomIdea() },
+        { text: '📚 看範例', action: () => showExamples() }
+    ]);
+}
+
+async function randomIdea() {
+    addTypingIndicator();
+    
+    try {
+        const result = await callAgent('concept', '請隨機生成一個有趣的短劇故事靈感，類型可以是靈異、愛情、懸疑、奇幻等，背景設定在香港。輸出JSON格式：{genre, setting, premise, hook}');
+        removeTypingIndicator();
+        
+        const idea = safeJSONParse(result.replace(/```json\n?/g, '').replace(/```/g, ''), 'randomIdea');
+        writeState.idea = idea;
+        
+        addAIMessage(`🎲 **隨機靈感**
+
+**類型**: ${idea.genre || '待定'}
+**背景**: ${idea.setting || '待定'}  
+**故事**: ${idea.premise || idea.logline || '待定'}
+**亮點**: ${idea.hook || '待定'}
+
+喜歡這個方向嗎？`, [
+            { text: '👍 就這個！', action: () => startWriteInterview() },
+            { text: '🎲 換一個', action: () => randomIdea() },
+            { text: '✏️ 我來改', action: () => {} }
+        ]);
+    } catch (err) {
+        removeTypingIndicator();
+        recordError(err, '隨機靈感');
+        showFriendlyError(err, '隨機靈感', () => randomIdea());
+    }
+}
+
+function showExamples() {
+    addAIMessage(`📚 **故事範例**
+
+**靈異類** 🔮
+「深夜食堂的老闆七叔，專門招待那些...已經不在人世的客人」
+
+**愛情類** 💕
+「她每天搭同一班港鐵，暗戀車廂裡看書的男生，直到有一天發現他看的是她寫的小說」
+
+**懸疑類** 🔍
+「建築師發現自己設計的大樓裡，有一層不存在於圖紙上的樓層」
+
+**奇幻類** ✨
+「香港最後一個風水師的孫女，意外繼承了能看見城市龍脈的能力」
+
+選一個開始，或輸入你自己的想法：`, [
+        { text: '🔮 深夜食堂', action: () => useExample('深夜食堂的老闆七叔，專門招待那些已經不在人世的客人', '靈異') },
+        { text: '💕 港鐵愛情', action: () => useExample('她每天搭同一班港鐵，暗戀車廂裡看書的男生', '愛情') },
+        { text: '🔍 神秘樓層', action: () => useExample('建築師發現自己設計的大樓裡，有一層不存在於圖紙上的樓層', '懸疑') }
+    ]);
+}
+
+function useExample(premise, genre) {
+    addUserMessage(premise);
+    writeState.idea = { premise, genre };
+    startWriteInterview();
+}
+
+// ==================== 写作访谈 ====================
+function startWriteInterview() {
+    writeState.currentQuestion = 0;
+    writeState.interview = {};
+    
+    addAIMessage(`好的！現在讓我了解更多細節，這會幫助我寫出更符合你想法的故事。
+
+🎤 **創作訪談** (${WRITE_QUESTIONS.length} 個問題)
+
+每個問題可以詳細回答，也可以輸入「跳過」。`);
+    
+    setTimeout(() => askWriteQuestion(), 500);
+}
+
+function askWriteQuestion() {
+    if (writeState.currentQuestion >= WRITE_QUESTIONS.length) {
+        finishWriteInterview();
+        return;
+    }
+    
+    const q = WRITE_QUESTIONS[writeState.currentQuestion];
+    const num = writeState.currentQuestion + 1;
+    
+    addAIMessage(`🎤 **問題 ${num}/${WRITE_QUESTIONS.length}**
+
+${q}`, [
+        { text: '跳過這題', action: () => { writeState.interview[writeState.currentQuestion] = '(跳過)'; writeState.currentQuestion++; askWriteQuestion(); } },
+        { text: '結束訪談，開始寫', action: () => finishWriteInterview() }
+    ]);
+}
+
+async function finishWriteInterview() {
+    addAIMessage(`✅ 訪談完成！
+
+現在我來生成**故事大綱**和**章節規劃**...`);
+    
+    await generateOutline();
+}
+
+// ==================== 生成大纲 ====================
+async function generateOutline() {
+    addProgressCard('生成故事大綱', 0);
+    
+    try {
+        const context = {
+            idea: writeState.idea,
+            interview: writeState.interview
+        };
+        
+        const prompt = `根據以下創作者訪談，生成一個完整的故事大綱。
+
+故事靈感：${JSON.stringify(writeState.idea)}
+創作者回答：${JSON.stringify(writeState.interview)}
+
+請輸出JSON格式：
+{
+  "title": "故事標題",
+  "logline": "一句話概括",
+  "genre": "類型",
+  "setting": "背景設定",
+  "theme": "核心主題",
+  "chapters": [
+    {"number": 1, "title": "章節標題", "summary": "劇情概要（50字）", "hook": "章節亮點"}
+  ]
+}
+
+要求：
+- 根據故事複雜度，可以10-100章
+- 每章有明確的劇情推進
+- 每5-10章一個小高潮
+- 結尾要有大高潮和收尾
+- 如果是長篇，先規劃大綱結構（序幕/開端/發展/高潮/結局）`;
+        
+        updateProgress(30);
+        const result = await callAgent('narrative', prompt, context);
+        updateProgress(100);
+        
+        writeState.outline = safeJSONParse(result.replace(/```json\n?/g, '').replace(/```/g, ''), 'outline');
+        
+        removeProgressCard();
+        
+        const o = writeState.outline;
+        const chs = o.chapters || [];
+        
+        addAIMessage(`📝 **故事大綱**
+
+**《${o.title || '未命名'}》**
+${o.logline || ''}
+
+**類型**: ${o.genre || '待定'}
+**背景**: ${o.setting || '待定'}
+**主題**: ${o.theme || '待定'}
+
+---
+
+**章節規劃** (共${chs.length}章)：
+
+${chs.slice(0, 5).map(c => `**第${c.number}章 ${c.title}**\n${c.summary}`).join('\n\n')}
+${chs.length > 5 ? `\n\n...還有 ${chs.length - 5} 章` : ''}
+
+---
+
+確認大綱後，我會**逐章寫作**。`, [
+            { text: '✅ 開始寫第1章', action: () => startWritingChapters() },
+            { text: '📝 調整大綱', action: () => showAdjustWarning('outline', 3) },
+            { text: '💾 保存大綱', action: () => saveProgress('outline') }
+        ]);
+        
+    } catch (err) {
+        removeProgressCard();
+        recordError(err, '大綱生成');
+        showFriendlyError(err, '大綱生成', () => generateOutline());
+    }
+}
+
+// ==================== 逐章写作 ====================
+async function startWritingChapters() {
+    writeState.currentChapter = 0;
+    writeState.chapters = [];
+    await writeNextChapter();
+}
+
+async function writeNextChapter() {
+    const outline = writeState.outline;
+    const chs = outline.chapters || [];
+    
+    if (writeState.currentChapter >= chs.length) {
+        finishWriting();
+        return;
+    }
+    
+    const ch = chs[writeState.currentChapter];
+    const num = writeState.currentChapter + 1;
+    const total = chs.length;
+    
+    addProgressCard(`寫作第${num}章：${ch.title}`, 0);
+    
+    try {
+        // ========== 智能上下文构建 ==========
+        
+        // 1. 故事大纲（精简版）
+        const outlineContext = `【故事大綱】
+標題：${outline.title}
+類型：${outline.genre || ''}
+主題：${outline.theme || ''}
+一句話：${outline.logline || ''}`;
+        
+        // 2. 人物小传（如果有）
+        let characterContext = '';
+        if (state.characters?.characters) {
+            const mainChars = state.characters.characters.slice(0, 3);
+            characterContext = `\n【主要人物】\n` + mainChars.map(c => 
+                `${c.name}(${c.role || '角色'}): ${c.psychology?.want || ''} / ${c.psychology?.wound || ''}`
+            ).join('\n');
+        }
+        
+        // 3. 前文回顾（最近2-3章的结尾）
+        let prevContext = '';
+        if (writeState.chapters.length > 0) {
+            const recentChapters = writeState.chapters.slice(-3);
+            prevContext = `\n【前情回顧】\n` + recentChapters.map(c => {
+                const ending = c.content.slice(-800);  // 取每章最后800字
+                return `第${c.number}章《${c.title}》結尾：\n${ending}`;
+            }).join('\n---\n');
+        }
+        
+        // 4. 前后章节预览
+        let surroundingContext = '\n【章節脈絡】\n';
+        if (num > 1) {
+            const prevCh = chs[num - 2];
+            surroundingContext += `上一章(${num-1})：${prevCh.title} - ${prevCh.summary}\n`;
+        }
+        surroundingContext += `▶ 本章(${num})：${ch.title} - ${ch.summary}\n`;
+        if (num < total) {
+            const nextCh = chs[num];
+            surroundingContext += `下一章(${num+1})：${nextCh.title} - ${nextCh.summary}\n`;
+        }
+        surroundingContext += `章節亮點：${ch.hook || '無'}`;
+        
+        // 5. 构建完整prompt
+        const prompt = `你是專業小說作家。請撰寫第${num}章（共${total}章）。
+
+${outlineContext}
+${characterContext}
+${surroundingContext}
+${prevContext ? prevContext.substring(0, 2000) : ''}
+
+【寫作要求】
+- 字數：1500-2500字
+- 包含場景描寫、對話、心理活動
+- 保持人物性格一致
+- 承接上文，鋪墊下文
+- 章節結尾留懸念或情感高潮
+- 直接輸出正文，不要標題和解釋`;
+
+        updateProgress(50);
+        const result = await callAgent('screenwriter', prompt);
+        updateProgress(100);
+        
+        // 保存章节
+        writeState.chapters.push({
+            number: num,
+            title: ch.title,
+            content: result,
+            timestamp: new Date().toISOString()
+        });
+        
+        // ========== 自动保存 ==========
+        autoSaveProject();
+        
+        removeProgressCard();
+        
+        const wordsWritten = result.length;
+        const totalWords = writeState.chapters.reduce((sum, c) => sum + c.content.length, 0);
+        
+        addAIMessage(`✅ **第${num}章《${ch.title}》** 完成！
+
+${result.substring(0, 400)}...
+
+---
+📊 本章 ${wordsWritten} 字 | 總計 ${totalWords.toLocaleString()} 字
+📈 進度 ${num}/${total} 章 (${Math.round(num/total*100)}%)`, [
+            { text: `▶️ 繼續第${num + 1}章`, action: () => { writeState.currentChapter++; writeNextChapter(); } },
+            { text: '📖 閱讀全文', action: () => showChapterContent(num) },
+            { text: '✏️ 修改本章', action: () => editChapter(num) },
+            { text: '⏸️ 暫停', action: () => pauseWriting() }
+        ]);
+        
+    } catch (err) {
+        removeProgressCard();
+        // 保存已有进度
+        autoSaveProject();
+        const info = friendlyError(err, '章節寫作');
+        addAIMessage(`${info.title} - 第${num}章
+
+**可能原因**: ${info.reason}
+
+✅ **好消息**: 已自動保存前${num-1}章的進度！
+
+**建議**:
+${info.solutions.slice(0, 2).map(s => `• ${s}`).join('\n')}`, [
+            { text: '🔄 重試本章', action: () => writeNextChapter() },
+            { text: '📂 查看已保存項目', action: () => showProjectList() }
+        ]);
+    }
+}
+
+// 自动保存（静默）
+function autoSaveProject() {
+    const projects = getProjects();
+    const projectName = writeState.outline?.title || `項目_${Date.now()}`;
+    const projectId = projectName.replace(/\s+/g, '_').toLowerCase();
+    
+    projects[projectId] = {
+        id: projectId,
+        name: projectName,
+        stage: 'write',
+        timestamp: new Date().toISOString(),
+        idea: writeState.idea,
+        interview: writeState.interview,
+        outline: writeState.outline,
+        chapters: writeState.chapters,
+        writeStoryboard: writeState.storyboard,
+        novel: state.novel,
+        novelTitle: state.novelTitle,
+        concept: state.concept,
+        characters: state.characters
+    };
+    
+    localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+    console.log(`💾 自動保存: ${projectName} (${writeState.chapters.length}章)`);
+}
+
+// 显示章节内容
+function showChapterContent(num) {
+    const ch = writeState.chapters.find(c => c.number === num);
+    if (!ch) return;
+    
+    addAIMessage(`📖 **第${num}章《${ch.title}》**
+
+${ch.content}
+
+---
+字數：${ch.content.length}`, [
+        { text: '✏️ 修改', action: () => editChapter(num) },
+        { text: '🔙 返回', action: () => {} }
+    ]);
+}
+
+// 编辑章节
+function editChapter(num) {
+    const ch = writeState.chapters.find(c => c.number === num);
+    if (!ch) return;
+    
+    addAIMessage(`✏️ **編輯第${num}章**
+
+請直接輸入修改意見或新的內容：
+- 輸入「重寫」- 重新生成整章
+- 輸入修改意見 - AI幫你修改
+- 直接貼上新內容 - 替換整章`, [
+        { text: '🔄 重寫整章', action: () => rewriteChapter(num) },
+        { text: '🔙 取消', action: () => {} }
+    ]);
+    
+    // 设置编辑状态
+    state.editingChapter = num;
+}
+
+async function rewriteChapter(num) {
+    // 删除这章，重新写
+    writeState.chapters = writeState.chapters.filter(c => c.number !== num);
+    writeState.currentChapter = num - 1;
+    await writeNextChapter();
+}
+
+function pauseWriting() {
+    saveProgress('chapters');
+    addAIMessage(`⏸️ 已暫停寫作
+
+**進度**: ${writeState.chapters.length}/${writeState.outline?.chapters?.length || 0} 章已完成
+
+隨時可以繼續：`, [
+        { text: '▶️ 繼續寫作', action: () => { writeState.currentChapter++; writeNextChapter(); } },
+        { text: '🎬 先生成分鏡', action: () => convertToStoryboard() },
+        { text: '📥 導出已完成章節', action: () => exportNovel() }
+    ]);
+}
+
+function finishWriting() {
+    const totalWords = writeState.chapters.reduce((sum, c) => sum + c.content.length, 0);
+    
+    addAIMessage(`🎉 **小說寫作完成！**
+
+**《${writeState.outline?.title || '未命名'}》**
+- 共 ${writeState.chapters.length} 章
+- 約 ${totalWords.toLocaleString()} 字
+
+接下來可以：`, [
+        { text: '🎬 轉換成分鏡', action: () => convertToStoryboard() },
+        { text: '📥 導出小說', action: () => exportNovel() },
+        { text: '💾 保存全部', action: () => saveProgress('complete') }
+    ]);
+}
+
+// ==================== 转分镜 ====================
+async function convertToStoryboard() {
+    addProgressCard('轉換為分鏡表', 0);
+    
+    try {
+        const novelText = writeState.chapters.map(c => `【第${c.number}章 ${c.title}】\n${c.content}`).join('\n\n');
+        
+        state.novel = novelText;
+        state.novelTitle = writeState.outline?.title || '未命名';
+        state.concept = writeState.outline;
+        
+        updateProgress(30);
+        
+        // 先生成角色
+        const charResult = await callAgent('character', novelText.substring(0, 4000));
+        state.characters = safeJSONParse(charResult.replace(/```json\n?/g, '').replace(/```/g, ''), 'characters');
+        
+        updateProgress(60);
+        
+        // 生成分镜
+        const sbResult = await callAgent('storyboard', novelText.substring(0, 3000), {
+            concept: state.concept,
+            characters: state.characters
+        });
+        
+        writeState.storyboard = sbResult;
+        state.storyboard = sbResult;
+        
+        updateProgress(100);
+        removeProgressCard();
+        
+        addAIMessage(`🎬 **分鏡表生成完成！**
+
+角色：${(state.characters?.characters || []).length} 個
+分鏡：已生成
+
+全部資料準備就緒！`, [
+            { text: '📥 導出Excel', action: () => exportExcel() },
+            { text: '📥 導出JSON', action: () => exportAll() },
+            { text: '💾 保存項目', action: () => saveProgress('complete') }
+        ]);
+        
+    } catch (err) {
+        removeProgressCard();
+        recordError(err, '分鏡轉換');
+        showFriendlyError(err, '分鏡轉換', () => convertToStoryboard());
+    }
+}
+
+// ==================== 项目管理 ====================
+const PROJECTS_KEY = 'fizzdragon_projects';
+
+function getProjects() {
+    try {
+        return JSON.parse(localStorage.getItem(PROJECTS_KEY) || '{}');
+    } catch {
+        return {};
+    }
+}
+
+function saveProject(name = null) {
+    const projects = getProjects();
+    const projectName = name || writeState.outline?.title || `項目_${Date.now()}`;
+    const projectId = projectName.replace(/\s+/g, '_').toLowerCase();
+    
+    projects[projectId] = {
+        id: projectId,
+        name: projectName,
+        stage: state.mode === 'write' ? 'write' : 'import',
+        timestamp: new Date().toISOString(),
+        // 写作模式数据
+        idea: writeState.idea,
+        interview: writeState.interview,
+        outline: writeState.outline,
+        chapters: writeState.chapters,
+        writeStoryboard: writeState.storyboard,
+        // 导入模式数据
+        novel: state.novel,
+        novelTitle: state.novelTitle,
+        concept: state.concept,
+        importInterview: state.interview,
+        characters: state.characters,
+        storyboard: state.storyboard
+    };
+    
+    localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+    
+    addAIMessage(`💾 **項目已保存！**
+
+**名稱**: ${projectName}
+**時間**: ${new Date().toLocaleString()}
+**章節**: ${writeState.chapters?.length || 0} 章
+
+可在「項目列表」中查看所有項目。`, [
+        { text: '📂 查看所有項目', action: () => showProjectList() }
+    ]);
+    
+    return projectId;
+}
+
+function showProjectList() {
+    const projects = getProjects();
+    const list = Object.values(projects);
+    
+    if (list.length === 0) {
+        addAIMessage(`📂 **項目列表**
+
+還沒有保存的項目。
+
+開始創作後點擊「💾 保存」即可保存項目。`, [
+            { text: '✍️ 創作小說', action: () => startWriteMode() },
+            { text: '📄 導入小說', action: () => document.getElementById('fileInput').click() }
+        ]);
+        return;
+    }
+    
+    const projectList = list
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 10)
+        .map(p => {
+            const date = new Date(p.timestamp).toLocaleDateString();
+            const chapters = p.chapters?.length || 0;
+            return `**${p.name}** (${date})\n   ${chapters}章 | ${p.stage === 'write' ? '創作' : '導入'}`;
+        })
+        .join('\n\n');
+    
+    addAIMessage(`📂 **項目列表** (${list.length}個)
+
+${projectList}
+
+選擇要打開的項目：`, list.slice(0, 5).map(p => ({
+        text: `📖 ${p.name}`,
+        action: () => loadProject(p.id)
+    })).concat([
+        { text: '🆕 新建項目', action: () => showStartOptions() },
+        { text: '🗑️ 管理項目', action: () => manageProjects() }
+    ]));
+}
+
+function loadProject(projectId) {
+    const projects = getProjects();
+    const p = projects[projectId];
+    
+    if (!p) {
+        addAIMessage(`❌ 項目不存在`);
+        return;
+    }
+    
+    // 恢复写作模式状态
+    writeState.idea = p.idea;
+    writeState.interview = p.interview;
+    writeState.outline = p.outline;
+    writeState.chapters = p.chapters || [];
+    writeState.storyboard = p.writeStoryboard;
+    
+    // 恢复导入模式状态
+    state.novel = p.novel;
+    state.novelTitle = p.novelTitle;
+    state.concept = p.concept;
+    state.interview = p.importInterview;
+    state.characters = p.characters;
+    state.storyboard = p.storyboard;
+    state.mode = p.stage;
+    
+    const chs = p.outline?.chapters || [];
+    const completed = p.chapters?.length || 0;
+    
+    addAIMessage(`📖 **已載入項目**
+
+**《${p.name}》**
+- 模式：${p.stage === 'write' ? '創作' : '導入'}
+- 進度：${completed}/${chs.length || '?'} 章
+- 上次編輯：${new Date(p.timestamp).toLocaleString()}`, [
+        { text: '▶️ 繼續', action: () => p.stage === 'write' ? continueWriteProject() : continueImportProject() },
+        { text: '🎬 生成分鏡', action: () => convertToStoryboard() },
+        { text: '📥 導出', action: () => showExportOptions() }
+    ]);
+}
+
+function continueWriteProject() {
+    const chs = writeState.outline?.chapters || [];
+    const completed = writeState.chapters?.length || 0;
+    const total = chs.length;
+    const totalWords = writeState.chapters.reduce((sum, c) => sum + (c.content?.length || 0), 0);
+    
+    if (completed >= total) {
+        addAIMessage(`✅ **小說已完成！**
+
+**《${writeState.outline?.title}》**
+- 共 ${total} 章
+- 約 ${totalWords.toLocaleString()} 字
+
+可以轉換分鏡或導出：`, [
+            { text: '🎬 轉換分鏡', action: () => convertToStoryboard() },
+            { text: '📥 導出小說', action: () => exportNovel() },
+            { text: '📊 導出Excel', action: () => exportExcel() }
+        ]);
+    } else {
+        writeState.currentChapter = completed;
+        const nextCh = chs[completed];
+        
+        addAIMessage(`▶️ **繼續寫作**
+
+**《${writeState.outline?.title}》**
+
+📊 進度：${completed}/${total} 章 (${Math.round(completed/total*100)}%)
+📝 已寫：${totalWords.toLocaleString()} 字
+📖 下一章：第${completed + 1}章《${nextCh?.title || ''}》
+
+我會自動加載：
+1. ✅ 故事大綱
+2. ✅ 人物小傳
+3. ✅ 前文回顧
+4. ✅ 章節脈絡
+
+準備好繼續了嗎？`, [
+            { text: `▶️ 開始寫第${completed + 1}章`, action: () => writeNextChapter() },
+            { text: '📖 查看大綱', action: () => showOutline() },
+            { text: '📚 查看已寫章節', action: () => showWrittenChapters() }
+        ]);
+    }
+}
+
+function showWrittenChapters() {
+    const chapters = writeState.chapters || [];
+    
+    if (chapters.length === 0) {
+        addAIMessage(`還沒有寫任何章節。`);
+        return;
+    }
+    
+    const list = chapters.map(c => 
+        `**第${c.number}章《${c.title}》** (${c.content?.length || 0}字)`
+    ).join('\n');
+    
+    addAIMessage(`📚 **已完成章節**
+
+${list}
+
+點擊查看詳情：`, chapters.slice(-5).map(c => ({
+        text: `📖 第${c.number}章`,
+        action: () => showChapterContent(c.number)
+    })));
+}
+
+function continueImportProject() {
+    console.log('continueImportProject:', { step: state.step, novel: !!state.novel, concept: !!state.concept, chapters: !!state.chapters, characters: !!state.characters, storyboard: !!state.storyboard });
+    
+    // 保存当前进度
+    saveProject();
+    
+    // 🔧 根据当前状态自动继续下一步
+    if (state.storyboard && state.storyboard.shots?.length > 0) {
+        const shotCount = state.storyboard.shots?.length || 0;
+        addAIMessage(`✅ **分鏡表已完成！** 共 ${shotCount} 個鏡頭
+
+可以導出或重新生成：`, [
+            { text: '📥 導出Excel', action: () => exportExcel() },
+            { text: '📥 導出JSON', action: () => exportAll() },
+            { text: '🔄 重新生成分鏡', action: () => runStoryboardStep() }
+        ]);
+    } else if (state.characters?.characters?.length > 0) {
+        const charCount = state.characters.characters.length;
+        addAIMessage(`👤 已設計 ${charCount} 個角色，正在生成分鏡...`);
+        setTimeout(() => runStoryboardStep(), 500);
+    } else if (state.chapters?.chapters?.length > 0) {
+        const chapterCount = state.chapters.chapters.length;
+        addAIMessage(`📝 已規劃 ${chapterCount} 章，正在設計角色...`);
+        setTimeout(() => runCharacterStep(), 500);
+    } else if (state.concept?.genre || state.concept?.theme) {
+        addAIMessage(`📖 概念分析完成，正在規劃章節...`);
+        setTimeout(() => runChaptersStep(), 500);
+    } else if (state.novel) {
+        addAIMessage(`📄 小說已導入（${state.novel.length}字），正在分析概念...`);
+        setTimeout(() => runConceptStep(), 500);
+    } else {
+        addAIMessage(`📝 請先導入小說或輸入故事內容：`, [
+            { text: '📄 導入小說文件', action: () => document.getElementById('fileInput').click() },
+            { text: '📝 直接輸入故事', action: () => addAIMessage('請直接輸入或粘貼你的故事內容（100字以上）') }
+        ]);
+    }
+}
+
+function manageProjects() {
+    const projects = getProjects();
+    const list = Object.values(projects);
+    
+    addAIMessage(`🗑️ **管理項目**
+
+選擇要刪除的項目：`, list.map(p => ({
+        text: `❌ 刪除 ${p.name}`,
+        action: () => deleteProject(p.id)
+    })).concat([
+        { text: '🔙 返回列表', action: () => showProjectList() }
+    ]));
+}
+
+function deleteProject(projectId) {
+    const projects = getProjects();
+    const name = projects[projectId]?.name;
+    delete projects[projectId];
+    localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+    
+    addAIMessage(`🗑️ 已刪除項目「${name}」`, [
+        { text: '📂 返回列表', action: () => showProjectList() }
+    ]);
+}
+
+function showExportOptions() {
+    addAIMessage(`📥 **導出選項**`, [
+        { text: '📄 導出小說 (TXT)', action: () => exportNovel() },
+        { text: '📊 導出Excel', action: () => exportExcel() },
+        { text: '📦 導出全部 (JSON)', action: () => exportAll() }
+    ]);
+}
+
+// 兼容旧的保存函数
+function saveProgress(stage) {
+    saveProject();
+}
+
+function loadProgress() {
+    // 兼容旧版本：检查单一保存
+    const oldSave = localStorage.getItem('ai_drama_write_progress');
+    if (oldSave) {
+        try {
+            const data = JSON.parse(oldSave);
+            // 迁移到新系统
+            if (data.outline) {
+                const projects = getProjects();
+                const id = (data.outline.title || 'migrated').replace(/\s+/g, '_').toLowerCase();
+                projects[id] = {
+                    id,
+                    name: data.outline?.title || '遷移項目',
+                    ...data
+                };
+                localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+                localStorage.removeItem('ai_drama_write_progress');
+                return projects[id];
+            }
+        } catch {}
+    }
+    
+    // 返回最近的项目
+    const projects = getProjects();
+    const list = Object.values(projects);
+    if (list.length > 0) {
+        return list.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+    }
+    return null;
+}
+
+function exportNovel() {
+    const content = writeState.chapters.map(c => 
+        `# 第${c.number}章 ${c.title}\n\n${c.content}`
+    ).join('\n\n---\n\n');
+    
+    const blob = new Blob([`# ${writeState.outline?.title || '未命名'}\n\n${content}`], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${writeState.outline?.title || '小說'}.txt`;
+    a.click();
+    
+    addAIMessage(`📥 已導出小說：${writeState.outline?.title || '小說'}.txt`);
+}
+
+function exportExcel() {
+    // 准备数据
+    const rows = [];
+    
+    // 添加章节信息
+    rows.push(['章節', '標題', '概要']);
+    (writeState.outline?.chapters || []).forEach(ch => {
+        rows.push([`第${ch.number}章`, ch.title, ch.summary]);
+    });
+    
+    rows.push([]);
+    rows.push(['角色', '類型', '描述', 'AI Prompt']);
+    (state.characters?.characters || []).forEach(c => {
+        rows.push([c.name, c.role || '', c.psychology?.want || '', c.ai_prompt || '']);
+    });
+    
+    // 使用SheetJS导出
+    if (typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, '故事資料');
+        XLSX.writeFile(wb, `${writeState.outline?.title || '故事'}_分鏡表.xlsx`);
+        addAIMessage(`📥 已導出Excel：${writeState.outline?.title || '故事'}_分鏡表.xlsx`);
+    } else {
+        // 降级为CSV
+        const csv = rows.map(r => r.join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${writeState.outline?.title || '故事'}_分鏡表.csv`;
+        a.click();
+        addAIMessage(`📥 已導出CSV：${writeState.outline?.title || '故事'}_分鏡表.csv`);
+    }
+}
+
+// ==================== 消息UI ====================
+function addUserMessage(text) {
+    const container = document.getElementById('chatContainer');
+    const msg = document.createElement('div');
+    msg.className = 'message user';
+    msg.innerHTML = `<div class="role">你</div><div class="content">${escapeHtml(text)}</div>`;
+    container.appendChild(msg);
+    scrollToBottom();
+}
+
+function addAIMessage(text, quickReplies = []) {
+    const container = document.getElementById('chatContainer');
+    const msg = document.createElement('div');
+    msg.className = 'message ai';
+    
+    let html = `<div class="role">🎬 AIGC番劇助手</div><div class="content">${formatMessage(text)}</div>`;
+    
+    if (quickReplies.length > 0) {
+        html += '<div class="quick-replies">';
+        quickReplies.forEach((r, i) => {
+            html += `<button class="quick-reply" onclick="handleQuickReply(${i})">${r.text}</button>`;
+        });
+        html += '</div>';
+        window._quickReplies = quickReplies;
+    }
+    
+    msg.innerHTML = html;
+    container.appendChild(msg);
+    scrollToBottom();
+    return msg;
+}
+
+function addTypingIndicator() {
+    const container = document.getElementById('chatContainer');
+    const msg = document.createElement('div');
+    msg.className = 'message ai';
+    msg.id = 'typingIndicator';
+    msg.innerHTML = `<div class="role">🎬 AIGC番劇助手</div><div class="typing"><span></span><span></span><span></span></div>`;
+    container.appendChild(msg);
+    scrollToBottom();
+}
+
+function removeTypingIndicator() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+}
+
+function addProgressCard(title, progress = 0) {
+    const container = document.getElementById('chatContainer');
+    const card = document.createElement('div');
+    card.className = 'message ai';
+    card.id = 'progressCard';
+    card.innerHTML = `
+        <div class="role">🎬 AIGC番劇助手</div>
+        <div class="progress-card">
+            <div class="progress-header">
+                <span>${title}</span>
+                <span id="progressPercent">${progress}%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: ${progress}%"></div>
+            </div>
+        </div>
+    `;
+    container.appendChild(card);
+    scrollToBottom();
+}
+
+function updateProgress(progress) {
+    const fill = document.getElementById('progressFill');
+    const percent = document.getElementById('progressPercent');
+    if (fill) fill.style.width = progress + '%';
+    if (percent) percent.textContent = progress + '%';
+}
+
+function removeProgressCard() {
+    const el = document.getElementById('progressCard');
+    if (el) el.remove();
+}
+
+function formatMessage(text) {
+    // 简单的markdown支持
+    return text
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// 友好的错误提示（告诉用户原因和解决方法）
+function friendlyError(err, step) {
+    const msg = err.message || String(err);
+    
+    // 分析错误类型
+    if (msg.includes('timeout') || msg.includes('Timeout') || msg.includes('超時')) {
+        return {
+            title: '⏱️ 處理時間較長',
+            reason: 'AI正在深度思考，但花了比預期更長的時間',
+            solutions: [
+                '稍等片刻後重試',
+                '如果內容較長，可以嘗試縮短輸入',
+                '網絡可能較慢，換個時間試試'
+            ]
+        };
+    }
+    
+    if (msg.includes('JSON') || msg.includes('parse') || msg.includes('Unexpected')) {
+        return {
+            title: '📋 格式解析問題',
+            reason: 'AI回覆的格式不太標準，系統正在學習處理',
+            solutions: [
+                '直接重試通常就能解決',
+                '這是AI偶爾的小脾氣，不影響後續'
+            ]
+        };
+    }
+    
+    if (msg.includes('network') || msg.includes('fetch') || msg.includes('連接')) {
+        return {
+            title: '🌐 網絡連接問題',
+            reason: '與AI服務的連接暫時中斷',
+            solutions: [
+                '檢查網絡連接',
+                '稍後重試',
+                '如持續失敗，可能是服務維護中'
+            ]
+        };
+    }
+    
+    if (msg.includes('API') || msg.includes('401') || msg.includes('403')) {
+        return {
+            title: '🔑 服務驗證問題',
+            reason: 'API密鑰可能需要更新',
+            solutions: [
+                '聯繫管理員檢查配置',
+                '稍後重試'
+            ]
+        };
+    }
+    
+    if (msg.includes('500') || msg.includes('502') || msg.includes('503')) {
+        return {
+            title: '🔧 服務暫時繁忙',
+            reason: 'AI服務正在處理大量請求',
+            solutions: [
+                '等待1-2分鐘後重試',
+                '高峰期可能需要多試幾次'
+            ]
+        };
+    }
+    
+    // 默认错误
+    return {
+        title: '⚠️ 遇到了小問題',
+        reason: msg.length > 100 ? msg.substring(0, 100) + '...' : msg,
+        solutions: [
+            '重試一次通常能解決',
+            '如果持續失敗，嘗試簡化輸入內容',
+            '或者先保存進度，稍後繼續'
+        ]
+    };
+}
+
+function showFriendlyError(err, step, retryAction) {
+    const info = friendlyError(err, step);
+    
+    addAIMessage(`${info.title}
+
+**可能原因**: ${info.reason}
+
+**建議**:
+${info.solutions.map(s => `• ${s}`).join('\n')}`, [
+        { text: '🔄 重試', action: retryAction },
+        { text: '💾 保存進度', action: () => saveProject() },
+        { text: '🆘 求助小助手', action: () => callHelpAgent() }
+    ]);
+}
+
+// ==================== 用户助手智能体 ====================
+let lastError = null;  // 记录最后的错误
+
+// 记录错误（在各个catch块中调用）
+function recordError(err, context) {
+    lastError = {
+        message: err.message || String(err),
+        context: context,
+        timestamp: new Date().toISOString(),
+        state: {
+            mode: state.mode,
+            step: state.step,
+            hasNovel: !!state.novel,
+            hasConcept: !!state.concept,
+            hasChapters: !!state.chapters,
+            hasCharacters: !!state.characters,
+            writeChapters: writeState.chapters?.length || 0
+        }
+    };
+}
+
+// 用户助手智能体
+async function callHelpAgent() {
+    const helpBtn = document.querySelector('.help-fab');
+    helpBtn.classList.add('loading');
+    helpBtn.textContent = '🔍';
+    
+    addAIMessage(`🆘 **用戶助手來幫忙了！**
+
+正在診斷系統狀態...`);
+    
+    // 收集诊断信息
+    const diagnosis = {
+        // 当前状态
+        mode: state.mode || '未開始',
+        step: state.step || 0,
+        
+        // 数据状态
+        hasNovel: !!state.novel,
+        novelLength: state.novel?.length || 0,
+        hasConcept: !!state.concept,
+        hasChapters: !!state.chapters || !!writeState.outline,
+        chapterCount: (state.chapters?.chapters || state.chapters?.episodes || writeState.outline?.chapters || []).length,
+        hasCharacters: !!state.characters,
+        characterCount: (state.characters?.characters || []).length,
+        writtenChapters: writeState.chapters?.length || 0,
+        hasStoryboard: !!state.storyboard,
+        
+        // API状态
+        apiConnected: API_BASE !== null,
+        apiEndpoint: API_BASE,
+        
+        // 最近错误
+        lastError: lastError
+    };
+    
+    // 分析问题并提供解决方案
+    const issues = [];
+    const fixes = [];
+    
+    // 检查API连接
+    if (!diagnosis.apiConnected) {
+        issues.push('❌ API未連接');
+        fixes.push({ text: '🔄 重新連接API', action: async () => {
+            await detectAPI();
+            addAIMessage(API_BASE ? '✅ API已重新連接！可以繼續了。' : '❌ 連接失敗，請檢查網絡');
+        }});
+    }
+    
+    // 检查数据完整性
+    if (diagnosis.mode === 'write' && diagnosis.hasNovel === false && !writeState.idea) {
+        issues.push('⚠️ 還沒有開始創作');
+        fixes.push({ text: '✍️ 開始創作', action: () => doStartWriteMode() });
+    }
+    
+    if (diagnosis.mode === 'import' && diagnosis.hasNovel && !diagnosis.hasConcept) {
+        issues.push('⚠️ 小說已導入但未分析');
+        fixes.push({ text: '📖 重新分析小說', action: () => runConceptStep() });
+    }
+    
+    if (diagnosis.hasConcept && !diagnosis.hasChapters && diagnosis.step >= 2) {
+        issues.push('⚠️ 章節規劃未完成');
+        fixes.push({ text: '📝 生成章節規劃', action: () => state.mode === 'write' ? generateOutline() : runChaptersStep() });
+    }
+    
+    if (diagnosis.hasChapters && !diagnosis.hasCharacters && diagnosis.step >= 4) {
+        issues.push('⚠️ 角色設計未完成');
+        fixes.push({ text: '👤 生成角色設計', action: () => runCharacterStep() });
+    }
+    
+    // 检查最近错误
+    if (lastError) {
+        issues.push(`⚠️ 最近錯誤: ${lastError.context}`);
+        
+        if (lastError.message.includes('timeout') || lastError.message.includes('Timeout')) {
+            fixes.push({ text: '⏱️ 延長超時重試', action: () => {
+                addAIMessage('已調整超時設置，請重試上一步操作。');
+            }});
+        }
+        
+        if (lastError.message.includes('JSON') || lastError.message.includes('parse')) {
+            fixes.push({ text: '🔄 清除緩存重試', action: () => {
+                lastError = null;
+                addAIMessage('已清除錯誤記錄，請重試上一步操作。');
+            }});
+        }
+    }
+    
+    // 生成诊断报告
+    helpBtn.classList.remove('loading');
+    helpBtn.textContent = '🆘';
+    
+    if (issues.length === 0) {
+        // 没有发现问题
+        addAIMessage(`✅ **診斷完成 - 系統正常！**
+
+**當前狀態**:
+• 模式: ${diagnosis.mode === 'write' ? '創作模式' : diagnosis.mode === 'import' ? '導入模式' : '未開始'}
+• 步驟: ${diagnosis.step}/5
+${diagnosis.hasNovel ? `• 小說: ${diagnosis.novelLength.toLocaleString()} 字` : ''}
+${diagnosis.chapterCount > 0 ? `• 章節: ${diagnosis.chapterCount} 章` : ''}
+${diagnosis.characterCount > 0 ? `• 角色: ${diagnosis.characterCount} 個` : ''}
+${diagnosis.writtenChapters > 0 ? `• 已寫: ${diagnosis.writtenChapters} 章` : ''}
+• API: ${diagnosis.apiConnected ? '已連接 ✅' : '未連接 ❌'}
+
+**沒有發現問題！** 如果遇到困難，請描述具體情況。`, [
+            { text: '▶️ 繼續創作', action: () => state.mode === 'write' ? continueWriteProject() : continueImportProject() },
+            { text: '🏠 返回主頁', action: () => showStartOptions() }
+        ]);
+    } else {
+        // 发现问题，提供修复选项
+        addAIMessage(`🔍 **診斷完成 - 發現 ${issues.length} 個問題**
+
+**問題列表**:
+${issues.map(i => `${i}`).join('\n')}
+
+**當前狀態**:
+• 模式: ${diagnosis.mode === 'write' ? '創作模式' : diagnosis.mode === 'import' ? '導入模式' : '未開始'}
+• 進度: ${diagnosis.step}/5
+• API: ${diagnosis.apiConnected ? '已連接 ✅' : '未連接 ❌'}
+
+點擊下方按鈕自動修復：`, fixes.concat([
+            { text: '🏠 返回主頁重新開始', action: () => {
+                resetWorkflowFromStep(0);
+                document.getElementById('chatContainer').innerHTML = '';
+                showStartOptions();
+            }}
+        ]));
+    }
+}
+
+function scrollToBottom() {
+    const container = document.getElementById('chatContainer');
+    setTimeout(() => container.scrollTop = container.scrollHeight, 100);
+}
+
+// ==================== 快捷回复 ====================
+function handleQuickReply(index) {
+    if (window._quickReplies && window._quickReplies[index]) {
+        const reply = window._quickReplies[index];
+        if (reply.action) {
+            reply.action();
+        } else if (reply.text) {
+            document.getElementById('userInput').value = reply.text;
+            sendMessage();
+        }
+    }
+}
+
+// ==================== 工作流重置 (DeepSeek风格) ====================
+// 检查是否有进行中的工作
+function hasActiveWork() {
+    // 检查对象是否有实际内容
+    const hasContent = (obj) => obj && Object.keys(obj).length > 0;
+    
+    const result = !!(
+        state.novel || 
+        state.concept || 
+        hasContent(state.interview) ||  // 检查是否有实际回答
+        state.chapters || 
+        state.characters || 
+        state.storyboard ||
+        writeState.idea ||
+        writeState.outline ||
+        hasContent(writeState.interview) ||  // 检查是否有实际回答
+        (writeState.chapters && writeState.chapters.length > 0)
+    );
+    
+    console.log('hasActiveWork:', result, { 
+        novel: !!state.novel, 
+        concept: !!state.concept, 
+        interview: hasContent(state.interview),
+        chapters: !!state.chapters,
+        idea: !!writeState.idea,
+        outline: !!writeState.outline
+    });
+    
+    return result;
+}
+
+// 重置工作流到指定步骤（清除该步骤及之后的所有数据）
+function resetWorkflowFromStep(stepNumber) {
+    console.log('resetWorkflowFromStep:', stepNumber);
+    // 步骤定义:
+    // 0: 初始状态（清空一切）
+    // 1: 导入/创意 完成，清除 concept 及之后
+    // 2: concept 完成，清除 interview 及之后  
+    // 3: interview 完成，清除 chapters 及之后
+    // 4: chapters 完成，清除 characters 及之后
+    // 5: characters 完成，清除 storyboard 及之后
+    
+    if (stepNumber <= 0) {
+        // 完全重置
+        state.novel = null;
+        state.novelTitle = '';
+        state.mode = null;
+        state.step = 0;
+        writeState.idea = null;
+        writeState.currentQuestion = null;
+    }
+    if (stepNumber <= 1) {
+        state.concept = null;
+        writeState.interview = {};
+    }
+    if (stepNumber <= 2) {
+        state.interview = {};
+        state.interviewQuestions = [];
+        state.currentQuestion = 0;
+    }
+    if (stepNumber <= 3) {
+        state.chapters = null;
+        writeState.outline = null;
+    }
+    if (stepNumber <= 4) {
+        state.characters = null;
+        writeState.chapters = [];
+        writeState.currentChapter = 0;
+    }
+    if (stepNumber <= 5) {
+        state.storyboard = null;
+        writeState.storyboard = null;
+    }
+    
+    state.step = stepNumber;
+    console.log(`工作流重置到步骤 ${stepNumber}`);
+}
+
+// 确认重置对话框
+function confirmResetAndImport(callback) {
+    if (!hasActiveWork()) {
+        callback();
+        return;
+    }
+    
+    // 有进行中的工作，需要确认
+    addAIMessage(`⚠️ **發現進行中的項目**
+
+當前有未保存的工作：
+${state.novelTitle || writeState.outline?.title || '未命名項目'}
+
+導入新小說會**清空當前所有進度**。
+
+確定要繼續嗎？`, [
+        { text: '💾 先保存當前項目', action: () => saveProject() },
+        { text: '🗑️ 放棄當前，導入新的', action: () => {
+            resetWorkflowFromStep(0);
+            document.getElementById('chatContainer').innerHTML = '';
+            callback();
+        }},
+        { text: '❌ 取消', action: () => showCurrentProgress() }
+    ]);
+}
+
+// 显示调整警告（修改前面的步骤会清空后续）
+function showAdjustWarning(stepName, stepNumber) {
+    const stepNames = {
+        'outline': '大綱',
+        'chapters': '章節規劃', 
+        'characters': '角色設計',
+        'interview': '訪談'
+    };
+    
+    const affectedSteps = [];
+    if (stepNumber <= 3) affectedSteps.push('章節規劃');
+    if (stepNumber <= 4) {
+        affectedSteps.push('角色設計');
+        if (writeState.chapters?.length > 0) {
+            affectedSteps.push(`已寫的 ${writeState.chapters.length} 章內容`);
+        }
+    }
+    if (stepNumber <= 5) affectedSteps.push('分鏡表');
+    
+    addAIMessage(`⚠️ **調整${stepNames[stepName] || stepName}**
+
+修改此步驟會**清空後續所有內容**：
+${affectedSteps.map(s => `• ${s}`).join('\n')}
+
+確定要調整嗎？`, [
+        { text: `✏️ 確定調整${stepNames[stepName] || stepName}`, action: () => {
+            resetWorkflowFromStep(stepNumber);
+            // 根据步骤类型，显示相应的调整界面
+            if (stepName === 'outline') {
+                addAIMessage(`📝 請描述你想如何調整大綱：
+- 整體結構
+- 章節數量
+- 故事走向
+- 其他要求`);
+            } else if (stepName === 'chapters') {
+                runChaptersStep();
+            } else if (stepName === 'characters') {
+                runCharacterStep();
+            }
+        }},
+        { text: '❌ 取消', action: () => showCurrentProgress() }
+    ]);
+}
+
+// 显示当前进度
+function showCurrentProgress() {
+    const title = state.novelTitle || writeState.outline?.title || '未命名';
+    const mode = state.mode === 'write' ? '創作模式' : '導入模式';
+    const chaptersCount = writeState.chapters?.length || 0;
+    
+    let progress = [];
+    if (state.novel || writeState.idea) progress.push('✅ 故事靈感');
+    if (state.concept) progress.push('✅ 概念分析');
+    if (Object.keys(state.interview || {}).length > 0 || Object.keys(writeState.interview || {}).length > 0) progress.push('✅ 訪談');
+    if (state.chapters || writeState.outline) progress.push('✅ 章節規劃');
+    if (state.characters) progress.push('✅ 角色設計');
+    if (chaptersCount > 0) progress.push(`✅ 已寫 ${chaptersCount} 章`);
+    if (state.storyboard) progress.push('✅ 分鏡表');
+    
+    addAIMessage(`📊 **當前進度**
+
+**《${title}》** - ${mode}
+
+${progress.join('\n') || '剛開始'}
+
+繼續當前工作：`, [
+        { text: '▶️ 繼續', action: () => state.mode === 'write' ? continueWriteProject() : continueImportProject() },
+        { text: '💾 保存項目', action: () => saveProject() }
+    ]);
+}
+
+// ==================== 文件导入 ====================
+document.getElementById('fileInput').addEventListener('change', async (e) => {
+    console.log('📁 文件选择触发');
+    const file = e.target.files[0];
+    if (!file) {
+        console.log('📁 没有选择文件');
+        return;
+    }
+    console.log('📁 文件:', file.name, file.size, 'bytes');
+    
+    // 检查是否有进行中的工作
+    if (hasActiveWork()) {
+        e.target.value = ''; // 清空文件输入
+        confirmResetAndImport(() => {
+            // 重新触发文件选择
+            document.getElementById('fileInput').click();
+        });
+        return;
+    }
+    
+    addUserMessage(`📄 導入文件: ${file.name}`);
+    addTypingIndicator();
+    
+    try {
+        let text = '';
+        const ext = file.name.split('.').pop().toLowerCase();
+        
+        if (ext === 'txt') {
+            text = await file.text();
+        } else if (ext === 'docx') {
+            const arrayBuffer = await file.arrayBuffer();
+            const result = await mammoth.extractRawText({ arrayBuffer });
+            text = result.value;
+        } else if (ext === 'pdf') {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                text += content.items.map(item => item.str).join(' ') + '\n';
+            }
+        }
+        
+        state.novel = text;
+        state.novelTitle = file.name.replace(/\.[^/.]+$/, '');
+        state.step = 1;
+        state.mode = 'import';  // 🔧 修复Bug#1: 设置导入模式
+        console.log('📁 状态已设置:', { mode: state.mode, step: state.step, title: state.novelTitle, novelLen: text.length });
+        
+        removeTypingIndicator();
+        
+        const preview = text.substring(0, 200) + (text.length > 200 ? '...' : '');
+        addAIMessage(`✅ 成功導入《${state.novelTitle}》
+
+**字數**: ${text.length.toLocaleString()} 字
+**預覽**: ${preview}
+
+我正在閱讀和分析這部作品，請稍等...`);
+        
+        // 自动开始概念提取
+        await runConceptStep();
+        
+    } catch (err) {
+        removeTypingIndicator();
+        addAIMessage(`📄 **文件讀取遇到問題**
+
+**可能原因**: 
+• 文件格式不支持（目前支持 .txt, .docx, .pdf）
+• 文件可能已損壞或加密
+• 文件太大（建議 < 5MB）
+
+**建議**:
+• 嘗試另存為 .txt 格式後重新導入
+• 確認文件可以正常打開`, [
+            { text: '📄 重新選擇文件', action: () => document.getElementById('fileInput').click() },
+            { text: '✍️ 改用創作模式', action: () => startWriteMode() }
+        ]);
+    }
+});
+
+// ==================== 快速生成（跳过访谈）====================
+async function quickGenerate() {
+    addAIMessage(`⚡ **快速生成模式**
+
+正在自動完成所有步驟...`);
+    
+    addProgressCard('快速生成分鏡', 0);
+    
+    try {
+        // 步骤1: 章节规划
+        updateProgress(20);
+        showAgentStatus('📝 章節規劃師', '規劃故事結構...');
+        const chaptersResult = await callAgent('narrative', state.novel.substring(0, 5000), { concept: state.concept });
+        state.chapters = safeJSONParse(chaptersResult, 'chapters');
+        state.step = 4;
+        
+        // 步骤2: 角色设计
+        updateProgress(50);
+        showAgentStatus('👤 角色設計師', '設計角色...');
+        const charactersResult = await callAgent('character', state.novel.substring(0, 4000), { concept: state.concept, chapters: state.chapters });
+        state.characters = safeJSONParse(charactersResult, 'characters');
+        state.step = 5;
+        
+        // 步骤3: 分镜生成
+        updateProgress(80);
+        showAgentStatus('🎬 分鏡導演', '生成分鏡表...');
+        const storyboardResult = await callAgent('storyboard', state.novel.substring(0, 3000), { concept: state.concept, chapters: state.chapters, characters: state.characters });
+        state.storyboard = storyboardResult;
+        
+        updateProgress(100);
+        removeProgressCard();
+        hideAgentStatus();
+        
+        const eps = state.chapters?.chapters || state.chapters?.episodes || [];
+        const chars = state.characters?.characters || [];
+        
+        addAIMessage(`✅ **快速生成完成！**
+
+📊 **生成結果**：
+• 章節：${eps.length} 集
+• 角色：${chars.length} 個
+• 分鏡：已生成
+
+接下來：`, [
+            { text: '📥 導出Excel', action: () => exportExcel() },
+            { text: '📥 導出JSON', action: () => exportAll() },
+            { text: '👀 查看詳情', action: () => showGeneratedDetails() }
+        ]);
+        
+    } catch (err) {
+        removeProgressCard();
+        hideAgentStatus();
+        recordError(err, '快速生成');
+        showFriendlyError(err, '快速生成', () => quickGenerate());
+    }
+}
+
+function showGeneratedDetails() {
+    const eps = state.chapters?.chapters || state.chapters?.episodes || [];
+    const chars = state.characters?.characters || [];
+    
+    let details = `📋 **生成詳情**\n\n**章節列表**：\n`;
+    eps.slice(0, 5).forEach((ep, i) => {
+        details += `• 第${i+1}集：${ep.title || ep.name || '未命名'}\n`;
+    });
+    if (eps.length > 5) details += `• ...還有 ${eps.length - 5} 集\n`;
+    
+    details += `\n**角色列表**：\n`;
+    chars.slice(0, 5).forEach(c => {
+        details += `• ${c.name}（${c.role || '角色'}）\n`;
+    });
+    if (chars.length > 5) details += `• ...還有 ${chars.length - 5} 個角色\n`;
+    
+    addAIMessage(details, [
+        { text: '📥 導出', action: () => exportAll() },
+        { text: '🔄 重新生成', action: () => quickGenerate() }
+    ]);
+}
+
+// ==================== 步骤执行 ====================
+async function runConceptStep() {
+    addTypingIndicator();
+    
+    try {
+        const result = await callAgent('concept', state.novel.substring(0, 4000));
+        state.concept = safeJSONParse(result, 'concept');
+        state.step = 1;  // 标记概念分析完成
+        
+        removeTypingIndicator();
+        
+        const c = state.concept;
+        addAIMessage(`📖 **分析完成！**《${state.novelTitle}》
+
+**類型**: ${c.genre || '待定'}
+**主題**: ${c.theme || '待定'}
+**情感基調**: ${c.tone || '待定'}
+**概括**: ${c.logline || '待定'}
+
+⏳ 自動進入下一步：規劃章節...`);
+        
+        // 🔧 修复Bug#2: 自动继续下一步，不再等待用户选择
+        saveProject();
+        setTimeout(() => runChaptersStep(), 1000);
+        
+    } catch (err) {
+        removeTypingIndicator();
+        recordError(err, '概念分析');
+        showFriendlyError(err, '概念分析', () => runConceptStep());
+    }
+}
+
+async function startInterview() {
+    // 生成访谈问题 - 调用访谈智能体
+    addTypingIndicator();
+    showAgentStatus('🎤 訪談師', '分析故事，設計問題...');
+    
+    try {
+        const result = await callAgent('interview', state.novel.substring(0, 3000), {
+            concept: state.concept
+        });
+        
+        console.log('訪談Agent返回:', result?.substring(0, 200));
+        
+        // 解析问题
+        const questions = extractQuestions(result);
+        console.log('提取到問題:', questions);
+        
+        if (questions.length > 0) {
+            state.interviewQuestions = questions;
+            state.currentQuestion = 0;
+            
+            removeTypingIndicator();
+            hideAgentStatus();
+            
+            addAIMessage(`🎤 **訪談師** 根據你的故事設計了 ${questions.length} 個針對性問題：`);
+            
+            // 问第一个问题
+            setTimeout(() => askNextQuestion(), 500);
+        } else {
+            throw new Error('未能提取到問題');
+        }
+        
+    } catch (err) {
+        console.error('訪談生成失敗:', err);
+        removeTypingIndicator();
+        hideAgentStatus();
+        
+        // 使用默认问题
+        state.interviewQuestions = [
+            '你創作這個故事的初衷是什麼？想傳達什麼核心信息？',
+            '故事中哪個角色最打動你？為什麼？',
+            '你希望觀眾看完後有什麼感受？',
+            '有參考過其他作品的風格嗎？',
+            '對視覺呈現有什麼想法？'
+        ];
+        state.currentQuestion = 0;
+        
+        addAIMessage(`⚠️ 訪談師暫時離線，使用通用問題：
+
+我會問你 5 個問題，幫助我更好地理解你的創作意圖。`);
+        
+        setTimeout(() => askNextQuestion(), 500);
+    }
+}
+
+function extractQuestions(text) {
+    // 提取问题列表 - 支持多种格式
+    const questions = [];
+    
+    // 方法1: 优先提取「」引号内的问题
+    const quoted = text.match(/「([^」]+[？?])」/g);
+    if (quoted) {
+        quoted.forEach(q => {
+            const clean = q.replace(/[「」]/g, '').trim();
+            if (clean.length > 5 && !questions.includes(clean)) {
+                questions.push(clean);
+            }
+        });
+    }
+    
+    // 如果已经提取到足够的问题，直接返回
+    if (questions.length >= 5) {
+        return questions.slice(0, 5);
+    }
+    
+    // 方法2: 提取其他包含问号的句子（去重）
+    const lines = text.split('\n');
+    for (const line of lines) {
+        if ((line.includes('?') || line.includes('？')) && line.length > 10) {
+            // 清理格式
+            let clean = line.replace(/^[\d\.\)、\-\*\s]+/, '').trim();
+            clean = clean.replace(/^\*\*[^*]+\*\*\s*/, ''); // 移除**标题**
+            clean = clean.replace(/^「|」$/g, '').trim();
+            
+            if (clean.length > 10 && clean.length < 150) {
+                // 检查是否已存在类似问题
+                const isDuplicate = questions.some(q => 
+                    q.includes(clean.substring(0, 15)) || clean.includes(q.substring(0, 15))
+                );
+                if (!isDuplicate) {
+                    questions.push(clean);
+                }
+            }
+        }
+    }
+    
+    // 返回前5个问题，如果没有提取到则用默认问题
+    return questions.length > 0 ? questions.slice(0, 5) : [
+        '你創作這個故事的初衷是什麼？想傳達什麼核心信息？',
+        '故事中哪個角色最打動你？為什麼？',
+        '你希望觀眾看完後有什麼感受？',
+        '有沒有參考過其他作品的風格？',
+        '對視覺風格有什麼想法？（比如色調、氛圍）'
+    ];
+}
+
+function askNextQuestion() {
+    if (state.currentQuestion >= state.interviewQuestions.length) {
+        // 访谈结束
+        finishInterview();
+        return;
+    }
+    
+    const q = state.interviewQuestions[state.currentQuestion];
+    const num = state.currentQuestion + 1;
+    const total = state.interviewQuestions.length;
+    
+    addAIMessage(`🎤 **訪談問題 ${num}/${total}**
+
+${q}`, [
+        { text: '跳過這題', action: () => skipQuestion() },
+        { text: '結束訪談', action: () => finishInterview() }
+    ]);
+}
+
+function skipQuestion() {
+    state.interview[state.currentQuestion] = '(跳過)';
+    state.currentQuestion++;
+    askNextQuestion();
+}
+
+async function finishInterview() {
+    state.step = 3;
+    addAIMessage(`✅ 訪談完成！感謝你的分享。
+
+現在我來規劃**章節分集**...`);
+    
+    await runChaptersStep();
+}
+
+async function runChaptersStep() {
+    addProgressCard('生成章節規劃', 0);
+    
+    try {
+        const context = {
+            concept: state.concept,
+            interview: state.interview
+        };
+        
+        updateProgress(30);
+        const result = await callAgent('narrative', state.novel.substring(0, 5000), context);
+        updateProgress(100);
+        
+        state.chapters = safeJSONParse(result, 'chapters');
+        state.step = 3;  // 标记章节规划完成
+        
+        removeProgressCard();
+        
+        const eps = state.chapters.chapters || state.chapters.episodes || [];
+        addAIMessage(`📝 **章節規劃完成！** 共 ${eps.length} 集
+
+${eps.slice(0, 3).map((ep, i) => `• 第${i+1}集: ${ep.title || ep.name || '未命名'}`).join('\n')}
+${eps.length > 3 ? `• ...還有 ${eps.length - 3} 集` : ''}
+
+⏳ 正在設計角色...`);
+        
+        // 🔧 自动继续下一步
+        saveProject();
+        setTimeout(() => runCharacterStep(), 1000);
+        
+    } catch (err) {
+        removeProgressCard();
+        recordError(err, '章節規劃');
+        showFriendlyError(err, '章節規劃', () => runChaptersStep());
+    }
+}
+
+async function runCharacterStep() {
+    addProgressCard('生成角色設計', 0);
+    
+    try {
+        const context = {
+            concept: state.concept,
+            chapters: state.chapters
+        };
+        
+        updateProgress(30);
+        const result = await callAgent('character', state.novel.substring(0, 4000), context);
+        updateProgress(100);
+        
+        state.characters = safeJSONParse(result, 'characters');
+        state.step = 4;  // 标记角色设计完成
+        
+        removeProgressCard();
+        
+        const chars = state.characters.characters || [];
+        addAIMessage(`👤 **角色設計完成！** 共 ${chars.length} 個角色
+
+${chars.slice(0, 3).map(c => `• **${c.name}** (${c.role || '角色'})`).join('\n')}
+
+⏳ 正在生成分鏡表...`);
+        
+        // 🔧 自动继续下一步
+        saveProject();
+        setTimeout(() => runStoryboardStep(), 1000);
+        
+    } catch (err) {
+        removeProgressCard();
+        recordError(err, '角色設計');
+        showFriendlyError(err, '角色設計', () => runCharacterStep());
+    }
+}
+
+async function runStoryboardStep() {
+    addProgressCard('生成分鏡表', 0);
+    
+    try {
+        const context = {
+            concept: state.concept,
+            chapters: state.chapters,
+            characters: state.characters
+        };
+        
+        updateProgress(30);
+        const result = await callAgent('storyboard', state.novel.substring(0, 3000), context);
+        updateProgress(100);
+        
+        // 解析分镜结果
+        const storyboardData = safeJSONParse(result, 'storyboard');
+        state.storyboard = storyboardData;
+        state.step = 5;  // 标记分镜完成
+        
+        removeProgressCard();
+        saveProject();
+        
+        // 统计分镜数量
+        const shots = storyboardData?.shots || storyboardData?.storyboard || [];
+        const shotCount = Array.isArray(shots) ? shots.length : 0;
+        const epCount = (state.chapters?.chapters || state.chapters?.episodes || []).length;
+        const charCount = (state.characters?.characters || []).length;
+        
+        addAIMessage(`🎬 **分鏡表生成完成！**
+
+📊 **製作資料統計**:
+• 故事概念: ✅
+• 章節規劃: ${epCount} 集
+• 角色設計: ${charCount} 個
+• 分鏡鏡頭: ${shotCount} 個
+
+🎉 恭喜！你的AI番劇製作資料已完成！`, [
+            { text: '📥 導出Excel', action: () => exportExcel() },
+            { text: '📥 導出JSON', action: () => exportAll() },
+            { text: '🔄 重新生成', action: () => runStoryboardStep() },
+            { text: '🏠 新項目', action: () => location.reload() }
+        ]);
+        
+    } catch (err) {
+        removeProgressCard();
+        recordError(err, '分鏡生成');
+        showFriendlyError(err, '分鏡生成', () => runStoryboardStep());
+    }
+}
+
+// ==================== 智能体名称映射 ====================
+const AGENT_NAMES = {
+    concept: '💡 概念生成器',
+    interview: '🎤 訪談師',
+    narrative: '📝 章節規劃師',
+    character: '👤 角色設計師',
+    storyboard: '🎬 分鏡導演',
+    artstyle: '🎨 美術指導',
+    screenwriter: '✍️ 編劇'
+};
+
+// ==================== API调用（带状态显示）====================
+async function callAgent(agentId, content, context = {}) {
+    const agentName = AGENT_NAMES[agentId] || agentId;
+    
+    // 显示调用状态
+    showAgentStatus(agentName, '準備中...');
+    
+    try {
+        const response = await fetch(`${API_BASE}/agent/${agentId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, ...context })
+        });
+        
+        if (!response.ok) {
+            hideAgentStatus();
+            throw new Error(`API錯誤: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // 显示token消耗
+        if (data.tokens) {
+            updateAgentStatus(agentName, `完成 ✅ (${data.tokens.input + data.tokens.output} tokens)`);
+        }
+        
+        // 如果有思考过程（reasoner），显示出来
+        if (data.reasoning || data.thinking) {
+            showThinkingProcess(data.reasoning || data.thinking);
+        }
+        
+        setTimeout(hideAgentStatus, 2000);
+        return data.result;
+        
+    } catch (err) {
+        hideAgentStatus();
+        throw err;
+    }
+}
+
+// ==================== 智能体状态显示 ====================
+function showAgentStatus(agentName, status) {
+    let statusBar = document.getElementById('agentStatusBar');
+    if (!statusBar) {
+        statusBar = document.createElement('div');
+        statusBar.id = 'agentStatusBar';
+        statusBar.style.cssText = `
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            border: 1px solid #E31B23;
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: #fff;
+            font-size: 13px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(232,48,48,0.3);
+        `;
+        document.body.appendChild(statusBar);
+    }
+    
+    statusBar.innerHTML = `
+        <div class="agent-spinner"></div>
+        <span><strong>${agentName}</strong> ${status}</span>
+    `;
+    statusBar.style.display = 'flex';
+    
+    // 添加spinner样式
+    if (!document.getElementById('spinnerStyle')) {
+        const style = document.createElement('style');
+        style.id = 'spinnerStyle';
+        style.textContent = `
+            .agent-spinner {
+                width: 16px;
+                height: 16px;
+                border: 2px solid #E31B2333;
+                border-top-color: #E31B23;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            .thinking-box {
+                background: transparent;
+                border: none;
+                border-left: 2px solid #333;
+                border-radius: 0;
+                padding: 8px 12px;
+                margin-top: 8px;
+                font-size: 12px;
+                color: #666;
+                max-height: 150px;
+                overflow-y: auto;
+                white-space: pre-wrap;
+            }
+            .thinking-box::before {
+                content: '💭 思考過程';
+                display: block;
+                color: #E31B23;
+                font-weight: 500;
+                margin-bottom: 8px;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function updateAgentStatus(agentName, status) {
+    const statusBar = document.getElementById('agentStatusBar');
+    if (statusBar) {
+        statusBar.innerHTML = `<span>✅ <strong>${agentName}</strong> ${status}</span>`;
+    }
+}
+
+function hideAgentStatus() {
+    const statusBar = document.getElementById('agentStatusBar');
+    if (statusBar) {
+        statusBar.style.display = 'none';
+    }
+}
+
+function showThinkingProcess(thinking) {
+    if (!thinking || thinking.length < 10) return;
+    
+    const container = document.getElementById('chatContainer');
+    const thinkingDiv = document.createElement('div');
+    thinkingDiv.className = 'message ai';
+    thinkingDiv.innerHTML = `
+        <div class="role">🧠 AI思考過程</div>
+        <div class="thinking-box">${escapeHtml(thinking.substring(0, 500))}${thinking.length > 500 ? '...' : ''}</div>
+    `;
+    container.appendChild(thinkingDiv);
+    scrollToBottom();
+}
+
+// ==================== 用户输入 ====================
+function sendMessage() {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    addUserMessage(text);
+    input.value = '';
+    
+    // 处理用户回复
+    handleUserInput(text);
+}
+
+function handleUserInput(text) {
+    console.log('🔔 handleUserInput:', { 
+        mode: state.mode, 
+        step: state.step, 
+        writeQ: writeState.currentQuestion,
+        novelTitle: state.novelTitle,
+        textLen: text.length
+    });
+    
+    // 写作模式 - 处理初始想法输入（等待故事灵感）
+    if (state.mode === 'write' && writeState.currentQuestion === -1) {
+        console.log('写作模式: 接收故事灵感');
+        writeState.idea = { premise: text };
+        startWriteInterview();
+        return;
+    }
+    
+    // 写作模式 - 访谈问题
+    if (state.mode === 'write' && typeof writeState.currentQuestion === 'number' && writeState.currentQuestion >= 0 && writeState.currentQuestion < WRITE_QUESTIONS.length) {
+        console.log('写作模式: 回答访谈问题', writeState.currentQuestion);
+        if (text.toLowerCase() === '跳過' || text.toLowerCase() === '跳过') {
+            writeState.interview[writeState.currentQuestion] = '(跳過)';
+        } else {
+            writeState.interview[writeState.currentQuestion] = text;
+        }
+        writeState.currentQuestion++;
+        setTimeout(() => askWriteQuestion(), 500);
+        return;
+    }
+    
+    // 导入模式 - 访谈问题
+    if (state.step === 2 && state.currentQuestion < (state.interviewQuestions?.length || 0)) {
+        state.interview[state.currentQuestion] = text;
+        state.currentQuestion++;
+        setTimeout(() => askNextQuestion(), 500);
+        return;
+    }
+    
+    // 🔧 修复Bug#1: 导入模式 - 用户发送文本时，显示当前状态
+    if (state.mode === 'import' && state.step >= 1) {
+        const stepNames = ['等待導入', '概念分析', '訪談中', '章節規劃', '角色設計', '分鏡生成'];
+        addAIMessage(`📊 **當前狀態**: ${stepNames[state.step] || '處理中'}
+
+正在處理《${state.novelTitle || '未命名'}》...`, [
+            { text: '▶️ 繼續下一步', action: () => continueImportProject() },
+            { text: '🆘 求助', action: () => callHelpAgent() }
+        ]);
+        return;
+    }
+    
+    // 初始状态 - 用户直接发送文字
+    if (state.step === 0 && !state.mode) {
+        // 检测是否像是故事内容（超过100字）
+        if (text.length > 100) {
+            addAIMessage(`📖 收到你的內容（${text.length}字）！
+
+這看起來像是故事內容，請選擇處理方式：`, [
+                { text: '📝 作為創作靈感', action: () => {
+                    state.mode = 'write';
+                    writeState.currentQuestion = -1;
+                    writeState.idea = { premise: text };
+                    startWriteInterview();
+                }},
+                { text: '📄 直接分析生成分鏡', action: async () => {
+                    state.novel = text;
+                    state.novelTitle = '直接輸入';
+                    state.step = 1;
+                    state.mode = 'import';
+                    await runConceptStep();
+                }}
+            ]);
+        } else {
+            addAIMessage(`👋 請選擇開始方式：`, [
+                { text: '📄 導入小說文件', action: () => document.getElementById('fileInput').click() },
+                { text: '✍️ 從零創作故事', action: () => startWriteMode() },
+                { text: '📝 直接輸入故事', action: () => addAIMessage('請直接輸入或粘貼你的故事內容（100字以上），我會自動識別並處理。') }
+            ]);
+        }
+        return;
+    }
+    
+    // 其他情况 - 显示帮助选项
+    addAIMessage(`📊 **當前狀態**
+• 模式: ${state.mode === 'write' ? '創作' : state.mode === 'import' ? '導入' : '未開始'}
+• 步驟: ${state.step}/5
+
+需要什麼幫助？`, [
+        { text: '▶️ 繼續', action: () => state.mode === 'write' ? continueWriteProject() : continueImportProject() },
+        { text: '🆘 診斷問題', action: () => callHelpAgent() },
+        { text: '🏠 重新開始', action: () => { resetWorkflowFromStep(0); document.getElementById('chatContainer').innerHTML = ''; showStartOptions(); }}
+    ]);
+}
+
+// 回车发送
+document.getElementById('userInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// 自动调整高度
+document.getElementById('userInput').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+});
+
+// ==================== 导出 ====================
+function exportAll() {
+    const data = {
+        title: state.novelTitle,
+        concept: state.concept,
+        interview: state.interview,
+        chapters: state.chapters,
+        characters: state.characters,
+        storyboard: state.storyboard,
+        exportTime: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${state.novelTitle}_AI番劇.json`;
+    a.click();
+    
+    addAIMessage(`✅ 已導出 **${state.novelTitle}_AI番劇.json**`);
+}
+
+// ==================== 启动 ====================
+init();
+    </script>
+</body>
+</html>
