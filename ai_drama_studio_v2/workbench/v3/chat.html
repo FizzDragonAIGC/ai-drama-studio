@@ -810,7 +810,7 @@
 // ==================== 配置 ====================
 const API_ENDPOINTS = [
     '/api',
-    'https://dvds-hoping-consultancy-site.trycloudflare.com/api',
+    'https://earthquake-subscribe-connectivity-pro.trycloudflare.com/api',
     'http://34.58.33.115:3001/api'
 ];
 let API_BASE = '/api';
@@ -3289,7 +3289,7 @@ async function generateImage(prompt, type = 'character') {
     showAgentStatus('🖼️ 圖像生成', '正在生成...');
     
     try {
-        const response = await fetch(`${API_URL}/generate-image`, {
+        const response = await fetch(`${API_BASE.replace('/api', '')}/api/generate-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3359,7 +3359,7 @@ async function generateCharacterImages() {
 // 检查生图服务状态
 async function checkImageGenStatus() {
     try {
-        const response = await fetch(`${API_URL}/generate-image/status`);
+        const response = await fetch(`${API_BASE.replace('/api', '')}/api/generate-image/status`);
         const status = await response.json();
         return status.enabled;
     } catch {
