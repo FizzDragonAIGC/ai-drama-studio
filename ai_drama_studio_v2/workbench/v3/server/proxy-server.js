@@ -348,8 +348,77 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY
 });
 
+// ========== 🛡️ 重试机制 + Provider备份 (Bug#5永久解决方案) ==========
+const RETRY_CONFIG = {
+  maxRetries: 5,           // 最多重试5次
+  baseDelay: 1000,         // 基础延迟1秒
+  maxDelay: 30000,         // 最大延迟30秒
+  backoffMultiplier: 2     // 指数退避倍数
+};
+
+// 备用Provider顺序
+const FALLBACK_PROVIDERS = ['deepseek', 'openrouter'];
+
+// 带重试的API调用包装器
+async function callWithRetry(callFn, agentId = '') {
+  let lastError = null;
+  
+  for (let attempt = 1; attempt <= RETRY_CONFIG.maxRetries; attempt++) {
+    try {
+      const result = await callFn();
+      if (attempt > 1) {
+        console.log(`✅ 第${attempt}次重试成功 (${agentId})`);
+      }
+      return result;
+    } catch (err) {
+      lastError = err;
+      const isTimeout = err.message?.includes('timeout') || err.message?.includes('ETIMEDOUT');
+      const isNetworkError = err.message?.includes('ECONNRESET') || err.message?.includes('ENOTFOUND') || err.message?.includes('fetch failed');
+      
+      if (attempt < RETRY_CONFIG.maxRetries && (isTimeout || isNetworkError || err.message?.includes('API error'))) {
+        const delay = Math.min(
+          RETRY_CONFIG.baseDelay * Math.pow(RETRY_CONFIG.backoffMultiplier, attempt - 1),
+          RETRY_CONFIG.maxDelay
+        );
+        console.log(`⚠️ 第${attempt}次失败 (${agentId}): ${err.message}, ${delay/1000}秒后重试...`);
+        await new Promise(r => setTimeout(r, delay));
+      } else {
+        break;
+      }
+    }
+  }
+  
+  throw lastError;
+}
+
+// 带Provider备份的调用
+async function callWithFallback(systemPrompt, userMessage, agentId = '', options = {}) {
+  const originalProvider = currentProvider;
+  
+  for (const provider of FALLBACK_PROVIDERS) {
+    if (!process.env[`${provider.toUpperCase()}_API_KEY`] && provider !== 'deepseek') {
+      continue; // 跳过没有配置key的provider
+    }
+    
+    try {
+      currentProvider = provider;
+      const result = await callWithRetry(
+        () => callOpenAICompatibleCore(systemPrompt, userMessage, agentId, options),
+        agentId
+      );
+      currentProvider = originalProvider;
+      return result;
+    } catch (err) {
+      console.log(`❌ ${provider} 失败，尝试下一个Provider...`);
+    }
+  }
+  
+  currentProvider = originalProvider;
+  throw new Error(`所有Provider都失败了 (${agentId})`);
+}
+
 // ========== DeepSeek/OpenRouter API调用 (OpenAI兼容) ==========
-async function callOpenAICompatible(systemPrompt, userMessage, agentId = '', options = {}) {
+async function callOpenAICompatibleCore(systemPrompt, userMessage, agentId = '', options = {}) {
   const provider = PROVIDERS[currentProvider];
   const baseUrl = provider.baseUrl;
   const apiKey = currentProvider === 'deepseek' 
@@ -527,9 +596,13 @@ async function callClaudeInternal(systemPrompt, userMessage, agentId = '', optio
   } else if (currentProvider === 'gemini') {
     return callGeminiAPI(systemPrompt, userMessage, agentId);
   } else {
-    return callOpenAICompatible(systemPrompt, userMessage, agentId, options);
+    // 🛡️ Bug#5修复: 使用带重试+备份的调用
+    return callWithFallback(systemPrompt, userMessage, agentId, options);
   }
 }
+
+// 兼容旧代码的别名
+const callOpenAICompatible = callWithFallback;
 
 // 单个Agent API路由
 app.post('/api/agent/:agentId', async (req, res) => {
