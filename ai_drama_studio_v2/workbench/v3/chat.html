@@ -33,16 +33,17 @@
             overflow: hidden;
         }
         
-        /* 左侧边栏 */
+        /* 左侧边栏 - Kimi风格 */
         .sidebar {
-            width: 260px;
+            width: 280px;
             height: 100vh;
-            background: #0d0d12;
+            background: #0a0a0f;
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
-            transition: transform 0.3s ease;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
         }
         
         .sidebar.hidden {
@@ -172,13 +173,18 @@
         }
         
         .menu-toggle {
-            background: none;
+            background: var(--surface);
             border: none;
+            border-radius: 8px;
             color: var(--text);
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
-            padding: 4px 8px;
+            padding: 8px 12px;
             display: none;
+            transition: background 0.2s;
+        }
+        .menu-toggle:hover, .menu-toggle:active {
+            background: var(--surface2);
         }
         
         .header-title {
@@ -523,16 +529,24 @@
                 top: 0;
                 z-index: 1000;
                 transform: translateX(-100%);
-                box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+                box-shadow: 8px 0 32px rgba(0,0,0,0.6);
+                width: 85vw;
+                max-width: 320px;
             }
             .sidebar.show {
                 transform: translateX(0);
             }
             .menu-toggle {
                 display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+            .header {
+                padding-left: env(safe-area-inset-left, 16px);
             }
             .header-title {
-                font-size: 14px;
+                font-size: 15px;
+                font-weight: 500;
             }
         }
         
@@ -669,19 +683,24 @@
                 padding: 8px 12px;
             }
             
-            /* 侧边栏遮罩 */
+            /* 侧边栏遮罩 - Kimi风格 */
             .sidebar-overlay {
-                display: none;
                 position: fixed;
                 top: 0;
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: rgba(0,0,0,0.5);
+                background: rgba(0,0,0,0.6);
                 z-index: 999;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.25s ease, visibility 0.25s ease;
+                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(2px);
             }
             .sidebar-overlay.show {
-                display: block;
+                opacity: 1;
+                visibility: visible;
             }
         }
         
