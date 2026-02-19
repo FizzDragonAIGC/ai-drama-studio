@@ -6135,31 +6135,38 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
     }
     console.log('📁 文件:', file.name, file.size, 'bytes');
     
-    // 检查是否有进行中的工作
+    // 🔧 保存文件引用（因为后面要清空input）
+    const selectedFile = file;
+    e.target.value = ''; // 清空文件输入，允许选择同一文件
+    
+    // 检查是否有进行中的工作 - 自动保存后继续
     if (hasActiveWork()) {
-        e.target.value = ''; // 清空文件输入
-        confirmResetAndImport(() => {
-            // 重新触发文件选择
-            document.getElementById('fileInput').click();
-        });
-        return;
+        saveProject(null, true); // 静默保存当前项目
+        // 清空状态
+        currentProjectId = null;
+        state.assets = { concept: null, characters: [], chapters: [], costumes: null, scripts: {}, storyboards: {} };
+        state.production = { episodes: 10, durationMin: 3, shotsPerMin: 10 };
+        updateAssetsPanel();
     }
     
-    addUserMessage(`📄 導入文件: ${file.name}`);
+    // 🔧 使用保存的文件引用继续处理
+    const fileToProcess = selectedFile;
+    
+    addUserMessage(`📄 導入文件: ${fileToProcess.name}`);
     addTypingIndicator();
     
     try {
         let text = '';
-        const ext = file.name.split('.').pop().toLowerCase();
+        const ext = fileToProcess.name.split('.').pop().toLowerCase();
         
         if (ext === 'txt') {
-            text = await file.text();
+            text = await fileToProcess.text();
         } else if (ext === 'docx') {
-            const arrayBuffer = await file.arrayBuffer();
+            const arrayBuffer = await fileToProcess.arrayBuffer();
             const result = await mammoth.extractRawText({ arrayBuffer });
             text = result.value;
         } else if (ext === 'pdf') {
-            const arrayBuffer = await file.arrayBuffer();
+            const arrayBuffer = await fileToProcess.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
@@ -6169,7 +6176,7 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
         }
         
         state.novel = text;
-        state.novelTitle = file.name.replace(/\.[^/.]+$/, '');
+        state.novelTitle = fileToProcess.name.replace(/\.[^/.]+$/, '');
         state.step = 1;
         state.mode = 'import';
         
