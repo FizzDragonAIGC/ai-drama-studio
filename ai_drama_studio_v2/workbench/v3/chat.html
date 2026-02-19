@@ -3248,6 +3248,21 @@ function startNewProject() {
     writeState.chapters = [];
     writeState.currentQuestion = null;
     
+    // 🔧 清空项目资产（这是漏掉的！）
+    state.assets = {
+        concept: null,
+        characters: [],
+        chapters: [],
+        costumes: null,
+        scripts: {},
+        storyboards: {}
+    };
+    state.production = {
+        episodes: 10,
+        durationMin: 3,
+        shotsPerMin: 10
+    };
+    
     // 清空广告状态
     adState.step = 0;
     adState.productImage = null;
@@ -3268,6 +3283,9 @@ function startNewProject() {
         showStartOptions();
     }
     renderProjectList();
+    
+    // 🔧 更新右侧资产面板（清空显示）
+    updateAssetsPanel();
     
     // 移动端关闭侧边栏
     if (window.innerWidth <= 768) {
