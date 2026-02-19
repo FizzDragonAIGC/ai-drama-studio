@@ -4382,12 +4382,88 @@ ${q}`, [
 }
 
 async function finishWriteInterview() {
+    // 🔧 先让用户设置制作规格
+    showWriteProductionSettings();
+}
+
+// 🔧 创作模式的制作设置
+function showWriteProductionSettings() {
     addAIMessage(`✅ 訪談完成！
+
+在開始創作前，請設定你的**番劇規格**：
+
+📺 **集數設定**
+請輸入集數（例如：50）`, [
+        { text: '10集（短篇）', action: () => setWriteEpisodes(10) },
+        { text: '24集（標準番）', action: () => setWriteEpisodes(24) },
+        { text: '50集（長篇）', action: () => setWriteEpisodes(50) }
+    ]);
+    
+    writeState.productionStep = 0;
+}
+
+function setWriteEpisodes(num) {
+    state.production.episodes = num;
+    addUserMessage(`${num} 集`);
+    
+    addAIMessage(`✅ ${num} 集
+
+⏱️ **每集時長**
+請輸入每集時長（分鐘）`, [
+        { text: '2分鐘（短視頻）', action: () => setWriteDuration(2) },
+        { text: '5分鐘（標準番）', action: () => setWriteDuration(5) },
+        { text: '10分鐘（劇情番）', action: () => setWriteDuration(10) }
+    ]);
+    
+    writeState.productionStep = 1;
+}
+
+function setWriteDuration(min) {
+    state.production.durationMin = min;
+    addUserMessage(`${min} 分鐘/集`);
+    
+    addAIMessage(`✅ ${min} 分鐘/集
+
+🎬 **鏡頭密度**
+每分鐘多少個鏡頭？`, [
+        { text: '8個/分鐘（慢節奏）', action: () => setWriteShots(8) },
+        { text: '12個/分鐘（中等）', action: () => setWriteShots(12) },
+        { text: '15個/分鐘（快節奏）', action: () => setWriteShots(15) }
+    ]);
+    
+    writeState.productionStep = 2;
+}
+
+function setWriteShots(shots) {
+    state.production.shotsPerMin = shots;
+    addUserMessage(`${shots} 鏡頭/分鐘`);
+    
+    const totalMin = state.production.episodes * state.production.durationMin;
+    const totalShots = totalMin * state.production.shotsPerMin;
+    
+    addAIMessage(`📊 **製作規格確認**
+
+• 集數: ${state.production.episodes} 集
+• 每集時長: ${state.production.durationMin} 分鐘
+• 鏡頭密度: ${state.production.shotsPerMin} 個/分鐘
+• **總時長**: ${totalMin} 分鐘
+• **預計分鏡**: ${totalShots.toLocaleString()} 個
+
+確認後開始創作！`, [
+        { text: '✅ 確認，開始創作', action: () => startWriteCreation() },
+        { text: '🔄 重新設定', action: () => showWriteProductionSettings() }
+    ]);
+    
+    writeState.productionStep = 3;
+}
+
+function startWriteCreation() {
+    addAIMessage(`🚀 **開始創作！**
 
 現在開始創作流程：
 1️⃣ 生成高概念
 2️⃣ 設計角色
-3️⃣ 規劃章節
+3️⃣ 規劃章節（${state.production.episodes}集）
 4️⃣ 設計服化道
 5️⃣ 寫劇本
 
@@ -8392,9 +8468,11 @@ function handleUserInput(text) {
     }
     
     // 写作模式 - 处理初始想法输入（等待故事灵感）
-    if (state.mode === 'write' && writeState.currentQuestion === -1) {
-        console.log('写作模式: 接收故事灵感');
+    // 🔧 修复：放宽条件，-1 或 null 或 undefined 都算初始状态
+    if (state.mode === 'write' && (writeState.currentQuestion === -1 || writeState.currentQuestion === null || writeState.currentQuestion === undefined) && !writeState.idea) {
+        console.log('写作模式: 接收故事灵感, currentQuestion:', writeState.currentQuestion);
         writeState.idea = { premise: text };
+        writeState.currentQuestion = -1;  // 确保设置为 -1
         startWriteInterview();
         return;
     }
