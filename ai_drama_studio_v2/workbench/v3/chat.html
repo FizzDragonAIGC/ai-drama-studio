@@ -1775,7 +1775,7 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="logo.jpg" alt="FizzDragon" class="sidebar-logo">
-            <div class="sidebar-tagline">重塑文明 ｜ Rebuilding Civilization</div>
+            <div class="sidebar-tagline">创造一些好故事 ｜ Create Good Stories</div>
             
             <!-- 模式Tabs -->
             <div class="mode-tabs">
@@ -5009,10 +5009,27 @@ function loadProject(projectId) {
     state.mode = p.stage;
     state.step = p.step || 0;
     
-    // 恢复项目资产（新结构）
+    // 🔧 恢复项目资产（先清空再加载，确保不污染）
+    state.assets = {
+        concept: null,
+        characters: [],
+        chapters: [],
+        costumes: null,
+        scripts: {},
+        storyboards: {}
+    };
+    
     if (p.assets) {
         state.assets = p.assets;
     }
+    
+    // 🔧 恢复生产规格（先清空再加载）
+    state.production = {
+        episodes: 10,
+        durationMin: 3,
+        shotsPerMin: 10
+    };
+    
     if (p.production) {
         state.production = p.production;
     }
@@ -5024,6 +5041,15 @@ function loadProject(projectId) {
     const scriptCount = Object.keys(assets.scripts || {}).length;
     const sbCount = Object.keys(assets.storyboards || {}).length;
     const stepNames = ['待開始', '高概念', '角色', '章節', '服化道', '劇本', '分鏡'];
+    
+    // 🔧 更新右侧资产面板
+    updateAssetsPanel();
+    
+    // 更新标题
+    document.getElementById('headerTitle').textContent = p.name;
+    
+    // 更新当前项目ID
+    currentProjectId = projectId;
     
     addAIMessage(`📖 **已載入項目**
 
@@ -5952,6 +5978,20 @@ function resetWorkflowFromStep(stepNumber) {
         state.step = 0;
         writeState.idea = null;
         writeState.currentQuestion = null;
+        
+        // 🔧 重置项目资产
+        state.assets = {
+            concept: null,
+            characters: [],
+            chapters: [],
+            costumes: null,
+            scripts: {},
+            storyboards: {}
+        };
+        currentProjectId = null;
+        
+        // 🔧 更新右侧资产面板
+        updateAssetsPanel();
     }
     if (stepNumber <= 1) {
         state.concept = null;
@@ -5987,23 +6027,13 @@ function confirmResetAndImport(callback) {
         return;
     }
     
-    // 有进行中的工作，需要确认
-    addAIMessage(`⚠️ **發現進行中的項目**
-
-當前有未保存的工作：
-${state.novelTitle || writeState.outline?.title || '未命名項目'}
-
-導入新小說會**清空當前所有進度**。
-
-確定要繼續嗎？`, [
-        { text: '💾 先保存當前項目', action: () => saveProject() },
-        { text: '🗑️ 放棄當前，導入新的', action: () => {
-            resetWorkflowFromStep(0);
-            document.getElementById('chatContainer').innerHTML = '';
-            callback();
-        }},
-        { text: '❌ 取消', action: () => showCurrentProgress() }
-    ]);
+    // 🔧 自动保存当前项目，不再提示
+    saveProject(true);  // 静默保存
+    
+    // 清空并继续
+    resetWorkflowFromStep(0);
+    document.getElementById('chatContainer').innerHTML = '';
+    callback();
 }
 
 // 显示调整警告（修改前面的步骤会清空后续）
@@ -7259,15 +7289,23 @@ async function callAgent(agentId, content, context = {}) {
     // 显示调用状态
     showAgentStatus(agentName, '準備中...');
     
-    // 🔧 默认使用DeepSeek Reasoner（除非明确指定不使用）
-    const useReasoner = context.useReasoner !== false;
+    // 🔧 某些agent使用快速模型（章節規劃、訪談等需要快速響應的）
+    const fastAgents = ['narrative', 'interview', 'concept'];
+    const useReasoner = fastAgents.includes(agentId) ? false : (context.useReasoner !== false);
+    
+    // 🔧 添加超时控制（3分钟）
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 180000);
     
     try {
         const response = await fetch(`${API_BASE}/agent/${agentId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content, ...context, useReasoner })
+            body: JSON.stringify({ content, ...context, useReasoner }),
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         
         if (!response.ok) {
             hideAgentStatus();
@@ -7290,7 +7328,13 @@ async function callAgent(agentId, content, context = {}) {
         return data.result;
         
     } catch (err) {
+        clearTimeout(timeoutId);
         hideAgentStatus();
+        
+        // 🔧 处理超时错误
+        if (err.name === 'AbortError') {
+            throw new Error('請求超時，AI正在忙碌中，請稍後重試');
+        }
         throw err;
     }
 }

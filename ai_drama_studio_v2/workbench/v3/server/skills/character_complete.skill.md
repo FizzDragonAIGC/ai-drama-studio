@@ -1,247 +1,311 @@
 # 角色設計完整技能 (Character Complete)
 
-> 📚 **融合視覺設計與心理動機**
-> - Tom Bancroft《Creating Characters with Personality》
-> - John Truby《The Anatomy of Story》
-> - K.M. Weiland《Creating Character Arcs》
+> 📚 **融合六大經典心理學著作**
+> - K.M. Weiland《Creating Character Arcs》- Ghost/Wound/Lie/Truth框架
+> - John Truby《The Anatomy of Story》- 22步角色設計
+> - William Indick《Psychology for Screenwriters》- 六大心理學派
+> - Tom Bancroft《Creating Characters with Personality》- 視覺性格設計
+> - Lisa Cron《Wired for Story》- 大腦如何讀故事
+> - Angela Ackerman《The Emotional Wound Thesaurus》- 情感創傷字典
 
 ---
 
-## 一、核心心理框架：Want / Need / Wound
+## 一、核心心理框架：G.W.L.T. 系統
 
-### Want（表面慾望）
+### 🔮 Ghost（幽靈 / 過去創傷事件）
+角色過去發生的**具體事件**，至今仍在「纏繞」他
+
+| 類型 | 範例 |
+|------|------|
+| 失去 | 童年喪母、被戀人拋棄、失去孩子 |
+| 背叛 | 被最信任的人出賣、父親拋棄家庭 |
+| 失敗 | 公開羞辱、比賽慘敗、救人失敗 |
+| 創傷 | 被霸凌、目睹暴力、意外傷害 |
+| 剝奪 | 貧困童年、缺失愛、被忽視 |
+
+**關鍵問題**：「發生了什麼具體事件，讓這個角色變成現在這樣？」
+
+---
+
+### 💔 Wound（傷口 / 心理傷痛）
+Ghost事件造成的**持續性心理痛苦**
+
+| Ghost 事件 | 造成的 Wound |
+|------------|-------------|
+| 父親拋棄 | 「我不值得被愛」的深層不安全感 |
+| 被霸凌 | 社交恐懼、自我價值感低落 |
+| 救人失敗 | 過度的責任感、無法原諒自己 |
+| 被背叛 | 無法信任他人、防禦性強 |
+
+**Wound的外在表現**：
+- 防禦機制（逃避、攻擊、控制）
+- 人際模式（疏離、討好、對抗）
+- 情緒反應（過度敏感、麻木、爆發）
+
+---
+
+### 🎭 Lie（謊言 / 錯誤信念）
+角色因為Wound而形成的**錯誤世界觀**
+
+這是角色用來「保護」自己的信念，但實際上在傷害自己：
+
+| 類型 | Lie 範例 |
+|------|----------|
+| 關於自己 | 「我不夠好」「我不值得被愛」「我很弱小」 |
+| 關於他人 | 「沒人可以信任」「愛是軟弱的表現」「別人都會離開」|
+| 關於世界 | 「世界是危險的」「好人沒好報」「權力就是一切」|
+
+**Lie 驅動行為**：角色的錯誤選擇、自我破壞、人際衝突都源於這個Lie
+
+---
+
+### ✨ Truth（真理 / 需要學習的）
+角色在故事結束時需要領悟的**正確信念**
+
+| Lie | → | Truth |
+|-----|---|-------|
+| 「我不值得被愛」| → | 「我值得被愛，不需要證明自己」|
+| 「信任會帶來傷害」| → | 「冒險去信任，才能獲得真正的連結」|
+| 「我必須獨自承擔一切」| → | 「接受幫助不是軟弱」|
+| 「權力是唯一的安全感」| → | 「真正的力量來自愛與連結」|
+
+---
+
+## 二、動機系統：Want vs Need
+
+### 🎯 Want（表面慾望）
 角色**意識到**並**主動追求**的目標
+
 - 外在的、具體的、可衡量的
 - 驅動情節前進
-- 例：復仇、財富、愛情、權力、自由
+- 通常是**錯誤的解決方案**（基於Lie）
 
-### Need（深層需求）
+**範例**：
+- 復仇（因為Lie告訴他這樣才能平復痛苦）
+- 財富（因為Lie告訴他有錢才能被愛）
+- 權力（因為Lie告訴他控制才能安全）
+
+### 💎 Need（深層需求）
 角色**真正需要**但可能**不自知**的東西
+
 - 內在的、抽象的、關於成長的
 - 驅動角色弧線
-- 例：被接納、自我價值、放下執念
+- 對應著Truth
 
-### Wound（心理創傷）
-**過去的傷痛**塑造了現在的行為模式
-- 童年經歷、失去、背叛、失敗
-- 解釋角色的恐懼和防禦機制
+**範例**：
+- 被接納（vs 追求完美）
+- 自我原諒（vs 追求復仇）
+- 放下控制（vs 追求權力）
+- 接受愛（vs 追求證明自己）
 
-### 動機公式
+### 公式
 ```
-Wound (過去) → Fear (現在恐懼) → Want (錯誤解決) → Need (真正解答)
+Ghost (過去事件) 
+    → Wound (心理傷痛) 
+        → Lie (錯誤信念) 
+            → Want (錯誤追求) 
+                → 衝突與失敗 
+                    → Truth (正確信念) 
+                        → Need (真正滿足)
 ```
 
 ---
 
-## 二、角色原型與動機
+## 三、情感維度：喜好與恐懼
 
-| 原型 | 典型 Want | 典型 Need | 典型 Wound |
-|------|-----------|-----------|------------|
-| 英雄 | 拯救世界 | 相信自己 | 被質疑/失敗 |
-| 導師 | 傳承智慧 | 放手讓徒弟成長 | 失敗的學生 |
-| 陰影/反派 | 毀滅/控制 | 被理解/療癒 | 深重的背叛 |
-| 使者 | 完成使命 | 找到自我認同 | 失去歸屬感 |
-| 變形者 | 保護自己 | 選擇立場 | 信任被背叛 |
-| 盟友 | 幫助主角 | 被認可價值 | 被忽視經歷 |
-| 門檻守衛 | 阻擋入侵 | 找到新使命 | 曾經的失職 |
+### ❤️ 喜歡 / 熱愛
+讓角色感到**愉悅、安全、有價值**的事物
+
+| 維度 | 問題 | 範例 |
+|------|------|------|
+| 活動 | 他閒暇時喜歡做什麼？| 閱讀、烹飪、園藝、跑步 |
+| 人際 | 他珍視什麼類型的關係？| 深度友誼 > 泛泛之交 |
+| 環境 | 他在什麼地方感到自在？| 海邊、圖書館、廚房 |
+| 價值 | 他最看重什麼？| 忠誠、創意、自由、秩序 |
+| 感官 | 他喜歡什麼氣味/聲音/味道？| 咖啡香、雨聲、辣食 |
+
+**技巧**：喜好可以反映角色的Wound——他喜歡的往往是他**缺失**或**渴望**的
 
 ---
 
-## 三、角色弧線設計
+### 😤 討厭 / 厭惡
+讓角色感到**不適、憤怒、想逃避**的事物
 
-### 正向弧線（成長）
+| 維度 | 問題 | 範例 |
+|------|------|------|
+| 行為 | 什麼行為讓他無法忍受？| 背叛、虛偽、欺凌弱者 |
+| 環境 | 什麼地方讓他不舒服？| 擁擠人群、封閉空間 |
+| 類型 | 什麼類型的人讓他反感？| 自以為是的人、說謊者 |
+| 感官 | 什麼氣味/聲音讓他厭惡？| 醫院消毒水味、尖叫聲 |
+
+**技巧**：厭惡往往連結到Ghost——他討厭的可能正是傷害過他的
+
+---
+
+### 😰 恐懼 / 害怕
+讓角色感到**焦慮、逃避、失控**的事物
+
+#### 表層恐懼（Conscious Fear）
+角色**知道**自己害怕的：
+- 高處、蜘蛛、黑暗、死亡
+- 失敗、被拒絕、孤獨
+- 失去控制、被困
+
+#### 深層恐懼（Unconscious Fear）
+角色**不願承認**或**不自知**的：
+- 其實害怕親密關係
+- 其實害怕成功後的責任
+- 其實害怕面對真實的自己
+
+| Wound | 深層恐懼 |
+|-------|---------|
+| 被拋棄 | 害怕再次被遺棄 → 先推開別人 |
+| 失敗羞辱 | 害怕再次失敗 → 不敢嘗試 |
+| 失去控制 | 害怕混亂 → 過度控制一切 |
+| 不被愛 | 害怕被看穿真實自己 → 戴面具 |
+
+**最大恐懼（Greatest Fear）**：
+通常直接連結到Ghost——角色最害怕的是**重複那個創傷經歷**
+
+---
+
+## 四、角色弧線設計
+
+### 正向弧線（Positive Arc / 成長）
 ```
-開始：被 Wound 控制，追求錯誤的 Want
-中間：遭遇挫折，開始質疑
-轉折：意識到真正的 Need
+開始：被 Lie 控制，追求錯誤的 Want
+↓
+觸發：遭遇挫折，Lie 被挑戰
+↓
+掙扎：Want 和 Need 之間拉扯
+↓
+低谷：面對最大恐懼，Lie 崩塌
+↓
+頓悟：意識到 Truth
+↓
 結束：放下 Want，擁抱 Need，療癒 Wound
 ```
 
-### 負向弧線（墮落）
+### 負向弧線（Negative Arc / 墮落）
 ```
 開始：有正當的追求
-中間：遭遇誘惑或挫折
-轉折：做出錯誤選擇
-結束：完全被 Wound 控制，成為反派
+↓
+誘惑：遭遇誘惑或挫折
+↓
+選擇：拒絕 Truth，擁抱更深的 Lie
+↓
+墮落：完全被 Lie 控制
+↓
+結束：成為反派 / 悲劇結局
 ```
 
-### 平坦弧線（堅持）
+### 平坦弧線（Flat Arc / 堅持）
 ```
-角色不變，但改變周圍的世界
-- 用於導師型或象徵型角色
+角色本身已擁有 Truth
+↓
+用 Truth 改變周圍的世界和人
+↓
+適用於：導師型、象徵型、正義化身角色
 ```
 
 ---
 
-## 四、視覺設計：剪影與形狀
+## 五、輸出格式要求
+
+### 人物小傳 JSON 結構
+```json
+{
+  "name": "角色名",
+  "role": "主角/反派/配角/導師",
+  "archetype": "英雄/智者/反叛者/照顧者...",
+  
+  "psychology": {
+    "ghost": "具體的過去創傷事件（一句話描述）",
+    "wound": "這個事件造成的心理傷痛",
+    "lie": "角色因此相信的錯誤信念",
+    "truth": "角色需要學習的正確信念",
+    "greatest_fear": "最大恐懼（連結到Ghost）"
+  },
+  
+  "motivation": {
+    "want": "表面慾望（外在目標）",
+    "need": "深層需求（內在成長）",
+    "goal": "具體的劇情目標"
+  },
+  
+  "personality": {
+    "likes": ["喜歡的事物1", "喜歡的事物2", "喜歡的事物3"],
+    "dislikes": ["討厭的事物1", "討厭的事物2", "討厭的事物3"],
+    "fears": ["表層恐懼", "深層恐懼"],
+    "habits": ["習慣動作/口頭禪"],
+    "strengths": ["優點1", "優點2"],
+    "flaws": ["缺點1（連結到Lie）", "缺點2"]
+  },
+  
+  "arc": {
+    "type": "正向/負向/平坦",
+    "start_state": "故事開始時的狀態",
+    "end_state": "故事結束時的狀態",
+    "turning_point": "關鍵轉變時刻"
+  },
+  
+  "appearance": {
+    "age": "年齡",
+    "physical": "外貌特徵",
+    "style": "穿著風格",
+    "signature": "標誌性特徵"
+  },
+  
+  "ai_prompt": "用於AI繪圖的角色提示詞（50-80字）"
+}
+```
+
+---
+
+## 六、視覺設計：形狀與剪影
 
 ### 三大基礎形狀
 | 形狀 | 性格暗示 | 適用角色 |
 |------|----------|----------|
-| 圓形 | 友善、可愛 | 配角、喜劇、導師 |
-| 方形 | 穩重、可靠 | 英雄、保護者、父親 |
-| 三角形 | 危險、神秘 | 反派、謀士、衝突角色 |
+| ⭕ 圓形 | 友善、溫暖、可靠 | 好人、導師、喜劇角色 |
+| 🔷 方形 | 穩定、堅強、固執 | 英雄、守護者、權威 |
+| 🔺 三角 | 危險、動態、聰明 | 反派、狡猾者、動作角色 |
 
-### 識別度測試
-- **遠景測試**：10米外能否認出？
-- **剪影測試**：純黑剪影能否區分？
-- **標誌性特徵**：帽子/髮型/武器/姿勢
-
----
-
-## 五、面部與體型設計
-
-### 五官設計
-| 部位 | 大/厚 | 小/薄 |
-|------|-------|-------|
-| 眼睛 | 天真、情感外露 | 精明、內斂 |
-| 眉毛 | 剛毅、直爽 | 優雅、陰險 |
-| 嘴巴 | 感性、熱情 | 理性、刻薄 |
-
-### 頭身比
-| 頭身比 | 風格 | 適用 |
-|--------|------|------|
-| 2-3頭身 | Q版/萌系 | 輕鬆番劇 |
-| 5-6頭身 | 少年向 | 熱血冒險 |
-| 7-8頭身 | 寫實 | 劇情/成人 |
-| 9+頭身 | 超模 | 時尚高貴 |
-
-### 體型與性格
-- **瘦高**：敏捷、神秘、脆弱感
-- **健壯**：力量、保護、威脅感
-- **圓潤**：親和、喜劇、享樂
-- **纖細**：優雅、靈巧、脆弱
+### 剪影測試
+好的角色設計應該只看**黑色剪影**就能辨認：
+- 獨特的輪廓
+- 標誌性的姿態
+- 特徵性的道具/服裝
 
 ---
 
-## 六、主角vs反派對比
+## 七、經典範例解析
 
-| 元素 | 主角 | 反派 |
-|------|------|------|
-| 形狀 | 圓/方 | 三角/尖銳 |
-| 顏色 | 暖色/明亮 | 冷色/暗沉 |
-| 線條 | 流暢/開放 | 銳利/封閉 |
-| 姿勢 | 前傾/開放 | 後仰/封閉 |
+### 《千與千尋》千尋
+| 元素 | 內容 |
+|------|------|
+| Ghost | 被父母保護過度，從未獨立面對困難 |
+| Wound | 依賴性、缺乏自信 |
+| Lie | 「我做不到」「我需要大人幫我」|
+| Truth | 「我比自己想像的更堅強」|
+| Want | 救回父母、回到原來的世界 |
+| Need | 發現自己的力量和勇氣 |
+| Fear | 被遺棄、孤獨、失敗 |
+| Arc | 正向：從膽小依賴 → 勇敢獨立 |
 
----
-
-## 七、AI生成Prompt公式 (150-200字英文)
-
-```
-[Name], [age] year old [gender], [role].
-
-FACE: [eyes], [eyebrows], [nose], [mouth], [skin], [distinctive feature].
-
-HAIR: [style], [length], [color], [texture], [accessories].
-
-BUILD: [height], [body type], [posture], [head-to-body ratio].
-
-EXPRESSION: [default mood], [eye direction], [mouth position].
-
-COSTUME: [main outfit], [colors], [accessories], [style era].
-
-SILHOUETTE: [dominant shape], [recognizable feature from distance].
-
-MOOD/AURA: [vibe], [color association], [lighting suggestion].
-
---style [art style], character design sheet, full body, multiple angles
-```
-
-### 範例：反派
-```
-Lord Varen, 45 year old male, main antagonist.
-
-FACE: Narrow calculating eyes with pale grey irises, thin arched eyebrows, aquiline nose, thin-lipped cold smile, pale porcelain skin, sharp cheekbones.
-
-HAIR: Slicked back silver hair, long to shoulders, immaculate, silver hair ornament.
-
-BUILD: Tall imposing 190cm, slender but commanding, perfectly straight posture, 8.5 head ratio.
-
-EXPRESSION: Condescending half-smile, looking down, one eyebrow raised.
-
-COSTUME: Black and purple noble robes with silver embroidery, high collar, black gloves, cape with red lining.
-
-SILHOUETTE: Inverted triangle (threatening), recognizable by tall figure and cape.
-
-MOOD/AURA: Menacing elegance, cold purple-black theme, dramatic side lighting.
-
---style dark fantasy, detailed, character design sheet, full body, 3/4 view
-```
+### 《霸王別姬》程蝶衣
+| 元素 | 內容 |
+|------|------|
+| Ghost | 被母親拋棄在戲班、被迫學旦角 |
+| Wound | 身份認同混亂、被遺棄的恐懼 |
+| Lie | 「只有完美演繹虞姬，才能被愛」|
+| Truth | 「做真實的自己也值得被愛」|
+| Want | 永遠和段小樓在一起演《霸王別姬》|
+| Need | 接受自我、放下執念 |
+| Fear | 被段小樓拋棄、戲劇消亡 |
+| Arc | 悲劇負向：始終無法放下Lie，最終自我毀滅 |
 
 ---
 
-## 八、行為模式設計
-
-| 情境 | 設計問題 |
-|------|----------|
-| 壓力下 | 如何反應？（戰/逃/僵） |
-| 開心時 | 如何表現？ |
-| 說話方式 | 口頭禪？語速？ |
-| 肢體語言 | 習慣性動作？ |
-
----
-
-## 九、輸出JSON格式
-
-```json
-{
-  "name": "角色名",
-  "role": "主角/配角/反派",
-  "visual_summary": "一句話視覺描述",
-  
-  "psychology": {
-    "wound": {
-      "event": "創傷事件",
-      "age": "發生年齡",
-      "impact": "如何影響現在"
-    },
-    "fear": {
-      "surface": "表面恐懼",
-      "deep": "深層恐懼"
-    },
-    "want": {
-      "goal": "具體目標",
-      "wrong_because": "為何是錯誤解決"
-    },
-    "need": {
-      "true_need": "真正需要",
-      "catalyst": "什麼讓他意識到"
-    },
-    "arc": {
-      "type": "正向/負向/平坦",
-      "start_state": "開始狀態",
-      "end_state": "結束狀態"
-    }
-  },
-  
-  "visual": {
-    "silhouette": {
-      "dominant_shape": "圓/方/三角",
-      "distinctive_feature": "標誌性特徵"
-    },
-    "face": {
-      "eyes": "形狀+顏色",
-      "skin": "膚色+質感",
-      "distinctive": "傷疤/紋身"
-    },
-    "hair": {
-      "style": "髮型",
-      "color": "顏色"
-    },
-    "body": {
-      "height": "身高",
-      "build": "體型",
-      "head_ratio": "頭身比"
-    },
-    "color_palette": ["主色", "輔色", "點綴色"]
-  },
-  
-  "behavioral": {
-    "when_stressed": "壓力反應",
-    "speech_pattern": "說話方式",
-    "body_language": "肢體語言"
-  },
-  
-  "ai_prompt": "完整150-200字英文生成Prompt"
-}
-```
+*技能版本：v2.0 | 更新日期：2026-02-19*
+*參考書目：6本專業著作 | 適用Agent：character, interview*
