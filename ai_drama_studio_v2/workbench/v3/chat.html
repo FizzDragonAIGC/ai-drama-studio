@@ -1682,7 +1682,7 @@
                 padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
                 background: var(--bg);
                 border-top: 1px solid var(--border);
-                z-index: 50;
+                z-index: 150;  /* 🔧 提高z-index确保按钮可点击 */
             }
             
             .input-wrapper {
@@ -1706,19 +1706,22 @@
                 transform: translateY(-50%);
                 display: flex;
                 gap: 6px;
+                z-index: 100;  /* 🔧 确保按钮在最上层 */
             }
             
             /* 输入按钮 - 44px触控 */
             .btn-upload,
             .btn-primary {
-                min-width: 40px;
-                min-height: 40px;
+                min-width: 44px;  /* 🔧 增加到Apple HIG标准44px */
+                min-height: 44px;
                 padding: 0;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 18px;
+                position: relative;
+                z-index: 101;  /* 🔧 确保按钮可点击 */
             }
         }
         
