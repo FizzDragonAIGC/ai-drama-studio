@@ -117,6 +117,7 @@ function needsJsonOutput(agentId) {
     'artdirector',   // 美術總監
     'scene',         // 場景
     'costume',       // 服裝
+    'production_design', // 服化道設計
     'storyboard',    // 分鏡
     'color',         // 色彩
     'artstyle',      // 畫風
@@ -726,9 +727,10 @@ app.post('/api/:legacy', async (req, res, next) => {
   const styleInfo = artStyle ? `\n\n【🎨 畫風設置】\n用戶選擇的畫風：${artStyleName || '電影級'}\n畫風關鍵詞：${artStyle}\n**所有ai_prompt結尾必須加上這個畫風關鍵詞！**` : '';
   
   // 🎤 訪談Agent：特殊處理，確保小說內容被正確傳入
-  if (agentId === 'interview' && novel) {
+  // 🐛 修復：前端通過 content 傳入小說，不是 novel 字段
+  if (agentId === 'interview' && (novel || content)) {
     // 傳入小說內容，讓AI閱讀後生成針對性問題
-    actualContent = novel.substring(0, 6000);  // 限制長度防超時
+    actualContent = (novel || content).substring(0, 6000);  // 限制長度防超時
     contextData = { 
       type: 'interview_generation',
       title: title || '未命名故事',
