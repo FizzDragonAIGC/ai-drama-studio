@@ -1,0 +1,590 @@
+[
+  {
+    "id": "sidebarCollapseBtn",
+    "onclick": "toggleSidebarCollapse()",
+    "title": "收起/展开项目列表",
+    "label": "⟨⟩"
+  },
+  {
+    "id": "",
+    "onclick": "switchAppMode('drama')",
+    "title": "",
+    "label": "🎬 AI影視項目"
+  },
+  {
+    "id": "",
+    "onclick": "switchAppMode('ad')",
+    "title": "",
+    "label": "📺 AI廣告分鏡"
+  },
+  {
+    "id": "newProjectBtn",
+    "onclick": "startNewProject()",
+    "title": "",
+    "label": "✨ 新建影視項目"
+  },
+  {
+    "id": "",
+    "onclick": "selectAllVisibleProjects()",
+    "title": "全選",
+    "label": "全選"
+  },
+  {
+    "id": "",
+    "onclick": "clearProjectSelection()",
+    "title": "清除",
+    "label": "清除"
+  },
+  {
+    "id": "",
+    "onclick": "bulkMoveSelectedToTrash()",
+    "title": "移入垃圾桶",
+    "label": "刪除"
+  },
+  {
+    "id": "",
+    "onclick": "toggleSidebar()",
+    "title": "",
+    "label": "☰"
+  },
+  {
+    "id": "",
+    "onclick": "showStartOptions()",
+    "title": "導入或寫作",
+    "label": "📄 導入/寫作"
+  },
+  {
+    "id": "autoPilotToggle",
+    "onclick": "toggleAutoPilotMode()",
+    "title": "Auto-Pilot 模式",
+    "label": "🚀 OFF"
+  },
+  {
+    "id": "",
+    "onclick": "handleLogout()",
+    "title": "登出",
+    "label": "🚪"
+  },
+  {
+    "id": "",
+    "onclick": "toggleAssetsPanel()",
+    "title": "",
+    "label": "📦"
+  },
+  {
+    "id": "btnConcept",
+    "onclick": "triggerAgentWithCheck('concept')",
+    "title": "Alt+1",
+    "label": "💡 概念"
+  },
+  {
+    "id": "btnInterview",
+    "onclick": "triggerAgentWithCheck('interview')",
+    "title": "Alt+2",
+    "label": "🎤 訪談"
+  },
+  {
+    "id": "btnCharacter",
+    "onclick": "triggerAgentWithCheck('character')",
+    "title": "Alt+3",
+    "label": "👤 人物"
+  },
+  {
+    "id": "btnChapters",
+    "onclick": "triggerAgentWithCheck('chapters')",
+    "title": "Alt+4",
+    "label": "📝 章節"
+  },
+  {
+    "id": "btnProduction",
+    "onclick": "triggerAgentWithCheck('production')",
+    "title": "Alt+P",
+    "label": "👗 服化道"
+  },
+  {
+    "id": "btnScript",
+    "onclick": "triggerAgentWithCheck('script')",
+    "title": "Alt+5",
+    "label": "✍️ 編劇"
+  },
+  {
+    "id": "btnStoryboard",
+    "onclick": "triggerAgentWithCheck('storyboard')",
+    "title": "Alt+6",
+    "label": "🎬 分鏡"
+  },
+  {
+    "id": "",
+    "onclick": "runAutoPilot()",
+    "title": "Alt+A",
+    "label": "🚀 Auto"
+  },
+  {
+    "id": "",
+    "onclick": "document.getElementById('fileInput').click()",
+    "title": "",
+    "label": "📄"
+  },
+  {
+    "id": "sendBtn",
+    "onclick": "sendMessage()",
+    "title": "",
+    "label": "➤"
+  },
+  {
+    "id": "toolbarProjects",
+    "onclick": "toggleSidebar()",
+    "title": "",
+    "label": "📁 項目"
+  },
+  {
+    "id": "",
+    "onclick": "document.getElementById('fileInput').click()",
+    "title": "",
+    "label": "📄 導入"
+  },
+  {
+    "id": "",
+    "onclick": "startNewProject()",
+    "title": "",
+    "label": "✨ 新建"
+  },
+  {
+    "id": "",
+    "onclick": "toggleAssetsPanel()",
+    "title": "",
+    "label": "📦 資產"
+  },
+  {
+    "id": "",
+    "onclick": "showMobileExportMenu()",
+    "title": "",
+    "label": "📤 導出"
+  },
+  {
+    "id": "",
+    "onclick": "exportScripts()",
+    "title": "導出所有劇本",
+    "label": "📜 劇本"
+  },
+  {
+    "id": "",
+    "onclick": "exportStoryboards()",
+    "title": "導出所有分鏡",
+    "label": "📊 分鏡"
+  },
+  {
+    "id": "",
+    "onclick": "importToFizzDragon()",
+    "title": "導入FizzStudio製作",
+    "label": "🚀 導入"
+  },
+  {
+    "id": "expandBtn",
+    "onclick": "toggleAssetsPanelWidth()",
+    "title": "展開/收縮",
+    "label": "◀▶"
+  },
+  {
+    "id": "fullscreenBtn",
+    "onclick": "toggleAssetsFullscreen()",
+    "title": "全屏",
+    "label": "⛶"
+  },
+  {
+    "id": "",
+    "onclick": "importToFizzDragon()",
+    "title": "導入 FizzDragon",
+    "label": "🚀"
+  },
+  {
+    "id": "",
+    "onclick": "callHelpAgent()",
+    "title": "遇到問題？點我求助",
+    "label": "🆘"
+  },
+  {
+    "id": "",
+    "onclick": "runAutoPilot()",
+    "title": "Auto-Pilot",
+    "label": "🚀"
+  },
+  {
+    "id": "",
+    "onclick": "exportStoryboards()",
+    "title": "導出",
+    "label": "📤"
+  },
+  {
+    "id": "tabBase",
+    "onclick": "switchAssetsTab('base')",
+    "title": "",
+    "label": "📋 設定"
+  },
+  {
+    "id": "tabProd",
+    "onclick": "switchAssetsTab('prod')",
+    "title": "",
+    "label": "📝 生產 ${scriptCount}/${a.chapters?.length || 0}"
+  },
+  {
+    "id": "tabStudio",
+    "onclick": "switchAssetsTab('studio')",
+    "title": "",
+    "label": "🚀 素材 ${charCount}人"
+  },
+  {
+    "id": "",
+    "onclick": "viewFullStory()",
+    "title": "",
+    "label": "👁️"
+  },
+  {
+    "id": "",
+    "onclick": "editStory()",
+    "title": "",
+    "label": "✏️"
+  },
+  {
+    "id": "",
+    "onclick": "triggerAgentWithCheck('concept')",
+    "title": "",
+    "label": "⚡ 一鍵生成高概念"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation();copyCharPrompt(${i})",
+    "title": "",
+    "label": "📋"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation();generateCharacterImage(${i})",
+    "title": "",
+    "label": "🎨 ${c.image_url ? '重新生成' : '生成形象'}"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation();editCharacter(${i})",
+    "title": "",
+    "label": "✏️ 編輯"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation();deleteCharacter(${i})",
+    "title": "",
+    "label": "🗑️"
+  },
+  {
+    "id": "charTabMain",
+    "onclick": "switchCharTab('main')",
+    "title": "",
+    "label": "⭐ 主角 (${mainChars.length})"
+  },
+  {
+    "id": "charTabSide",
+    "onclick": "switchCharTab('side')",
+    "title": "",
+    "label": "👥 配角 (${sideChars.length})"
+  },
+  {
+    "id": "",
+    "onclick": "triggerAgentWithCheck('character')",
+    "title": "",
+    "label": "⚡ 一鍵識別角色/生成小傳"
+  },
+  {
+    "id": "",
+    "onclick": "askCharacterBioManual()",
+    "title": "",
+    "label": "✍️ 手動輸入人物小傳"
+  },
+  {
+    "id": "",
+    "onclick": "triggerAgentWithCheck('chapters')",
+    "title": "",
+    "label": "📝 生成章節"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation();exportChapterStoryboard(${ep})",
+    "title": "導出",
+    "label": "📥"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation();copyChapterPrompts(${ep})",
+    "title": "複製",
+    "label": "📋"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation();fillStoryboardPrompts(${ep})",
+    "title": "補全Prompt",
+    "label": "🧩"
+  },
+  {
+    "id": "",
+    "onclick": "exportToExcel()",
+    "title": "",
+    "label": "📥 導出全部Excel"
+  },
+  {
+    "id": "",
+    "onclick": "copyAllStoryboardPrompts()",
+    "title": "",
+    "label": "📋 複製全部Prompt"
+  },
+  {
+    "id": "",
+    "onclick": "generateAllCharacterImages()",
+    "title": "",
+    "label": "🎨 批量生成形象"
+  },
+  {
+    "id": "",
+    "onclick": "copyAllCharacterPrompts()",
+    "title": "",
+    "label": "📋 複製全部Prompt"
+  },
+  {
+    "id": "",
+    "onclick": "copyAllProductionPrompts()",
+    "title": "",
+    "label": "📋 複製全部"
+  },
+  {
+    "id": "",
+    "onclick": "fillMissingProductionPrompts()",
+    "title": "",
+    "label": "🔧 補充缺失Prompt"
+  },
+  {
+    "id": "",
+    "onclick": "triggerAgentWithCheck('production')",
+    "title": "",
+    "label": "🎨 生成"
+  },
+  {
+    "id": "",
+    "onclick": "resetAllStoryboards()",
+    "title": "只清除分鏡，不影響劇本",
+    "label": "🧹 重置分鏡"
+  },
+  {
+    "id": "",
+    "onclick": "resumeStoryboardFromPrompt()",
+    "title": "從指定集開始重新生成分鏡",
+    "label": "▶️ 續跑分鏡"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation();requestRewriteChapter(${num})",
+    "title": "重寫此集",
+    "label": "🔄"
+  },
+  {
+    "id": "",
+    "onclick": "navigator.clipboard.writeText('${prompt.replace(/'/g, ",
+    "title": "",
+    "label": "📋 複製Prompt"
+  },
+  {
+    "id": "",
+    "onclick": "this.closest('#productionModal').remove()",
+    "title": "",
+    "label": "關閉"
+  },
+  {
+    "id": "",
+    "onclick": "this.closest('.story-modal').remove()",
+    "title": "",
+    "label": "✕"
+  },
+  {
+    "id": "",
+    "onclick": "this.closest('.story-modal').remove()",
+    "title": "",
+    "label": "✕"
+  },
+  {
+    "id": "",
+    "onclick": "copyStoryContent()",
+    "title": "",
+    "label": "📋 複製全文"
+  },
+  {
+    "id": "",
+    "onclick": "this.closest('.story-modal').remove()",
+    "title": "",
+    "label": "✕"
+  },
+  {
+    "id": "",
+    "onclick": "saveStoryEdit()",
+    "title": "",
+    "label": "💾 保存"
+  },
+  {
+    "id": "",
+    "onclick": "this.closest('.story-modal').remove()",
+    "title": "",
+    "label": "✕"
+  },
+  {
+    "id": "",
+    "onclick": "saveNewStory('${type}')",
+    "title": "",
+    "label": "💾 保存並開始分析"
+  },
+  {
+    "id": "",
+    "onclick": "runScriptWriting(${num})",
+    "title": "",
+    "label": "✍️ 生成第${num}集劇本"
+  },
+  {
+    "id": "",
+    "onclick": "editChapterScript(${num})",
+    "title": "",
+    "label": "✏️ 編輯"
+  },
+  {
+    "id": "",
+    "onclick": "runStoryboardGeneration(${num})",
+    "title": "",
+    "label": "🎬 生成第${num}集分鏡"
+  },
+  {
+    "id": "",
+    "onclick": "copyText('${(shot.Image_Prompt || shot.image_prompt).replace(/'/g, ",
+    "title": "",
+    "label": "🖼️ 圖片"
+  },
+  {
+    "id": "",
+    "onclick": "copyText('${(shot.Video_Prompt || shot.video_prompt).replace(/'/g, ",
+    "title": "",
+    "label": "🎬 視頻"
+  },
+  {
+    "id": "",
+    "onclick": "showAllShots(${num})",
+    "title": "",
+    "label": "展開全部"
+  },
+  {
+    "id": "",
+    "onclick": "copyChapterPrompts(${num})",
+    "title": "",
+    "label": "📋 複製全部"
+  },
+  {
+    "id": "",
+    "onclick": "exportChapterCSV(${num})",
+    "title": "",
+    "label": "📊 導出CSV"
+  },
+  {
+    "id": "",
+    "onclick": "showChapterScript(${num})",
+    "title": "",
+    "label": "取消"
+  },
+  {
+    "id": "",
+    "onclick": "saveChapterScript(${num})",
+    "title": "",
+    "label": "💾 保存"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation(); renameProject('${p.id}', '${safeName}')",
+    "title": "${t('rename')}",
+    "label": "✏️"
+  },
+  {
+    "id": "",
+    "onclick": "event.stopPropagation(); confirmDeleteProject('${p.id}', '${safeName}')",
+    "title": "${t('delete')}",
+    "label": "✕"
+  },
+  {
+    "id": "",
+    "onclick": "selectAdDuration(15)",
+    "title": "",
+    "label": "⚡ 15秒 6個鏡頭"
+  },
+  {
+    "id": "",
+    "onclick": "selectAdDuration(30)",
+    "title": "",
+    "label": "📱 30秒 8-10鏡頭"
+  },
+  {
+    "id": "",
+    "onclick": "selectAdDuration(60)",
+    "title": "",
+    "label": "🎬 60秒 12-18鏡頭"
+  },
+  {
+    "id": "",
+    "onclick": "copyText(this, \\`${imagePrompt.replace(/`/g, ",
+    "title": "",
+    "label": "📋 複製"
+  },
+  {
+    "id": "",
+    "onclick": "triggerAgentWithCheck('concept')",
+    "title": "",
+    "label": "💡 概念${assets.concept ? ' ✅' : ''}"
+  },
+  {
+    "id": "",
+    "onclick": "runAutoPilot()",
+    "title": "",
+    "label": "🚀 自動"
+  },
+  {
+    "id": "",
+    "onclick": "handleQuickReplyById(${msgId}, ${i})",
+    "title": "",
+    "label": "${r.text}"
+  },
+  {
+    "id": "",
+    "onclick": "regenerateResult()",
+    "title": "",
+    "label": "✏️ 不滿意，我要改"
+  },
+  {
+    "id": "",
+    "onclick": "confirmResult()",
+    "title": "",
+    "label": "✅ 確認存入資產庫"
+  },
+  {
+    "id": "",
+    "onclick": "toggleAllStoryboards(true)",
+    "title": "",
+    "label": "全選"
+  },
+  {
+    "id": "",
+    "onclick": "toggleAllStoryboards(false)",
+    "title": "",
+    "label": "取消全選"
+  },
+  {
+    "id": "",
+    "onclick": "this.closest('.message').remove()",
+    "title": "",
+    "label": "取消"
+  },
+  {
+    "id": "",
+    "onclick": "confirmFizzStudioImport()",
+    "title": "",
+    "label": "🚀 確認導入"
+  }
+]

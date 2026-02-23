@@ -1,0 +1,234 @@
+[
+  {
+    "agentId": "director",
+    "name": "🎬 總導演",
+    "skills": [
+      "narrative_complete",
+      "cinematography_complete"
+    ]
+  },
+  {
+    "agentId": "concept",
+    "name": "💡 概念生成器",
+    "skills": [
+      "core_methodology"
+    ]
+  },
+  {
+    "agentId": "script_parser",
+    "name": "📋 劇本拆分",
+    "skills": [
+      "script_parser",
+      "batch_processing",
+      "core_methodology"
+    ]
+  },
+  {
+    "agentId": "interview",
+    "name": "🎤 訪談師",
+    "skills": [
+      "interview_complete",
+      "core_methodology"
+    ]
+  },
+  {
+    "agentId": "story_architect",
+    "name": "🏗️ 故事架構師",
+    "skills": [
+      "story_architect",
+      "narrative_complete",
+      "core_methodology"
+    ]
+  },
+  {
+    "agentId": "episode_planner",
+    "name": "📋 單集規劃師",
+    "skills": [
+      "episode_planner",
+      "narrative_complete",
+      "netflix_streaming"
+    ]
+  },
+  {
+    "agentId": "novelist",
+    "name": "📖 小說家",
+    "skills": [
+      "narrative_complete",
+      "dialogue_complete",
+      "creative_master"
+    ]
+  },
+  {
+    "agentId": "screenwriter",
+    "name": "✍️ 編劇",
+    "skills": [
+      "netflix_streaming",
+      "screenplay_complete",
+      "dialogue_complete",
+      "screenplay_expand"
+    ]
+  },
+  {
+    "agentId": "narrative",
+    "name": "📖 敘事/章節",
+    "skills": [
+      "core_methodology"
+    ]
+  },
+  {
+    "agentId": "storyboard_skeleton",
+    "name": "🎥 分鏡(結構)",
+    "skills": [
+      "cinematography_complete"
+    ]
+  },
+  {
+    "agentId": "artstyle",
+    "name": "🎨 畫風",
+    "skills": [
+      "cinematography_complete",
+      "character_complete"
+    ]
+  },
+  {
+    "agentId": "character",
+    "name": "👤 角色設計",
+    "skills": [
+      "character_complete",
+      "narrative_complete"
+    ]
+  },
+  {
+    "agentId": "costume",
+    "name": "👗 服裝設計",
+    "skills": [
+      "costume_design",
+      "character_complete"
+    ]
+  },
+  {
+    "agentId": "prop",
+    "name": "🎭 道具設計",
+    "skills": [
+      "prop_design",
+      "narrative_complete"
+    ]
+  },
+  {
+    "agentId": "set_design",
+    "name": "🏛️ 場景設計",
+    "skills": [
+      "set_design",
+      "cinematography_complete"
+    ]
+  },
+  {
+    "agentId": "production_design",
+    "name": "👔 服化道總覽",
+    "skills": [
+      "costume_design",
+      "prop_design",
+      "set_design"
+    ]
+  },
+  {
+    "agentId": "prompt",
+    "name": "🖼️ Prompt師",
+    "skills": [
+      "image_prompt",
+      "video_prompt"
+    ]
+  },
+  {
+    "agentId": "image_prompt",
+    "name": "🎨 圖片提示詞",
+    "skills": [
+      "image_prompt",
+      "cinematography_complete"
+    ]
+  },
+  {
+    "agentId": "video_prompt",
+    "name": "🎬 視頻提示詞",
+    "skills": [
+      "video_prompt",
+      "cinematography_complete"
+    ]
+  },
+  {
+    "agentId": "vfx",
+    "name": "💥 VFX/特效",
+    "skills": [
+      "cinematography_complete",
+      "storyboard_complete"
+    ]
+  },
+  {
+    "agentId": "music",
+    "name": "🎵 音樂設計",
+    "skills": [
+      "music_complete"
+    ]
+  },
+  {
+    "agentId": "era",
+    "name": "📜 時代/文化",
+    "skills": [
+      "screenplay_complete",
+      "character_complete"
+    ]
+  },
+  {
+    "agentId": "novel_processor",
+    "name": "📚 長篇處理",
+    "skills": [
+      "novel_processing_complete",
+      "narrative_complete"
+    ]
+  },
+  {
+    "agentId": "script_reviewer",
+    "name": "📋 劇本評審",
+    "skills": [
+      "screenplay_complete",
+      "narrative_complete"
+    ]
+  },
+  {
+    "agentId": "ad_director",
+    "name": "🎬 廣告導演",
+    "skills": [
+      "ad_creative"
+    ]
+  },
+  {
+    "agentId": "ad_strategy",
+    "name": "🧠 廣告策略師",
+    "skills": [
+      "ad_creative"
+    ]
+  },
+  {
+    "agentId": "ad_visual",
+    "name": "👁️ 廣告視覺師",
+    "skills": [
+      "storyboard_complete",
+      "cinematography_complete"
+    ]
+  },
+  {
+    "agentId": "ad_copywriter",
+    "name": "✍️ 廣告文案師",
+    "skills": [
+      "ad_creative"
+    ]
+  },
+  {
+    "agentId": "format_adapter",
+    "name": "✂️ 格式重組",
+    "skills": [
+      "format_adapter",
+      "core_methodology"
+    ]
+  }
+]

@@ -1,0 +1,272 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/auth/register",
+    "line": 311
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/login",
+    "line": 333
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/me",
+    "line": 349
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/verify",
+    "line": 354
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/logout",
+    "line": 357
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/register",
+    "line": 429
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/login",
+    "line": 463
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/verify",
+    "line": 492
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/logout",
+    "line": 510
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/users",
+    "line": 526
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/kick",
+    "line": 542
+  },
+  {
+    "method": "POST",
+    "path": "/api/agent-stream/:agentId",
+    "line": 1012
+  },
+  {
+    "method": "POST",
+    "path": "/api/agent/:agentId",
+    "line": 1104
+  },
+  {
+    "method": "POST",
+    "path": "/api/config",
+    "line": 1277
+  },
+  {
+    "method": "GET",
+    "path": "/api/config",
+    "line": 1292
+  },
+  {
+    "method": "POST",
+    "path": "/api/:legacy",
+    "line": 1303
+  },
+  {
+    "method": "GET",
+    "path": "/api/agents",
+    "line": 1650
+  },
+  {
+    "method": "GET",
+    "path": "/api/tokens",
+    "line": 1661
+  },
+  {
+    "method": "POST",
+    "path": "/api/tokens/reset",
+    "line": 1666
+  },
+  {
+    "method": "GET",
+    "path": "/api/queue",
+    "line": 1699
+  },
+  {
+    "method": "GET",
+    "path": "/api/providers",
+    "line": 1704
+  },
+  {
+    "method": "POST",
+    "path": "/api/stream",
+    "line": 1723
+  },
+  {
+    "method": "GET",
+    "path": "/api/moodboard/providers",
+    "line": 1832
+  },
+  {
+    "method": "POST",
+    "path": "/api/moodboard/generate",
+    "line": 1846
+  },
+  {
+    "method": "POST",
+    "path": "/api/moodboard/analyze",
+    "line": 1902
+  },
+  {
+    "method": "POST",
+    "path": "/api/novel/structure",
+    "line": 2015
+  },
+  {
+    "method": "POST",
+    "path": "/api/novel/chunk",
+    "line": 2049
+  },
+  {
+    "method": "POST",
+    "path": "/api/novel/aggregate",
+    "line": 2091
+  },
+  {
+    "method": "POST",
+    "path": "/api/novel/preview",
+    "line": 2133
+  },
+  {
+    "method": "POST",
+    "path": "/api/project/create",
+    "line": 2250
+  },
+  {
+    "method": "POST",
+    "path": "/api/project/:projectId/scripts/generate",
+    "line": 2274
+  },
+  {
+    "method": "GET",
+    "path": "/api/project/:projectId/scripts",
+    "line": 2289
+  },
+  {
+    "method": "PUT",
+    "path": "/api/project/:projectId/scripts/:episode",
+    "line": 2301
+  },
+  {
+    "method": "POST",
+    "path": "/api/project/:projectId/storyboard/:episode/generate",
+    "line": 2310
+  },
+  {
+    "method": "POST",
+    "path": "/api/project/:projectId/storyboard/generate-all",
+    "line": 2335
+  },
+  {
+    "method": "GET",
+    "path": "/api/project/:projectId/storyboard/:episode",
+    "line": 2364
+  },
+  {
+    "method": "GET",
+    "path": "/api/project/:projectId",
+    "line": 2384
+  },
+  {
+    "method": "GET",
+    "path": "/api/project/:projectId/storyboard",
+    "line": 2405
+  },
+  {
+    "method": "GET",
+    "path": "/api/projects",
+    "line": 2421
+  },
+  {
+    "method": "GET",
+    "path": "/api/pipeline/modes",
+    "line": 2433
+  },
+  {
+    "method": "POST",
+    "path": "/api/pipeline/create",
+    "line": 2446
+  },
+  {
+    "method": "POST",
+    "path": "/api/pipeline/:id/run",
+    "line": 2475
+  },
+  {
+    "method": "POST",
+    "path": "/api/pipeline/:id/run-episodes",
+    "line": 2489
+  },
+  {
+    "method": "GET",
+    "path": "/api/pipeline/:id",
+    "line": 2510
+  },
+  {
+    "method": "GET",
+    "path": "/api/pipeline/:id/storyboard",
+    "line": 2518
+  },
+  {
+    "method": "GET",
+    "path": "/api/pipelines",
+    "line": 2530
+  },
+  {
+    "method": "POST",
+    "path": "/api/generate-image",
+    "line": 2553
+  },
+  {
+    "method": "GET",
+    "path": "/api/generate-image/status",
+    "line": 2626
+  },
+  {
+    "method": "POST",
+    "path": "/api/aliyun/generate",
+    "line": 2642
+  },
+  {
+    "method": "POST",
+    "path": "/api/aliyun/characters",
+    "line": 2662
+  },
+  {
+    "method": "GET",
+    "path": "/api/aliyun/status",
+    "line": 2682
+  },
+  {
+    "method": "GET",
+    "path": "/api/user-projects/:userId",
+    "line": 2712
+  },
+  {
+    "method": "POST",
+    "path": "/api/user-projects/:userId",
+    "line": 2739
+  },
+  {
+    "method": "PUT",
+    "path": "/api/user-projects/:userId/:projectId",
+    "line": 2762
+  }
+]
